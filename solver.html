@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>حل مسئله | VAYRA</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div class="left-tools">
+        <span class="tool-icon">☾</span>
+
+        <span class="tool-icon">🌐</span>
+
+        <div class="search">
+          <input type="text" placeholder="جستجو کنید..." />
+
+          <span>⌕</span>
+        </div>
+      </div>
+
+      <a href="index.html" class="brand">
+        <img src="images/vayra-logo1.png" alt="VAYRA" />
+
+        <div>
+          <h2>VAYRA</h2>
+
+          <p>WINGS OF KNOWLEDGE</p>
+        </div>
+      </a>
+
+      <div class="menu" onclick="toggleSidebar()">☰</div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="profile">
+        <img src="images/vayra-logo2.png" alt="VAYRA" />
+
+        <h2>VAYRA</h2>
+
+        <small> WINGS OF KNOWLEDGE </small>
+      </div>
+
+      <nav class="menu-items">
+        <a href="calculator.html"> 🧮 ماشین حساب </a>
+
+        <a href="solver.html" class="active"> ✏️ حل مسئله </a>
+
+        <a href="graph.html"> 📈 رسم نمودار </a>
+
+        <a href="advanced-calculator.html"> 🔢 ماشین حساب پیشرفته </a>
+
+        <a href="engineering.html"> 📐 ابزار مهندسی </a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="page-header">
+        <h1>
+          حل مسئله
+          <span>VAYRA</span>
+        </h1>
+
+        <p>مسئله ریاضی یا مهندسی خود را وارد کنید.</p>
+      </section>
+
+      <section class="panel">
+        <div class="input-group">
+          <label> متن مسئله </label>
+
+          <textarea
+            id="problem"
+            placeholder="مثلاً: معادله 2x + 5 = 15 را حل کنید..."
+          ></textarea>
+        </div>
+
+        <button class="primary-btn" onclick="solveProblem()">حل مسئله</button>
+
+        <div id="result" class="result-box">
+          نتیجه حل مسئله در این قسمت نمایش داده می‌شود.
+        </div>
+      </section>
+    </main>
+
+    <script>
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+      }
+
+      function solveProblem() {
+        const problem = document.getElementById("problem").value;
+
+        const result = document.getElementById("result");
+
+        if (!problem.trim()) {
+          result.innerHTML = "لطفاً ابتدا مسئله را وارد کنید.";
+
+          return;
+        }
+
+        result.innerHTML =
+          "مسئله شما دریافت شد. در نسخه کامل VAYRA، موتور هوشمند حل مسئله می‌تواند این بخش را تحلیل و پاسخ مرحله‌به‌مرحله تولید کند.";
+      }
+    </script>
+  </body>
+</html>

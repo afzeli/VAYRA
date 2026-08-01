@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>VAYRA - Wings of Knowledge</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- ================= HEADER ================= -->
+
+      <header class="topbar">
+        <div class="left-tools">
+          <span class="tool-icon">☾</span>
+
+          <span class="tool-icon">🌐</span>
+
+          <div class="search">
+            <input type="text" placeholder="جستجو کنید..." />
+
+            <span>⌕</span>
+          </div>
+        </div>
+
+        <a href="index.html" class="brand">
+          <img src="images/vayra-logo1.png" alt="VAYRA Logo" />
+
+          <div>
+            <h2>VAYRA</h2>
+
+            <p>WINGS OF KNOWLEDGE</p>
+          </div>
+        </a>
+
+        <div class="menu" onclick="toggleSidebar()">☰</div>
+      </header>
+
+      <!-- ================= SIDEBAR ================= -->
+
+      <aside class="sidebar" id="sidebar">
+        <div class="profile">
+          <img src="images/vayra-logo2.png" alt="VAYRA" />
+
+          <h2>VAYRA</h2>
+
+          <small> WINGS OF KNOWLEDGE </small>
+        </div>
+
+        <nav class="menu-items">
+          <a href="calculator.html"> 🧮 ماشین حساب </a>
+
+          <a href="solver.html"> ✏️ حل مسئله </a>
+
+          <a href="graph.html"> 📈 رسم نمودار </a>
+
+          <a href="advanced-calculator.html"> 🔢 ماشین حساب پیشرفته </a>
+
+          <a href="engineering.html"> 📐 ابزار مهندسی </a>
+        </nav>
+      </aside>
+
+      <!-- ================= MAIN ================= -->
+
+      <main class="content">
+        <section class="hero">
+          <h1>
+            به
+            <span>VAYRA</span>
+            خوش آمدید
+          </h1>
+
+          <p>
+            ابزار هوشمند حل مسائل ریاضی، مهندسی و علوم
+
+            <br />
+
+            حل مرحله به مرحله، گراف‌های قدرتمند و یادگیری عمیق
+          </p>
+        </section>
+
+        <section class="cards">
+          <div class="card">
+            <div class="icon purple">ƒ(x)</div>
+
+            <h2>حل مسئله</h2>
+
+            <p>حل مسائل ریاضی، مهندسی و معادلات پیچیده</p>
+
+            <a href="solver.html" class="primary-btn"> شروع حل </a>
+          </div>
+
+          <div class="card">
+            <div class="icon green">📖</div>
+
+            <h2>یادگیری</h2>
+
+            <p>آموزش گام به گام همراه با توضیحات</p>
+
+            <a href="solver.html" class="primary-btn"> مشاهده </a>
+          </div>
+
+          <div class="card">
+            <div class="icon blue">📊</div>
+
+            <h2>نمودار و تحلیل</h2>
+
+            <p>رسم نمودارهای دقیق و تحلیل داده‌ها</p>
+
+            <a href="graph.html" class="primary-btn"> باز کردن </a>
+          </div>
+        </section>
+
+        <footer class="footer">© 2026 VAYRA - Wings of Knowledge</footer>
+      </main>
+    </div>
+
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+
+        sidebar.classList.toggle("open");
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>ماشین حساب | VAYRA</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div class="left-tools">
+        <span class="tool-icon">☾</span>
+
+        <span class="tool-icon">🌐</span>
+
+        <div class="search">
+          <input type="text" placeholder="جستجو کنید..." />
+
+          <span>⌕</span>
+        </div>
+      </div>
+
+      <a href="index.html" class="brand">
+        <img src="images/vayra-logo1.png" alt="VAYRA" />
+
+        <div>
+          <h2>VAYRA</h2>
+
+          <p>WINGS OF KNOWLEDGE</p>
+        </div>
+      </a>
+
+      <div class="menu" onclick="toggleSidebar()">☰</div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="profile">
+        <img src="images/vayra-logo2.png" alt="VAYRA" />
+
+        <h2>VAYRA</h2>
+
+        <small> WINGS OF KNOWLEDGE </small>
+      </div>
+
+      <nav class="menu-items">
+        <a href="calculator.html" class="active"> 🧮 ماشین حساب </a>
+
+        <a href="solver.html"> ✏️ حل مسئله </a>
+
+        <a href="graph.html"> 📈 رسم نمودار </a>
+
+        <a href="advanced-calculator.html"> 🔢 ماشین حساب پیشرفته </a>
+
+        <a href="engineering.html"> 📐 ابزار مهندسی </a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="page-header">
+        <h1>
+          ماشین حساب
+          <span>VAYRA</span>
+        </h1>
+
+        <p>محاسبات ریاضی خود را سریع و دقیق انجام دهید.</p>
+      </section>
+
+      <section class="panel">
+        <div class="calculator">
+          <input id="display" class="calculator-display" type="text" readonly />
+
+          <div class="calculator-buttons">
+            <button onclick="clearDisplay()">C</button>
+
+            <button onclick="deleteLast()">⌫</button>
+
+            <button class="operator" onclick="appendValue('%')">%</button>
+
+            <button class="operator" onclick="appendValue('/')">÷</button>
+
+            <button onclick="appendValue('7')">7</button>
+
+            <button onclick="appendValue('8')">8</button>
+
+            <button onclick="appendValue('9')">9</button>
+
+            <button class="operator" onclick="appendValue('*')">×</button>
+
+            <button onclick="appendValue('4')">4</button>
+
+            <button onclick="appendValue('5')">5</button>
+
+            <button onclick="appendValue('6')">6</button>
+
+            <button class="operator" onclick="appendValue('-')">−</button>
+
+            <button onclick="appendValue('1')">1</button>
+
+            <button onclick="appendValue('2')">2</button>
+
+            <button onclick="appendValue('3')">3</button>
+
+            <button class="operator" onclick="appendValue('+')">+</button>
+
+            <button onclick="appendValue('0')">0</button>
+
+            <button onclick="appendValue('.')">.</button>
+
+            <button
+              class="equal"
+              onclick="calculate()"
+              style="grid-column: span 2"
+            >
+              =
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="calculator.js"></script>
+
+    <script>
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+      }
+    </script>
+  </body>
+</html>

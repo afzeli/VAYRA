@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>ابزارهای مهندسی | VAYRA</title>
+
+    <!-- CSS اصلی -->
+
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- فونت وزیرمتن -->
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+      <header class="topbar">
+        <!-- ابزارهای سمت چپ -->
+
+        <div class="left-tools">
+          <span class="tool-icon" title="حالت شب"> ☾ </span>
+
+          <span class="tool-icon" title="زبان"> 🌐 </span>
+
+          <div class="search">
+            <input type="text" placeholder="جستجو کنید..." />
+
+            <span> ⌕ </span>
+          </div>
+        </div>
+
+        <!-- برند -->
+
+        <a href="index.html" class="brand">
+          <img src="images/vayra-logo1.png" alt="VAYRA Logo" />
+
+          <div>
+            <h2>VAYRA</h2>
+
+            <p>WINGS OF KNOWLEDGE</p>
+          </div>
+        </a>
+
+        <!-- منوی موبایل -->
+
+        <div class="menu" onclick="toggleSidebar()">☰</div>
+      </header>
+
+      <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+      <aside class="sidebar" id="sidebar">
+        <!-- پروفایل -->
+
+        <div class="profile">
+          <img src="images/vayra-logo2.png" alt="VAYRA Logo" />
+
+          <h2>VAYRA</h2>
+
+          <small> WINGS OF KNOWLEDGE </small>
+        </div>
+
+        <!-- منوی اصلی -->
+
+        <nav class="menu-items">
+          <a href="calculator.html"> 🧮 ماشین حساب </a>
+
+          <a href="solver.html"> ✏️ حل مسئله </a>
+
+          <a href="graph.html"> 📈 رسم نمودار </a>
+
+          <a href="advanced-calculator.html"> 🔢 ماشین حساب پیشرفته </a>
+
+          <a href="engineering.html" class="active"> 📐 ابزار مهندسی </a>
+        </nav>
+      </aside>
+
+      <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+      <main class="content">
+        <!-- عنوان صفحه -->
+
+        <section class="page-header">
+          <h1>
+            ابزارهای مهندسی
+
+            <span> VAYRA </span>
+          </h1>
+
+          <p>مجموعه‌ای از ابزارهای کاربردی برای محاسبات مهندسی، فیزیک و علوم</p>
+        </section>
+
+        <!-- =================================================
+             ENGINEERING TOOLS
+        ================================================== -->
+
+        <section class="cards">
+          <!-- =========================
+                 OHM'S LAW
+            ========================== -->
+
+          <div class="card">
+            <div class="icon blue">⚡</div>
+
+            <h2>قانون اهم</h2>
+
+            <p>محاسبه ولتاژ، جریان و مقاومت در مدارهای الکتریکی</p>
+
+            <a href="#ohm" class="primary-btn"> شروع محاسبه </a>
+          </div>
+
+          <!-- =========================
+                 TORQUE
+            ========================== -->
+
+          <div class="card">
+            <div class="icon purple">⚙️</div>
+
+            <h2>محاسبه گشتاور</h2>
+
+            <p>محاسبه گشتاور نیرو در سیستم‌های مکانیکی</p>
+
+            <a href="#torque" class="primary-btn"> شروع محاسبه </a>
+          </div>
+
+          <!-- =========================
+                 PRESSURE
+            ========================== -->
+
+          <div class="card">
+            <div class="icon green">🔧</div>
+
+            <h2>فشار</h2>
+
+            <p>محاسبه فشار بر اساس نیرو و سطح مقطع</p>
+
+            <a href="#pressure" class="primary-btn"> شروع محاسبه </a>
+          </div>
+
+          <!-- =========================
+                 POWER
+            ========================== -->
+
+          <div class="card">
+            <div class="icon blue">🔋</div>
+
+            <h2>توان الکتریکی</h2>
+
+            <p>محاسبه توان الکتریکی در سیستم‌های مختلف</p>
+
+            <a href="#power" class="primary-btn"> شروع محاسبه </a>
+          </div>
+
+          <!-- =========================
+                 SPEED
+            ========================== -->
+
+          <div class="card">
+            <div class="icon purple">🚀</div>
+
+            <h2>سرعت</h2>
+
+            <p>محاسبه سرعت، مسافت و زمان حرکت</p>
+
+            <a href="#speed" class="primary-btn"> شروع محاسبه </a>
+          </div>
+
+          <!-- =========================
+                 DENSITY
+            ========================== -->
+
+          <div class="card">
+            <div class="icon green">🧪</div>
+
+            <h2>چگالی</h2>
+
+            <p>محاسبه چگالی بر اساس جرم و حجم ماده</p>
+
+            <a href="#density" class="primary-btn"> شروع محاسبه </a>
+          </div>
+        </section>
+
+        <!-- =================================================
+             INFORMATION PANEL
+        ================================================== -->
+
+        <section class="panel" style="margin-top: 40px">
+          <h2 style="color: #d4af37; margin-bottom: 15px">
+            ابزارهای مهندسی VAYRA
+          </h2>
+
+          <p style="color: #aaa; line-height: 2">
+            در این بخش می‌توانید از مجموعه‌ای از ابزارهای محاسباتی مهندسی برای
+            انجام محاسبات الکتریکی، مکانیکی و فیزیکی استفاده کنید.
+
+            <br />
+
+            ابزار مورد نظر خود را انتخاب کنید و محاسبات را با سرعت و دقت انجام
+            دهید.
+          </p>
+        </section>
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer class="footer">© 2026 VAYRA - Wings of Knowledge</footer>
+      </main>
+    </div>
+
+    <!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+
+    <script>
+      /* =========================
+   MOBILE SIDEBAR
+========================= */
+
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+
+        sidebar.classList.toggle("open");
+      }
+
+      /* =========================
+   SEARCH
+========================= */
+
+      const searchInput = document.querySelector(".search input");
+
+      searchInput.addEventListener("keyup", function () {
+        const value = this.value.toLowerCase();
+
+        const cards = document.querySelectorAll(".card");
+
+        cards.forEach(function (card) {
+          const text = card.innerText.toLowerCase();
+
+          if (text.includes(value)) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

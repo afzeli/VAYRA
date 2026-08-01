@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>رسم نمودار | VAYRA</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div class="left-tools">
+        <span class="tool-icon">☾</span>
+
+        <span class="tool-icon">🌐</span>
+
+        <div class="search">
+          <input type="text" placeholder="جستجو کنید..." />
+
+          <span>⌕</span>
+        </div>
+      </div>
+
+      <a href="index.html" class="brand">
+        <img src="images/vayra-logo1.png" alt="VAYRA" />
+
+        <div>
+          <h2>VAYRA</h2>
+
+          <p>WINGS OF KNOWLEDGE</p>
+        </div>
+      </a>
+
+      <div class="menu" onclick="toggleSidebar()">☰</div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="profile">
+        <img src="images/vayra-logo2.png" alt="VAYRA" />
+
+        <h2>VAYRA</h2>
+
+        <small> WINGS OF KNOWLEDGE </small>
+      </div>
+
+      <nav class="menu-items">
+        <a href="calculator.html"> 🧮 ماشین حساب </a>
+
+        <a href="solver.html"> ✏️ حل مسئله </a>
+
+        <a href="graph.html" class="active"> 📈 رسم نمودار </a>
+
+        <a href="advanced-calculator.html"> 🔢 ماشین حساب پیشرفته </a>
+
+        <a href="engineering.html"> 📐 ابزار مهندسی </a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="page-header">
+        <h1>
+          رسم نمودار
+          <span>VAYRA</span>
+        </h1>
+
+        <p>تابع ریاضی خود را وارد کنید و نمودار آن را مشاهده کنید.</p>
+      </section>
+
+      <section class="panel">
+        <div class="input-group">
+          <label> تابع </label>
+
+          <input id="functionInput" type="text" placeholder="مثلاً: x²" />
+        </div>
+
+        <button class="primary-btn" onclick="drawGraph()">رسم نمودار</button>
+
+        <div class="graph-container">
+          <canvas id="graphCanvas"></canvas>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      let chart;
+
+      function drawGraph() {
+        const input = document.getElementById("functionInput").value;
+
+        if (!input.trim()) {
+          alert("لطفاً یک تابع وارد کنید.");
+
+          return;
+        }
+
+        const labels = [];
+
+        const data = [];
+
+        for (let x = -10; x <= 10; x += 0.5) {
+          labels.push(x.toFixed(1));
+
+          // پشتیبانی ساده از x²
+
+          let y = Math.pow(x, 2);
+
+          data.push(y);
+        }
+
+        if (chart) {
+          chart.destroy();
+        }
+
+        const ctx = document.getElementById("graphCanvas").getContext("2d");
+
+        chart = new Chart(ctx, {
+          type: "line",
+
+          data: {
+            labels: labels,
+
+            datasets: [
+              {
+                label: input,
+
+                data: data,
+
+                borderWidth: 2,
+
+                fill: false,
+
+                tension: 0.2,
+              },
+            ],
+          },
+
+          options: {
+            responsive: true,
+
+            maintainAspectRatio: false,
+          },
+        });
+      }
+
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+      }
+    </script>
+  </body>
+</html>
