@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="fa" dir="rtl">
   <head>
@@ -5,156 +6,523 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>رسم نمودار | VAYRA</title>
+    <title>VAYRA - رسم نمودار پیشرفته</title>
+
+    <!-- =====================================================
+         VAYRA STYLE
+    ====================================================== -->
 
     <link rel="stylesheet" href="style.css" />
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- =====================================================
+         VAZIRMATN FONT
+    ====================================================== -->
 
     <link
-      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
+
+    <!-- =====================================================
+         PLOTLY.JS
+    ====================================================== -->
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+    <!-- =====================================================
+         MATH.JS
+    ====================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@13.2.3/lib/browser/math.js"></script>
   </head>
 
   <body>
-    <header class="topbar">
-      <div class="left-tools">
-        <span class="tool-icon">☾</span>
+    <div class="dashboard">
+      <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-        <span class="tool-icon">🌐</span>
+      <header class="topbar">
+        <div class="left-tools">
+          <span class="tool-icon" title="حالت شب"> ☾ </span>
 
-        <div class="search">
-          <input type="text" placeholder="جستجو کنید..." />
+          <span class="tool-icon" title="زبان"> 🌐 </span>
 
-          <span>⌕</span>
+          <div class="search">
+            <input type="text" placeholder="جستجو کنید..." />
+
+            <span> ⌕ </span>
+          </div>
         </div>
-      </div>
 
-      <a href="index.html" class="brand">
-        <img src="images/vayra-logo1.png" alt="VAYRA" />
+        <!-- BRAND -->
 
-        <div>
+        <a href="index.html" class="brand">
+          <img src="images/vayra-logo1.png" alt="VAYRA Logo" />
+
+          <div>
+            <h2>VAYRA</h2>
+
+            <p>WINGS OF KNOWLEDGE</p>
+          </div>
+        </a>
+
+        <!-- MOBILE MENU -->
+
+        <div class="menu" onclick="toggleSidebar()">☰</div>
+      </header>
+
+      <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+      <aside class="sidebar" id="sidebar">
+        <div class="profile">
+          <img src="images/vayra-logo2.png" alt="VAYRA" />
+
           <h2>VAYRA</h2>
 
-          <p>WINGS OF KNOWLEDGE</p>
-        </div>
-      </a>
-
-      <div class="menu" onclick="toggleSidebar()">☰</div>
-    </header>
-
-    <aside class="sidebar" id="sidebar">
-      <div class="profile">
-        <img src="images/vayra-logo2.png" alt="VAYRA" />
-
-        <h2>VAYRA</h2>
-
-        <small> WINGS OF KNOWLEDGE </small>
-      </div>
-
-      <nav class="menu-items">
-        <a href="calculator.html"> 🧮 ماشین حساب </a>
-
-        <a href="solver.html"> ✏️ حل مسئله </a>
-
-        <a href="graph.html" class="active"> 📈 رسم نمودار </a>
-
-        <a href="advanced-calculator.html"> 🔢 ماشین حساب پیشرفته </a>
-
-        <a href="engineering.html"> 📐 ابزار مهندسی </a>
-      </nav>
-    </aside>
-
-    <main class="content">
-      <section class="page-header">
-        <h1>
-          رسم نمودار
-          <span>VAYRA</span>
-        </h1>
-
-        <p>تابع ریاضی خود را وارد کنید و نمودار آن را مشاهده کنید.</p>
-      </section>
-
-      <section class="panel">
-        <div class="input-group">
-          <label> تابع </label>
-
-          <input id="functionInput" type="text" placeholder="مثلاً: x²" />
+          <small> WINGS OF KNOWLEDGE </small>
         </div>
 
-        <button class="primary-btn" onclick="drawGraph()">رسم نمودار</button>
+        <nav class="menu-items">
+          <a href="solver.html"> ✏️ حل مسئله </a>
 
-        <div class="graph-container">
-          <canvas id="graphCanvas"></canvas>
-        </div>
-      </section>
-    </main>
+          <a href="graph.html" class="active"> 📈 رسم نمودار </a>
+
+          <a href="advanced-calculator.html"> 🔢 ماشین حساب پیشرفته </a>
+
+          <a href="engineering.html"> 📐 ابزار مهندسی </a>
+        </nav>
+      </aside>
+
+      <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+      <main class="content">
+        <!-- PAGE HEADER -->
+
+        <section class="page-header">
+          <h1>
+            رسم نمودار
+            <span> پیشرفته </span>
+          </h1>
+
+          <p>
+            توابع ریاضی خود را وارد کنید و نمودارهای دقیق و تعاملی رسم کنید.
+
+            <br />
+
+            امکان Zoom، Pan، مشاهده مختصات و رسم چند تابع به صورت همزمان.
+          </p>
+        </section>
+
+        <!-- =================================================
+             GRAPH PANEL
+        ================================================== -->
+
+        <section class="panel">
+          <!-- =================================================
+                 FUNCTION INPUT
+            ================================================== -->
+
+          <div class="input-group">
+            <label for="functionInput"> تابع ریاضی </label>
+
+            <input
+              type="text"
+              id="functionInput"
+              placeholder="مثال: sin(x) + x^2"
+              autocomplete="off"
+              spellcheck="false"
+            />
+
+            <small>
+              نمونه‌ها:
+
+              <span dir="ltr"> sin(x) </span>
+
+              ،
+
+              <span dir="ltr"> x^2 </span>
+
+              ،
+
+              <span dir="ltr"> sqrt(x) </span>
+
+              ،
+
+              <span dir="ltr"> 1/(x-2) </span>
+
+              ،
+
+              <span dir="ltr"> sin(x)/x </span>
+            </small>
+          </div>
+
+          <!-- =================================================
+                 GRAPH CONTROLS
+            ================================================== -->
+
+          <div class="controls-grid">
+            <!-- MIN X -->
+
+            <div class="input-group">
+              <label for="minX"> حداقل X </label>
+
+              <input type="number" id="minX" value="-10" step="any" />
+            </div>
+
+            <!-- MAX X -->
+
+            <div class="input-group">
+              <label for="maxX"> حداکثر X </label>
+
+              <input type="number" id="maxX" value="10" step="any" />
+            </div>
+
+            <!-- SAMPLES -->
+
+            <div class="input-group">
+              <label for="samples"> دقت رسم </label>
+
+              <input
+                type="number"
+                id="samples"
+                value="3000"
+                min="100"
+                max="20000"
+                step="100"
+              />
+
+              <small> تعداد نقاط بیشتر = دقت بالاتر </small>
+            </div>
+          </div>
+
+          <!-- =================================================
+                 BUTTONS
+            ================================================== -->
+
+          <div class="button-row">
+            <button class="primary-btn" id="plotBtn" type="button">
+              📈 رسم تابع
+            </button>
+
+            <button class="secondary-btn" id="examplesBtn" type="button">
+              ✨ نمایش نمونه‌ها
+            </button>
+
+            <button class="secondary-btn" id="resetZoomBtn" type="button">
+              🔄 بازنشانی Zoom
+            </button>
+
+            <button class="secondary-btn" id="zoomInBtn" type="button">
+              🔍 Zoom In
+            </button>
+
+            <button class="secondary-btn" id="zoomOutBtn" type="button">
+              🔎 Zoom Out
+            </button>
+
+            <button class="danger-btn" id="clearBtn" type="button">
+              🗑️ حذف همه نمودارها
+            </button>
+          </div>
+
+          <!-- =================================================
+                 QUICK FUNCTIONS
+            ================================================== -->
+
+          <div class="quick-functions">
+            <span> توابع سریع: </span>
+
+            <button
+              type="button"
+              class="secondary-btn quick-function"
+              data-function="sin(x)"
+            >
+              sin(x)
+            </button>
+
+            <button
+              type="button"
+              class="secondary-btn quick-function"
+              data-function="cos(x)"
+            >
+              cos(x)
+            </button>
+
+            <button
+              type="button"
+              class="secondary-btn quick-function"
+              data-function="tan(x)"
+            >
+              tan(x)
+            </button>
+
+            <button
+              type="button"
+              class="secondary-btn quick-function"
+              data-function="x^2"
+            >
+              x²
+            </button>
+
+            <button
+              type="button"
+              class="secondary-btn quick-function"
+              data-function="sqrt(x)"
+            >
+              √x
+            </button>
+
+            <button
+              type="button"
+              class="secondary-btn quick-function"
+              data-function="1/x"
+            >
+              1/x
+            </button>
+
+            <button
+              type="button"
+              class="secondary-btn quick-function"
+              data-function="abs(x)"
+            >
+              |x|
+            </button>
+          </div>
+
+          <!-- =================================================
+                 GRAPH
+            ================================================== -->
+
+          <div class="graph-container">
+            <div id="graph" aria-label="نمودار توابع ریاضی"></div>
+          </div>
+
+          <!-- =================================================
+                 FUNCTION LIST
+            ================================================== -->
+
+          <div class="function-section">
+            <h3>توابع رسم‌شده</h3>
+
+            <div id="functionList"></div>
+          </div>
+
+          <!-- =================================================
+                 GRAPH HELP
+            ================================================== -->
+
+          <div class="result-box">
+            <strong> راهنمای نمودار: </strong>
+
+            <br />
+
+            🖱️ برای حرکت نمودار، نمودار را Drag کنید.
+
+            <br />
+
+            🔍 برای Zoom، از چرخ موس استفاده کنید.
+
+            <br />
+
+            📦 برای انتخاب یک محدوده، از ابزار Box Zoom استفاده کنید.
+
+            <br />
+
+            🔄 برای بازگشت به نمای اولیه، روی Reset Zoom کلیک کنید.
+
+            <br />
+
+            📌 برای مشاهده دقیق مختصات، نشانگر موس را روی نمودار حرکت دهید.
+          </div>
+        </section>
+
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
+
+        <footer class="footer">© 2026 VAYRA - Wings of Knowledge</footer>
+      </main>
+    </div>
+
+    <!-- =========================================================
+     SIDEBAR SCRIPT
+========================================================== -->
 
     <script>
-      let chart;
-
-      function drawGraph() {
-        const input = document.getElementById("functionInput").value;
-
-        if (!input.trim()) {
-          alert("لطفاً یک تابع وارد کنید.");
-
-          return;
-        }
-
-        const labels = [];
-
-        const data = [];
-
-        for (let x = -10; x <= 10; x += 0.5) {
-          labels.push(x.toFixed(1));
-
-          // پشتیبانی ساده از x²
-
-          let y = Math.pow(x, 2);
-
-          data.push(y);
-        }
-
-        if (chart) {
-          chart.destroy();
-        }
-
-        const ctx = document.getElementById("graphCanvas").getContext("2d");
-
-        chart = new Chart(ctx, {
-          type: "line",
-
-          data: {
-            labels: labels,
-
-            datasets: [
-              {
-                label: input,
-
-                data: data,
-
-                borderWidth: 2,
-
-                fill: false,
-
-                tension: 0.2,
-              },
-            ],
-          },
-
-          options: {
-            responsive: true,
-
-            maintainAspectRatio: false,
-          },
-        });
-      }
-
       function toggleSidebar() {
-        document.getElementById("sidebar").classList.toggle("open");
+        const sidebar = document.getElementById("sidebar");
+
+        sidebar.classList.toggle("open");
       }
     </script>
+
+    <!-- =========================================================
+     GRAPH UI CONTROLLER
+========================================================== -->
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const functionInput = document.getElementById("functionInput");
+
+        const minXInput = document.getElementById("minX");
+
+        const maxXInput = document.getElementById("maxX");
+
+        const samplesInput = document.getElementById("samples");
+
+        // =================================================
+        // PLOT BUTTON
+        // =================================================
+
+        document
+          .getElementById("plotBtn")
+          .addEventListener("click", function () {
+            const expression = functionInput.value.trim();
+
+            if (!expression) {
+              alert("لطفاً یک تابع وارد کنید.");
+
+              functionInput.focus();
+
+              return;
+            }
+
+            const minX = Number(minXInput.value);
+
+            const maxX = Number(maxXInput.value);
+
+            const samples = Number(samplesInput.value);
+
+            if (!Number.isFinite(minX) || !Number.isFinite(maxX)) {
+              alert("محدوده X معتبر نیست.");
+
+              return;
+            }
+
+            if (minX >= maxX) {
+              alert("حداقل X باید از حداکثر X کوچک‌تر باشد.");
+
+              return;
+            }
+
+            if (samples < 100 || samples > 20000) {
+              alert("دقت رسم باید بین 100 تا 20000 باشد.");
+
+              return;
+            }
+
+            plotFunction(expression, {
+              minX: minX,
+
+              maxX: maxX,
+
+              samples: samples,
+
+              name: expression,
+            });
+
+            functionInput.value = "";
+
+            functionInput.focus();
+          });
+
+        // =================================================
+        // ENTER KEY
+        // =================================================
+
+        functionInput.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+
+            document.getElementById("plotBtn").click();
+          }
+        });
+
+        // =================================================
+        // CLEAR ALL
+        // =================================================
+
+        document
+          .getElementById("clearBtn")
+          .addEventListener("click", function () {
+            if (typeof graphs !== "undefined" && graphs.length > 0) {
+              const confirmed = confirm(
+                "آیا می‌خواهید تمام نمودارها حذف شوند؟",
+              );
+
+              if (confirmed) {
+                clearGraphs();
+              }
+            }
+          });
+
+        // =================================================
+        // EXAMPLES
+        // =================================================
+
+        document
+          .getElementById("examplesBtn")
+          .addEventListener("click", function () {
+            plotExamples();
+          });
+
+        // =================================================
+        // RESET ZOOM
+        // =================================================
+
+        document
+          .getElementById("resetZoomBtn")
+          .addEventListener("click", function () {
+            resetZoom();
+          });
+
+        // =================================================
+        // ZOOM IN
+        // =================================================
+
+        document
+          .getElementById("zoomInBtn")
+          .addEventListener("click", function () {
+            zoomIn();
+          });
+
+        // =================================================
+        // ZOOM OUT
+        // =================================================
+
+        document
+          .getElementById("zoomOutBtn")
+          .addEventListener("click", function () {
+            zoomOut();
+          });
+
+        // =================================================
+        // QUICK FUNCTIONS
+        // =================================================
+
+        const quickButtons = document.querySelectorAll(".quick-function");
+
+        quickButtons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            const expression = this.dataset.function;
+
+            functionInput.value = expression;
+
+            functionInput.focus();
+          });
+        });
+      });
+    </script>
+
+    <!-- =========================================================
+     ADVANCED GRAPH ENGINE
+========================================================== -->
+
+    <script src="graph.js"></script>
   </body>
 </html>

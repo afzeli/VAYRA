@@ -1,8 +1,10 @@
 <!doctype html>
+
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
 
+    ```
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>VAYRA - Wings of Knowledge</title>
@@ -13,24 +15,28 @@
       href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap"
       rel="stylesheet"
     />
+    ```
   </head>
 
   <body>
     <div class="dashboard">
+      ```
       <!-- ================= HEADER ================= -->
 
       <header class="topbar">
         <div class="left-tools">
-          <span class="tool-icon">☾</span>
+          <span class="tool-icon" title="تغییر حالت نمایش"> ☾ </span>
 
-          <span class="tool-icon">🌐</span>
+          <span class="tool-icon" title="زبان"> 🌐 </span>
 
           <div class="search">
-            <input type="text" placeholder="جستجو کنید..." />
+            <input type="text" placeholder="جستجو کنید..." aria-label="جستجو" />
 
             <span>⌕</span>
           </div>
         </div>
+
+        <!-- ================= BRAND ================= -->
 
         <a href="index.html" class="brand">
           <img src="images/vayra-logo1.png" alt="VAYRA Logo" />
@@ -42,7 +48,17 @@
           </div>
         </a>
 
-        <div class="menu" onclick="toggleSidebar()">☰</div>
+        <!-- ================= MOBILE MENU ================= -->
+
+        <div
+          class="menu"
+          onclick="toggleSidebar()"
+          aria-label="باز کردن منو"
+          role="button"
+          tabindex="0"
+        >
+          ☰
+        </div>
       </header>
 
       <!-- ================= SIDEBAR ================= -->
@@ -56,14 +72,12 @@
           <small> WINGS OF KNOWLEDGE </small>
         </div>
 
-        <nav class="menu-items">
-          <a href="calculator.html"> 🧮 ماشین حساب </a>
+        <!-- ================= NAVIGATION ================= -->
 
+        <nav class="menu-items">
           <a href="solver.html"> ✏️ حل مسئله </a>
 
-          <a href="graph.html"> 📈 رسم نمودار </a>
-
-          <a href="advanced-calculator.html"> 🔢 ماشین حساب پیشرفته </a>
+          <a href="graph.html" class="active"> 📈 رسم نمودار پیشرفته </a>
 
           <a href="engineering.html"> 📐 ابزار مهندسی </a>
         </nav>
@@ -72,6 +86,8 @@
       <!-- ================= MAIN ================= -->
 
       <main class="content">
+        <!-- ================= HERO ================= -->
+
         <section class="hero">
           <h1>
             به
@@ -84,52 +100,97 @@
 
             <br />
 
-            حل مرحله به مرحله، گراف‌های قدرتمند و یادگیری عمیق
+            حل مرحله به مرحله، رسم نمودارهای پیشرفته و تحلیل دقیق
           </p>
         </section>
 
+        <!-- ================= FEATURE CARDS ================= -->
+
         <section class="cards">
+          <!-- SOLVER -->
+
           <div class="card">
             <div class="icon purple">ƒ(x)</div>
 
             <h2>حل مسئله</h2>
 
-            <p>حل مسائل ریاضی، مهندسی و معادلات پیچیده</p>
+            <p>
+              حل مسائل ریاضی، مهندسی و معادلات پیچیده همراه با تحلیل و توضیحات
+              مرحله به مرحله
+            </p>
 
             <a href="solver.html" class="primary-btn"> شروع حل </a>
           </div>
+
+          <!-- LEARNING -->
 
           <div class="card">
             <div class="icon green">📖</div>
 
             <h2>یادگیری</h2>
 
-            <p>آموزش گام به گام همراه با توضیحات</p>
+            <p>
+              آموزش گام به گام مفاهیم ریاضی و علمی همراه با توضیحات ساده و قابل
+              فهم
+            </p>
 
             <a href="solver.html" class="primary-btn"> مشاهده </a>
           </div>
 
+          <!-- ADVANCED GRAPH -->
+
           <div class="card">
             <div class="icon blue">📊</div>
 
-            <h2>نمودار و تحلیل</h2>
+            <h2>نمودار پیشرفته</h2>
 
-            <p>رسم نمودارهای دقیق و تحلیل داده‌ها</p>
+            <p>
+              رسم توابع ریاضی، نمودارهای دقیق، زوم تعاملی، تحلیل نقاط و پشتیبانی
+              از توابع مختلف
+            </p>
 
-            <a href="graph.html" class="primary-btn"> باز کردن </a>
+            <a href="graph.html" class="primary-btn"> باز کردن نمودار </a>
           </div>
         </section>
+
+        <!-- ================= FOOTER ================= -->
 
         <footer class="footer">© 2026 VAYRA - Wings of Knowledge</footer>
       </main>
     </div>
 
+    <!-- ================= SIDEBAR SCRIPT ================= -->
+
     <script>
       function toggleSidebar() {
         const sidebar = document.getElementById("sidebar");
 
+        if (!sidebar) {
+          return;
+        }
+
         sidebar.classList.toggle("open");
       }
+
+      // باز کردن منو با Enter یا Space
+      // برای دسترسی بهتر در موبایل و کیبورد
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const menu = document.querySelector(".menu");
+
+        if (!menu) {
+          return;
+        }
+
+        menu.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+
+            toggleSidebar();
+          }
+        });
+      });
     </script>
+    ```
   </body>
 </html>
