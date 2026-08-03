@@ -1,116 +1,125 @@
 /* =========================================================
-   VAYRA - PROFESSIONAL ADVANCED GRAPH ENGINE
-   ---------------------------------------------------------
-   Requires:
-   - Plotly.js
-   - Math.js
-   ---------------------------------------------------------
-   Features:
-   - sin, cos, tan
-   - cot, sec, csc
-   - asin, acos, atan
-   - sinh, cosh, tanh
-   - sqrt, abs
-   - log, ln, exp
-   - pi, π, e
-   - Multiple graphs
-   - Asymptote detection
-   - Smart discontinuity detection
-   - LocalStorage persistence
-   - Linear functions
-   - Zoom controls
-   - Hover coordinates
-   ========================================================= */
+VAYRA - ADVANCED GRAPH ENGINE
+Version: Final
+Requires:
+
+* Plotly.js
+* Math.js
+
+Features:
+
+* sin, cos, tan
+* asin, acos, atan
+* sinh, cosh, tanh
+* log, ln, log10, exp
+* logarithm with custom base
+* degree / radian mode
+* deg(x) / rad(x)
+* asymptote detection
+* detailed formula errors
+* multiple graphs
+* linear functions
+* localStorage
+* zoom / pan
+  ========================================================= */
 
 (() => {
   "use strict";
 
   /* =========================================================
-     DOM ELEMENTS
-     ========================================================= */
+DOM ELEMENTS
+========================================================= */
 
-  const $ = (id) => document.getElementById(id);
+  const graphContainer = document.getElementById("graph");
+  const functionList = document.getElementById("functionList");
+  const pointInfo = document.getElementById("pointInfo");
 
-  const graphContainer = $("graph");
-  const functionList = $("functionList");
-  const pointInfo = $("pointInfo");
+  const functionInput = document.getElementById("functionInput");
 
-  const functionInput = $("functionInput");
-  const minXInput = $("minX");
-  const maxXInput = $("maxX");
-  const samplesInput = $("samples");
+  const minXInput = document.getElementById("minX");
+  const maxXInput = document.getElementById("maxX");
+  const samplesInput = document.getElementById("samples");
 
-  const plotBtn = $("plotBtn");
-  const plotLinearBtn = $("plotLinearBtn");
+  const plotBtn = document.getElementById("plotBtn");
+  const plotLinearBtn = document.getElementById("plotLinearBtn");
 
-  const linearEquationInput = $("linearEquationInput");
-  const linearAInput = $("linearA");
-  const linearBInput = $("linearB");
-  const linearPreview = $("linearPreview");
+  const linearEquationInput = document.getElementById("linearEquationInput");
 
-  const examplesBtn = $("examplesBtn");
-  const clearBtn = $("clearBtn");
+  const linearAInput = document.getElementById("linearA");
 
-  const resetZoomBtn = $("resetZoomBtn");
-  const zoomInBtn = $("zoomInBtn");
-  const zoomOutBtn = $("zoomOutBtn");
+  const linearBInput = document.getElementById("linearB");
 
-  const menuButton = $("menuButton");
-  const sidebar = $("sidebar");
+  const linearPreview = document.getElementById("linearPreview");
+
+  const examplesBtn = document.getElementById("examplesBtn");
+
+  const clearBtn = document.getElementById("clearBtn");
+
+  const resetZoomBtn = document.getElementById("resetZoomBtn");
+
+  const zoomInBtn = document.getElementById("zoomInBtn");
+
+  const zoomOutBtn = document.getElementById("zoomOutBtn");
+
+  const menuButton = document.getElementById("menuButton");
+
+  const sidebar = document.getElementById("sidebar");
 
   /* =========================================================
-     GLOBAL STATE
-     ========================================================= */
+GLOBAL STATE
+========================================================= */
 
   let graphs = [];
 
-  /* =========================================================
-     CONFIGURATION
-     ========================================================= */
+  let angleMode = "rad";
 
-  const CONFIG = {
+  /* =========================================================
+CONFIG
+========================================================= */
+
+  const GRAPH_CONFIG = {
     minX: -10,
+
     maxX: 10,
 
     samples: 4000,
 
-    minSamples: 100,
     maxSamples: 20000,
 
-    /*
-     * اگر مقدار Y از این عدد بیشتر شود،
-     * نقطه نامعتبر در نظر گرفته میشود.
-     */
-    maxY: 1e6,
+    maxY: 1e10,
 
-    /*
-     * اگر اختلاف دو نقطه خیلی زیاد باشد،
-     * احتمالاً از مجانب عبور کردهایم.
-     */
-    maxJump: 1000,
-
-    /*
-     * فاصله تقریبی مجاز برای تشخیص پرش.
-     */
-    jumpFactor: 20,
+    asymptoteJumpFactor: 25,
 
     storageKey: "vayra_graphs_v4",
 
-    colors: [
-      "#d4af37",
-      "#4ea1ff",
-      "#48c987",
-      "#ff6b81",
-      "#b889ff",
-      "#ff9f43",
-      "#00d2d3",
-      "#10ac84",
-    ],
+    angleModeKey: "vayra_angle_mode",
   };
 
   /* =========================================================
-     LIBRARY CHECKS
-     ========================================================= */
+COLORS
+========================================================= */
+
+  const graphColors = [
+    "#d4af37",
+
+    "#4ea1ff",
+
+    "#48c987",
+
+    "#ff6b81",
+
+    "#b889ff",
+
+    "#ff9f43",
+
+    "#00d2d3",
+
+    "#10ac84",
+  ];
+
+  /* =========================================================
+LIBRARY CHECK
+========================================================= */
 
   function getMath() {
     if (typeof window.math === "undefined") {
@@ -129,46 +138,168 @@
   }
 
   /* =========================================================
-     GRAPH SETTINGS
-     ========================================================= */
+ANGLE MODE
+========================================================= */
 
-  function getGraphSettings() {
-    const minX = Number(minXInput?.value ?? CONFIG.minX);
-
-    const maxX = Number(maxXInput?.value ?? CONFIG.maxX);
-
-    let samples = Number(samplesInput?.value ?? CONFIG.samples);
-
-    if (!Number.isFinite(minX) || !Number.isFinite(maxX)) {
-      throw new Error("محدوده X معتبر نیست.");
+  function setAngleMode(mode) {
+    if (mode !== "rad" && mode !== "deg") {
+      mode = "rad";
     }
 
-    if (minX >= maxX) {
-      throw new Error("حداقل X باید از حداکثر X کوچکتر باشد.");
-    }
+    angleMode = mode;
 
-    if (!Number.isFinite(samples)) {
-      throw new Error("دقت رسم معتبر نیست.");
+    try {
+      localStorage.setItem(GRAPH_CONFIG.angleModeKey, angleMode);
+    } catch (error) {
+      console.warn("Angle mode save failed:", error);
     }
+  }
 
-    samples = Math.floor(samples);
+  function loadAngleMode() {
+    try {
+      const saved = localStorage.getItem(GRAPH_CONFIG.angleModeKey);
 
-    if (samples < CONFIG.minSamples || samples > CONFIG.maxSamples) {
-      throw new Error(
-        `دقت رسم باید بین ${CONFIG.minSamples} و ${CONFIG.maxSamples} باشد.`,
-      );
+      if (saved === "rad" || saved === "deg") {
+        angleMode = saved;
+      }
+    } catch (error) {
+      console.warn("Angle mode load failed:", error);
     }
+  }
+
+  function toRadians(value) {
+    return angleMode === "deg" ? (value * Math.PI) / 180 : value;
+  }
+
+  function fromRadians(value) {
+    return angleMode === "deg" ? (value * 180) / Math.PI : value;
+  }
+
+  /* =========================================================
+CUSTOM MATH FUNCTIONS
+========================================================= */
+
+  function createMathScope() {
+    const math = getMath();
 
     return {
-      minX,
-      maxX,
-      samples,
+      pi: Math.PI,
+
+      e: Math.E,
+
+      deg: function (x) {
+        return (Number(x) * 180) / Math.PI;
+      },
+
+      rad: function (x) {
+        return (Number(x) * Math.PI) / 180;
+      },
+
+      sin: function (x) {
+        return Math.sin(toRadians(Number(x)));
+      },
+
+      cos: function (x) {
+        return Math.cos(toRadians(Number(x)));
+      },
+
+      tan: function (x) {
+        const radians = toRadians(Number(x));
+
+        const cosValue = Math.cos(radians);
+
+        if (Math.abs(cosValue) < 1e-12) {
+          return Infinity;
+        }
+
+        return Math.tan(radians);
+      },
+
+      asin: function (x) {
+        return fromRadians(Math.asin(Number(x)));
+      },
+
+      acos: function (x) {
+        return fromRadians(Math.acos(Number(x)));
+      },
+
+      atan: function (x) {
+        return fromRadians(Math.atan(Number(x)));
+      },
+
+      atan2: function (y, x) {
+        return fromRadians(Math.atan2(Number(y), Number(x)));
+      },
+
+      sinh: function (x) {
+        return Math.sinh(Number(x));
+      },
+
+      cosh: function (x) {
+        return Math.cosh(Number(x));
+      },
+
+      tanh: function (x) {
+        return Math.tanh(Number(x));
+      },
+
+      ln: function (x) {
+        const value = Number(x);
+
+        if (value <= 0) {
+          return NaN;
+        }
+
+        return Math.log(value);
+      },
+
+      log10: function (x) {
+        const value = Number(x);
+
+        if (value <= 0) {
+          return NaN;
+        }
+
+        return Math.log10(value);
+      },
+
+      log: function (x, base) {
+        const value = Number(x);
+
+        if (value <= 0) {
+          return NaN;
+        }
+
+        if (typeof base === "undefined") {
+          return Math.log10(value);
+        }
+
+        const b = Number(base);
+
+        if (b <= 0 || b === 1) {
+          return NaN;
+        }
+
+        return Math.log(value) / Math.log(b);
+      },
+
+      exp: function (x) {
+        return Math.exp(Number(x));
+      },
+
+      sqrt: function (x) {
+        return Math.sqrt(Number(x));
+      },
+
+      abs: function (x) {
+        return Math.abs(Number(x));
+      },
     };
   }
 
   /* =========================================================
-     NORMALIZE EXPRESSION
-     ========================================================= */
+PREPARE EXPRESSION
+========================================================= */
 
   function prepareExpression(expression) {
     let expr = String(expression ?? "").trim();
@@ -177,329 +308,324 @@
       throw new Error("لطفاً یک تابع وارد کنید.");
     }
 
-    /*
-     * Remove y =
-     *
-     * y = sin(x)
-     * =>
-     * sin(x)
-     */
+    /* Remove y = */
 
     expr = expr.replace(/^\s*y\s*=\s*/i, "");
 
-    /*
-     * Remove spaces
-     */
+    /* Remove spaces */
 
     expr = expr.replace(/\s+/g, "");
 
-    /*
-     * Unicode normalization
-     */
+    /* Persian / Unicode symbols */
 
-    expr = expr
-      .replace(/π/gi, "pi")
-      .replace(/−/g, "-")
-      .replace(/×/g, "*")
-      .replace(/÷/g, "/");
+    expr = expr.replace(/π/gi, "pi");
 
-    /*
-     * Normalize uppercase X
-     */
+    expr = expr.replace(/−/g, "-");
+
+    /* Normalize uppercase X */
 
     expr = expr.replace(/X/g, "x");
 
-    /*
-     * Common Persian/Unicode powers
-     */
+    /* Common function aliases */
 
-    expr = expr.replace(/²/g, "^2").replace(/³/g, "^3");
+    expr = expr.replace(/\bln\(/gi, "ln(");
 
-    /*
-     * sin²(x)
-     * =>
-     * sin(x)^2
-     *
-     * cos²(x)
-     * =>
-     * cos(x)^2
-     */
+    expr = expr.replace(/\blog10\(/gi, "log10(");
 
-    expr = expr.replace(/(sin|cos|tan|cot|sec|csc)²(?=\()/gi, "$1^2");
-
-    expr = expr.replace(/(sin|cos|tan|cot|sec|csc)³(?=\()/gi, "$1^3");
+    expr = expr.replace(/\bEXP\(/g, "exp(");
 
     /*
-     * Common function aliases
-     */
+  log2(x)
+  log3(x)
+  log10(x)
 
-    expr = expr.replace(/\bln\(/gi, "log(").replace(/\blog10\(/gi, "log10(");
+  Convert:
+  log2(x) -> log(x,2)
+  log3(x) -> log(x,3)
+
+  Keep log10 as log10.
+*/
+
+    expr = expr.replace(/\blog(\d+)\(([^()]*)\)/gi, (match, base, value) => {
+      if (base === "10") {
+        return `log10(${value})`;
+      }
+
+      return `log(${value},${base})`;
+    });
 
     return expr;
   }
 
   /* =========================================================
-     CUSTOM FUNCTIONS
-     ========================================================= */
+FORMULA ERROR ANALYSIS
+========================================================= */
 
-  function registerCustomFunctions() {
-    const math = getMath();
+  function getDetailedError(expression, error) {
+    const message = String(error?.message || error || "");
 
-    /*
-     * cot(x) = 1 / tan(x)
-     */
+    if (/Undefined symbol/i.test(message)) {
+      const match = message.match(/Undefined symbol\s+([^\s]+)/i);
 
-    if (!math.expression.transform) {
-      // Nothing required here.
-    }
+      const symbol = match?.[1] || "";
 
-    /*
-     * Register custom functions only once.
-     */
-
-    try {
-      math.import(
-        {
-          cot: function (x) {
-            return 1 / Math.tan(x);
-          },
-
-          sec: function (x) {
-            return 1 / Math.cos(x);
-          },
-
-          csc: function (x) {
-            return 1 / Math.sin(x);
-          },
-        },
-        {
-          override: false,
-        },
+      return (
+        `تابع یا نماد «${symbol}» شناخته نشد. ` +
+        `از توابعی مثل sin, cos, tan, ln, log, exp, sqrt استفاده کنید.`
       );
-    } catch (error) {
-      console.warn("Custom functions already registered.");
     }
+
+    if (/Parenthesis/i.test(message) || /parentheses/i.test(message)) {
+      return (
+        "پرانتزهای فرمول صحیح نیستند. " +
+        "تعداد پرانتزهای باز و بسته را بررسی کنید."
+      );
+    }
+
+    if (/Unexpected end/i.test(message)) {
+      return "فرمول ناقص است. " + "احتمالاً یک عملگر یا پرانتز بسته نشده است.";
+    }
+
+    if (/Unexpected token/i.test(message)) {
+      return "در فرمول یک علامت یا کاراکتر غیرمنتظره وجود دارد.";
+    }
+
+    if (/Division by zero/i.test(message)) {
+      return "تقسیم بر صفر در فرمول وجود دارد.";
+    }
+
+    return (
+      `فرمول «${expression}» معتبر نیست. ` +
+      `جزئیات: ${message || "خطای ناشناخته"}`
+    );
   }
 
   /* =========================================================
-     CREATE FUNCTION
-     ========================================================= */
+CREATE FUNCTION
+========================================================= */
 
   function createFunction(expression) {
     const math = getMath();
 
-    registerCustomFunctions();
-
     const prepared = prepareExpression(expression);
 
-    let compiled;
-
     try {
-      compiled = math.compile(prepared);
-    } catch (error) {
-      console.error("Compile error:", error);
-
-      throw new Error(`فرمول «${expression}» معتبر نیست.`);
-    }
-
-    /*
-     * Validate expression
-     */
-
-    try {
-      const testResult = compiled.evaluate({
-        x: 1,
-      });
-
-      if (!math.isNumeric(testResult)) {
-        throw new Error("Function does not return a numeric value.");
-      }
-    } catch (error) {
-      console.warn("Function validation warning:", error);
+      const scope = createMathScope();
 
       /*
-       * بعضی توابع ممکن است در x=1
-       * تعریف نشده باشند.
-       *
-       * بنابراین اینجا خطا را
-       * الزاماً Fatal نمیکنیم.
-       */
-    }
+    Use math.parse first.
+    This gives better syntax validation.
+  */
 
-    /*
-     * Return callable function
-     */
+      const node = math.parse(prepared);
 
-    return function (x) {
-      try {
-        const result = compiled.evaluate({
-          x,
-        });
+      const compiled = node.compile();
 
-        const numeric = Number(result);
+      /* Test evaluation */
 
-        if (!Number.isFinite(numeric)) {
+      const test = compiled.evaluate({
+        x: 1,
+        ...scope,
+      });
+
+      if (typeof test !== "number" && !math.isNumeric(test)) {
+        throw new Error("تابع باید یک مقدار عددی برگرداند.");
+      }
+
+      return function (x) {
+        try {
+          const result = compiled.evaluate({
+            x,
+
+            ...scope,
+          });
+
+          const numericResult = Number(result);
+
+          if (!Number.isFinite(numericResult)) {
+            return NaN;
+          }
+
+          return numericResult;
+        } catch {
           return NaN;
         }
+      };
+    } catch (error) {
+      console.error("Formula error:", error);
 
-        return numeric;
-      } catch (error) {
-        return NaN;
-      }
+      throw new Error(getDetailedError(expression, error));
+    }
+  }
+
+  /* =========================================================
+GRAPH SETTINGS
+========================================================= */
+
+  function getGraphSettings() {
+    const minX = Number(minXInput?.value ?? GRAPH_CONFIG.minX);
+
+    const maxX = Number(maxXInput?.value ?? GRAPH_CONFIG.maxX);
+
+    const samples = Number(samplesInput?.value ?? GRAPH_CONFIG.samples);
+
+    if (!Number.isFinite(minX) || !Number.isFinite(maxX)) {
+      throw new Error("محدوده X معتبر نیست.");
+    }
+
+    if (minX >= maxX) {
+      throw new Error("حداقل X باید از حداکثر X کوچک‌تر باشد.");
+    }
+
+    if (
+      !Number.isFinite(samples) ||
+      samples < 100 ||
+      samples > GRAPH_CONFIG.maxSamples
+    ) {
+      throw new Error("دقت رسم باید بین 100 تا 20000 باشد.");
+    }
+
+    return {
+      minX,
+
+      maxX,
+
+      samples: Math.floor(samples),
     };
   }
 
   /* =========================================================
-     GENERATE X VALUES
-     ========================================================= */
+GENERATE X VALUES
+========================================================= */
 
   function generateXValues(minX, maxX, samples) {
-    const values = [];
-
-    const count = Math.max(
-      CONFIG.minSamples,
-      Math.min(Math.floor(samples), CONFIG.maxSamples),
+    const safeSamples = Math.max(
+      100,
+      Math.min(Math.floor(Number(samples)), GRAPH_CONFIG.maxSamples),
     );
 
-    const step = (maxX - minX) / (count - 1);
+    const step = (maxX - minX) / (safeSamples - 1);
 
-    for (let i = 0; i < count; i++) {
-      values.push(minX + i * step);
+    const values = new Array(safeSamples);
+
+    for (let i = 0; i < safeSamples; i++) {
+      values[i] = minX + i * step;
     }
 
     return values;
   }
 
   /* =========================================================
-     SMART POINT GENERATION
-     ========================================================= */
+ASYMPTOTE DETECTION
+========================================================= */
+
+  function isLikelyAsymptote(previousY, currentY, nextY) {
+    if (!Number.isFinite(previousY) || !Number.isFinite(currentY)) {
+      return true;
+    }
+
+    const absoluteCurrent = Math.abs(currentY);
+
+    if (absoluteCurrent > GRAPH_CONFIG.maxY) {
+      return true;
+    }
+
+    if (Number.isFinite(nextY)) {
+      const jumpLeft = Math.abs(currentY - previousY);
+
+      const jumpRight = Math.abs(nextY - currentY);
+
+      const localScale = Math.max(1, Math.abs(currentY));
+
+      if (
+        jumpLeft > GRAPH_CONFIG.asymptoteJumpFactor * localScale ||
+        jumpRight > GRAPH_CONFIG.asymptoteJumpFactor * localScale
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /* =========================================================
+GENERATE POINTS
+========================================================= */
 
   function generatePoints(func, minX, maxX, samples) {
     const xValues = generateXValues(minX, maxX, samples);
 
-    const yValues = [];
-
-    let previousX = null;
-    let previousY = null;
-
-    /*
-     * Average expected Y movement.
-     *
-     * This is useful for detecting
-     * vertical asymptotes.
-     */
-
-    const xStep = (maxX - minX) / (xValues.length - 1);
+    const rawY = new Array(xValues.length);
 
     for (let i = 0; i < xValues.length; i++) {
-      const x = xValues[i];
-
-      let y;
-
       try {
-        y = Number(func(x));
+        const y = Number(func(xValues[i]));
+
+        rawY[i] = Number.isFinite(y) ? y : NaN;
       } catch {
-        y = NaN;
+        rawY[i] = NaN;
       }
+    }
 
-      /*
-       * Invalid value
-       */
+    const yValues = new Array(xValues.length);
 
-      if (!Number.isFinite(y) || Math.abs(y) > CONFIG.maxY) {
-        yValues.push(null);
+    for (let i = 0; i < rawY.length; i++) {
+      const current = rawY[i];
 
-        previousX = null;
-        previousY = null;
+      const previous = i > 0 ? rawY[i - 1] : NaN;
+
+      const next = i < rawY.length - 1 ? rawY[i + 1] : NaN;
+
+      if (!Number.isFinite(current)) {
+        yValues[i] = null;
 
         continue;
       }
 
-      /*
-       * Detect sudden vertical jump.
-       *
-       * Important for:
-       *
-       * tan(x)
-       * cot(x)
-       * sec(x)
-       * csc(x)
-       * 1/x
-       */
+      if (Math.abs(current) > GRAPH_CONFIG.maxY) {
+        yValues[i] = null;
 
-      if (previousX !== null && previousY !== null) {
-        const jump = Math.abs(y - previousY);
-
-        /*
-         * Dynamic jump threshold
-         */
-
-        const dynamicThreshold = Math.max(
-          CONFIG.maxJump,
-          Math.abs(previousY) * CONFIG.jumpFactor,
-        );
-
-        if (jump > dynamicThreshold) {
-          yValues.push(null);
-
-          previousX = null;
-          previousY = null;
-
-          continue;
-        }
-
-        /*
-         * Extremely large X gap
-         */
-
-        if (Math.abs(x - previousX) > xStep * 2) {
-          yValues.push(null);
-
-          previousX = null;
-          previousY = null;
-
-          continue;
-        }
+        continue;
       }
 
-      /*
-       * Valid point
-       */
+      if (isLikelyAsymptote(previous, current, next)) {
+        yValues[i] = null;
 
-      yValues.push(y);
+        continue;
+      }
 
-      previousX = x;
-      previousY = y;
+      yValues[i] = current;
     }
 
     return {
       x: xValues,
+
       y: yValues,
     };
   }
 
   /* =========================================================
-     CREATE FUNCTION TRACE
-     ========================================================= */
+CREATE FUNCTION TRACE
+========================================================= */
 
   function createFunctionTrace(expression, options = {}) {
     const minX = Number.isFinite(Number(options.minX))
       ? Number(options.minX)
-      : CONFIG.minX;
+      : GRAPH_CONFIG.minX;
 
     const maxX = Number.isFinite(Number(options.maxX))
       ? Number(options.maxX)
-      : CONFIG.maxX;
+      : GRAPH_CONFIG.maxX;
 
     const samples = Number.isFinite(Number(options.samples))
       ? Number(options.samples)
-      : CONFIG.samples;
+      : GRAPH_CONFIG.samples;
 
     const func = createFunction(expression);
 
     const points = generatePoints(func, minX, maxX, samples);
 
-    const color = CONFIG.colors[graphs.length % CONFIG.colors.length];
+    const color = graphColors[graphs.length % graphColors.length];
 
     return {
       x: points.x,
@@ -515,6 +641,8 @@
       graphType: "function",
 
       expression: expression,
+
+      angleMode: angleMode,
 
       line: {
         color,
@@ -533,8 +661,8 @@
   }
 
   /* =========================================================
-     PLOT FUNCTION
-     ========================================================= */
+PLOT FUNCTION
+========================================================= */
 
   function plotFunction(expression, options = {}) {
     try {
@@ -545,13 +673,14 @@
       const cleanExpression = expression.trim();
 
       if (!cleanExpression) {
-        throw new Error("لطفاً یک تابع وارد کنید.");
+        throw new Error("لطفاً تابع را وارد کنید.");
       }
 
       const settings = getGraphSettings();
 
       const trace = createFunctionTrace(cleanExpression, {
         ...settings,
+
         ...options,
       });
 
@@ -565,7 +694,7 @@
 
       return true;
     } catch (error) {
-      console.error("Plot function error:", error);
+      console.error(error);
 
       alert(error.message || "خطا در رسم نمودار.");
 
@@ -574,8 +703,8 @@
   }
 
   /* =========================================================
-     LINEAR FUNCTION
-     ========================================================= */
+LINEAR NORMALIZATION
+========================================================= */
 
   function normalizeLinearExpression(expression) {
     let expr = String(expression ?? "").trim();
@@ -592,7 +721,7 @@
 
     expr = expr.replace(/X/g, "x");
 
-    if (!expr.includes("x")) {
+    if (!/[x]/.test(expr)) {
       throw new Error("تابع درجه یک باید شامل متغیر x باشد.");
     }
 
@@ -600,8 +729,8 @@
   }
 
   /* =========================================================
-     CREATE LINEAR TRACE
-     ========================================================= */
+LINEAR TRACE
+========================================================= */
 
   function createLinearTraceFromEquation(expression, options = {}) {
     const normalized = normalizeLinearExpression(expression);
@@ -610,19 +739,19 @@
 
     const minX = Number.isFinite(Number(options.minX))
       ? Number(options.minX)
-      : CONFIG.minX;
+      : GRAPH_CONFIG.minX;
 
     const maxX = Number.isFinite(Number(options.maxX))
       ? Number(options.maxX)
-      : CONFIG.maxX;
+      : GRAPH_CONFIG.maxX;
 
     const samples = Number.isFinite(Number(options.samples))
       ? Number(options.samples)
-      : CONFIG.samples;
+      : GRAPH_CONFIG.samples;
 
     const points = generatePoints(func, minX, maxX, samples);
 
-    const color = CONFIG.colors[graphs.length % CONFIG.colors.length];
+    const color = graphColors[graphs.length % graphColors.length];
 
     return {
       x: points.x,
@@ -645,7 +774,7 @@
         width: 3.5,
       },
 
-      connectgaps: false,
+      connectgaps: true,
 
       hovertemplate:
         "<b>%{fullData.name}</b>" +
@@ -656,11 +785,11 @@
   }
 
   /* =========================================================
-     FORMAT LINEAR EQUATION
-     ========================================================= */
+FORMAT LINEAR
+========================================================= */
 
   function formatLinearEquation(a, b) {
-    let result;
+    let result = "";
 
     if (a === 1) {
       result = "x";
@@ -680,8 +809,8 @@
   }
 
   /* =========================================================
-     PLOT LINEAR BY COEFFICIENTS
-     ========================================================= */
+PLOT LINEAR COEFFICIENTS
+========================================================= */
 
   function plotLinearByCoefficients() {
     try {
@@ -722,8 +851,8 @@
   }
 
   /* =========================================================
-     PLOT LINEAR BY EQUATION
-     ========================================================= */
+PLOT LINEAR EQUATION
+========================================================= */
 
   function plotLinearByEquation() {
     try {
@@ -760,8 +889,8 @@
   }
 
   /* =========================================================
-     LINEAR PREVIEW
-     ========================================================= */
+LINEAR PREVIEW
+========================================================= */
 
   function updateLinearPreview() {
     if (!linearPreview || !linearAInput || !linearBInput) {
@@ -782,8 +911,8 @@
   }
 
   /* =========================================================
-     EXAMPLES
-     ========================================================= */
+EXAMPLES
+========================================================= */
 
   function plotExamples() {
     const examples = [
@@ -806,35 +935,33 @@
       },
 
       {
+        expression: "ln(x)",
+
+        name: "ln(x)",
+      },
+
+      {
+        expression: "log(x,2)",
+
+        name: "log₂(x)",
+      },
+
+      {
+        expression: "exp(x)",
+
+        name: "eˣ",
+      },
+
+      {
         expression: "x^2",
 
         name: "x²",
       },
 
       {
-        expression: "sqrt(x)",
-
-        name: "√x",
-      },
-
-      {
-        expression: "1/x",
-
-        name: "1/x",
-      },
-
-      {
-        expression: "sin(x) + cos(x)",
-
-        name: "sin(x) + cos(x)",
-      },
-
-      {
         expression: "2*x + 3",
 
         name: "y = 2x + 3",
-
-        linear: true,
       },
     ];
 
@@ -842,7 +969,9 @@
 
     examples.forEach((item) => {
       try {
-        const trace = item.linear
+        const isLinear = item.name.includes("y =");
+
+        const trace = isLinear
           ? createLinearTraceFromEquation(item.expression, {
               ...settings,
 
@@ -868,11 +997,17 @@
   }
 
   /* =========================================================
-     GRAPH LAYOUT
-     ========================================================= */
+UPDATE GRAPH
+========================================================= */
 
-  function getGraphLayout() {
-    return {
+  function updateGraph() {
+    if (!graphContainer || typeof window.Plotly === "undefined") {
+      return;
+    }
+
+    const Plotly = getPlotly();
+
+    const layout = {
       autosize: true,
 
       paper_bgcolor: "rgba(0,0,0,0)",
@@ -886,7 +1021,7 @@
       },
 
       xaxis: {
-        title: "X",
+        title: angleMode === "deg" ? "X — حالت درجه" : "X — حالت رادیان",
 
         showgrid: true,
 
@@ -943,24 +1078,8 @@
         b: 90,
       },
 
-      uirevision: "vayra-stable",
+      uirevision: "vayra-fixed",
     };
-  }
-
-  /* =========================================================
-     UPDATE GRAPH
-     ========================================================= */
-
-  function updateGraph() {
-    if (!graphContainer) {
-      return;
-    }
-
-    if (typeof window.Plotly === "undefined") {
-      return;
-    }
-
-    const Plotly = getPlotly();
 
     const config = {
       responsive: true,
@@ -976,12 +1095,20 @@
       modeBarButtonsToRemove: ["lasso2d", "select2d"],
     };
 
-    Plotly.react(graphContainer, graphs, getGraphLayout(), config);
+    Plotly.react(
+      graphContainer,
+
+      graphs,
+
+      layout,
+
+      config,
+    );
   }
 
   /* =========================================================
-     CLEAR GRAPHS
-     ========================================================= */
+CLEAR
+========================================================= */
 
   function clearGraphs() {
     graphs = [];
@@ -994,8 +1121,8 @@
   }
 
   /* =========================================================
-     REMOVE GRAPH
-     ========================================================= */
+REMOVE GRAPH
+========================================================= */
 
   function removeGraph(index) {
     if (index < 0 || index >= graphs.length) {
@@ -1012,33 +1139,37 @@
   }
 
   /* =========================================================
-     RESET ZOOM
-     ========================================================= */
+RESET ZOOM
+========================================================= */
 
   function resetZoom() {
     if (!graphContainer || typeof window.Plotly === "undefined") {
       return;
     }
 
-    getPlotly().relayout(graphContainer, {
-      "xaxis.autorange": true,
+    window.Plotly.relayout(
+      graphContainer,
 
-      "yaxis.autorange": true,
-    });
+      {
+        "xaxis.autorange": true,
+
+        "yaxis.autorange": true,
+      },
+    );
   }
 
   /* =========================================================
-     ZOOM IN
-     ========================================================= */
+ZOOM IN
+========================================================= */
 
   function zoomIn() {
-    if (!graphContainer?.layout) {
+    if (!graphContainer?.layout?.xaxis || !graphContainer?.layout?.yaxis) {
       return;
     }
 
-    const xRange = graphContainer.layout.xaxis?.range;
+    const xRange = graphContainer.layout.xaxis.range;
 
-    const yRange = graphContainer.layout.yaxis?.range;
+    const yRange = graphContainer.layout.yaxis.range;
 
     if (!xRange || !yRange) {
       return;
@@ -1052,25 +1183,29 @@
 
     const yHalf = (yRange[1] - yRange[0]) * 0.4;
 
-    getPlotly().relayout(graphContainer, {
-      "xaxis.range": [xCenter - xHalf, xCenter + xHalf],
+    window.Plotly.relayout(
+      graphContainer,
 
-      "yaxis.range": [yCenter - yHalf, yCenter + yHalf],
-    });
+      {
+        "xaxis.range": [xCenter - xHalf, xCenter + xHalf],
+
+        "yaxis.range": [yCenter - yHalf, yCenter + yHalf],
+      },
+    );
   }
 
   /* =========================================================
-     ZOOM OUT
-     ========================================================= */
+ZOOM OUT
+========================================================= */
 
   function zoomOut() {
-    if (!graphContainer?.layout) {
+    if (!graphContainer?.layout?.xaxis || !graphContainer?.layout?.yaxis) {
       return;
     }
 
-    const xRange = graphContainer.layout.xaxis?.range;
+    const xRange = graphContainer.layout.xaxis.range;
 
-    const yRange = graphContainer.layout.yaxis?.range;
+    const yRange = graphContainer.layout.yaxis.range;
 
     if (!xRange || !yRange) {
       return;
@@ -1084,16 +1219,20 @@
 
     const yHalf = (yRange[1] - yRange[0]) * 0.625;
 
-    getPlotly().relayout(graphContainer, {
-      "xaxis.range": [xCenter - xHalf, xCenter + xHalf],
+    window.Plotly.relayout(
+      graphContainer,
 
-      "yaxis.range": [yCenter - yHalf, yCenter + yHalf],
-    });
+      {
+        "xaxis.range": [xCenter - xHalf, xCenter + xHalf],
+
+        "yaxis.range": [yCenter - yHalf, yCenter + yHalf],
+      },
+    );
   }
 
   /* =========================================================
-     FUNCTION LIST
-     ========================================================= */
+FUNCTION LIST
+========================================================= */
 
   function updateFunctionList() {
     if (!functionList) {
@@ -1127,7 +1266,10 @@
 
       type.className = "graph-type";
 
-      type.textContent = graph.graphType === "linear" ? "درجه یک" : "تابع";
+      type.textContent =
+        graph.graphType === "linear"
+          ? "درجه یک"
+          : `تابع — ${graph.angleMode === "deg" ? "درجه" : "رادیان"}`;
 
       const button = document.createElement("button");
 
@@ -1152,8 +1294,8 @@
   }
 
   /* =========================================================
-     SAVE GRAPHS
-     ========================================================= */
+SAVE
+========================================================= */
 
   function saveGraphs() {
     try {
@@ -1163,21 +1305,27 @@
         expression: graph.expression,
 
         name: graph.name,
+
+        angleMode: graph.angleMode || "rad",
       }));
 
-      localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
+      window.localStorage.setItem(
+        GRAPH_CONFIG.storageKey,
+
+        JSON.stringify(data),
+      );
     } catch (error) {
       console.warn("Save error:", error);
     }
   }
 
   /* =========================================================
-     LOAD GRAPHS
-     ========================================================= */
+LOAD
+========================================================= */
 
   function loadGraphs() {
     try {
-      const saved = localStorage.getItem(CONFIG.storageKey);
+      const saved = window.localStorage.getItem(GRAPH_CONFIG.storageKey);
 
       if (!saved) {
         return;
@@ -1196,29 +1344,49 @@
 
         try {
           const settings = {
-            minX: CONFIG.minX,
+            minX: GRAPH_CONFIG.minX,
 
-            maxX: CONFIG.maxX,
+            maxX: GRAPH_CONFIG.maxX,
 
-            samples: CONFIG.samples,
+            samples: GRAPH_CONFIG.samples,
           };
+
+          const oldAngleMode = angleMode;
+
+          if (item.angleMode === "deg" || item.angleMode === "rad") {
+            setAngleMode(item.angleMode);
+          }
 
           const trace =
             item.graphType === "linear"
-              ? createLinearTraceFromEquation(item.expression, {
-                  ...settings,
+              ? createLinearTraceFromEquation(
+                  item.expression,
 
-                  name: item.name || item.expression,
-                })
-              : createFunctionTrace(item.expression, {
-                  ...settings,
+                  {
+                    ...settings,
 
-                  name: item.name || item.expression,
-                });
+                    name: item.name || item.expression,
+                  },
+                )
+              : createFunctionTrace(
+                  item.expression,
+
+                  {
+                    ...settings,
+
+                    name: item.name || item.expression,
+                  },
+                );
 
           graphs.push(trace);
+
+          setAngleMode(oldAngleMode);
         } catch (error) {
-          console.warn("Graph load failed:", error);
+          console.warn(
+            "Graph load failed:",
+
+            error,
+          );
         }
       });
 
@@ -1231,248 +1399,302 @@
   }
 
   /* =========================================================
-     HOVER INFORMATION
-     ========================================================= */
+HOVER
+========================================================= */
 
   function setupHover() {
     if (!graphContainer || !pointInfo) {
       return;
     }
 
-    graphContainer.on("plotly_hover", (data) => {
-      if (!data || !data.points || !data.points.length) {
-        return;
-      }
+    graphContainer.on(
+      "plotly_hover",
 
-      const point = data.points[0];
+      (data) => {
+        if (!data || !data.points || !data.points.length) {
+          return;
+        }
 
-      const x = Number(point.x);
+        const point = data.points[0];
 
-      const y = Number(point.y);
+        const x = Number(point.x);
 
-      if (!Number.isFinite(x) || !Number.isFinite(y)) {
-        return;
-      }
+        const y = Number(point.y);
 
-      pointInfo.innerHTML =
-        `<strong>x = ${x.toFixed(8)}</strong>` +
-        "&nbsp;&nbsp;" +
-        `<strong>y = ${y.toFixed(8)}</strong>`;
-    });
+        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+          return;
+        }
 
-    graphContainer.on("plotly_unhover", () => {
-      pointInfo.textContent =
-        "برای مشاهده مختصات، نشانگر را روی نمودار حرکت دهید.";
-    });
+        pointInfo.innerHTML =
+          `<strong>x = ${x.toFixed(8)}</strong>` +
+          "&nbsp;&nbsp;" +
+          `<strong>y = ${y.toFixed(8)}</strong>`;
+      },
+    );
+
+    graphContainer.on(
+      "plotly_unhover",
+
+      () => {
+        pointInfo.textContent =
+          "برای مشاهده مختصات، نشانگر را روی نمودار حرکت دهید.";
+      },
+    );
   }
 
   /* =========================================================
-     EVENT LISTENERS
-     ========================================================= */
+EVENT LISTENERS
+========================================================= */
 
   function setupEvents() {
-    /*
-     * Normal Function
-     */
+    /* Normal Function */
 
-    plotBtn?.addEventListener("click", () => {
-      const expression = functionInput?.value.trim() || "";
+    if (plotBtn) {
+      plotBtn.addEventListener(
+        "click",
 
-      if (plotFunction(expression)) {
-        functionInput.value = "";
+        () => {
+          const expression = functionInput?.value.trim() || "";
 
-        functionInput.focus();
-      }
-    });
+          if (plotFunction(expression)) {
+            if (functionInput) {
+              functionInput.value = "";
 
-    /*
-     * Enter => Plot
-     */
+              functionInput.focus();
+            }
+          }
+        },
+      );
+    }
 
-    functionInput?.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
+    /* Enter */
 
-        plotBtn?.click();
-      }
-    });
+    if (functionInput) {
+      functionInput.addEventListener(
+        "keydown",
 
-    /*
-     * Linear Function
-     */
+        (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
 
-    plotLinearBtn?.addEventListener("click", () => {
-      const directEquation = linearEquationInput?.value.trim() || "";
+            plotBtn?.click();
+          }
+        },
+      );
+    }
 
-      if (directEquation) {
-        if (plotLinearByEquation()) {
-          linearEquationInput.value = "";
+    /* Linear */
+
+    if (plotLinearBtn) {
+      plotLinearBtn.addEventListener(
+        "click",
+
+        () => {
+          const directEquation = linearEquationInput?.value.trim() || "";
+
+          if (directEquation) {
+            if (plotLinearByEquation() && linearEquationInput) {
+              linearEquationInput.value = "";
+            }
+          } else {
+            plotLinearByCoefficients();
+          }
+        },
+      );
+    }
+
+    /* Linear Enter */
+
+    if (linearEquationInput) {
+      linearEquationInput.addEventListener(
+        "keydown",
+
+        (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+
+            plotLinearBtn?.click();
+          }
+        },
+      );
+    }
+
+    /* Preview */
+
+    linearAInput?.addEventListener(
+      "input",
+
+      updateLinearPreview,
+    );
+
+    linearBInput?.addEventListener(
+      "input",
+
+      updateLinearPreview,
+    );
+
+    /* Examples */
+
+    examplesBtn?.addEventListener(
+      "click",
+
+      () => {
+        try {
+          plotExamples();
+        } catch (error) {
+          alert(error.message || "خطا در رسم مثال‌ها.");
         }
-      } else {
-        plotLinearByCoefficients();
-      }
-    });
+      },
+    );
 
-    /*
-     * Linear Enter
-     */
+    /* Clear */
 
-    linearEquationInput?.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
+    clearBtn?.addEventListener(
+      "click",
 
-        plotLinearBtn?.click();
-      }
-    });
+      () => {
+        if (graphs.length === 0) {
+          return;
+        }
 
-    /*
-     * Linear Preview
-     */
+        if (confirm("آیا می‌خواهید تمام نمودارها حذف شوند؟")) {
+          clearGraphs();
+        }
+      },
+    );
 
-    linearAInput?.addEventListener("input", updateLinearPreview);
+    /* Zoom */
 
-    linearBInput?.addEventListener("input", updateLinearPreview);
+    resetZoomBtn?.addEventListener(
+      "click",
 
-    /*
-     * Examples
-     */
+      resetZoom,
+    );
 
-    examplesBtn?.addEventListener("click", () => {
-      try {
-        plotExamples();
-      } catch (error) {
-        alert(error.message || "خطا در رسم مثالها.");
-      }
-    });
+    zoomInBtn?.addEventListener(
+      "click",
 
-    /*
-     * Clear
-     */
+      zoomIn,
+    );
 
-    clearBtn?.addEventListener("click", () => {
-      if (graphs.length === 0) {
-        return;
-      }
+    zoomOutBtn?.addEventListener(
+      "click",
 
-      if (confirm("آیا میخواهید تمام نمودارها حذف شوند؟")) {
-        clearGraphs();
-      }
-    });
+      zoomOut,
+    );
 
-    /*
-     * Zoom Controls
-     */
+    /* Mobile Menu */
 
-    resetZoomBtn?.addEventListener("click", resetZoom);
+    if (menuButton && sidebar) {
+      menuButton.addEventListener(
+        "click",
 
-    zoomInBtn?.addEventListener("click", zoomIn);
+        () => {
+          sidebar.classList.toggle("open");
+        },
+      );
+    }
 
-    zoomOutBtn?.addEventListener("click", zoomOut);
+    /* Close Sidebar */
 
-    /*
-     * Mobile Menu
-     */
+    if (sidebar) {
+      sidebar.querySelectorAll("a").forEach((link) => {
+        link.addEventListener(
+          "click",
 
-    menuButton?.addEventListener("click", () => {
-      sidebar?.classList.toggle("open");
-    });
-
-    /*
-     * Close Sidebar
-     */
-
-    sidebar?.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        sidebar.classList.remove("open");
+          () => {
+            sidebar.classList.remove("open");
+          },
+        );
       });
-    });
+    }
   }
 
   /* =========================================================
-     RESIZE
-     ========================================================= */
+RESIZE
+========================================================= */
 
-  window.addEventListener("resize", () => {
-    if (graphContainer && typeof window.Plotly !== "undefined") {
-      window.Plotly.Plots.resize(graphContainer);
-    }
-  });
+  window.addEventListener(
+    "resize",
+
+    () => {
+      if (graphContainer && typeof window.Plotly !== "undefined") {
+        window.Plotly.Plots.resize(graphContainer);
+      }
+    },
+  );
 
   /* =========================================================
-     INITIALIZE
-     ========================================================= */
+INITIALIZE
+========================================================= */
 
   function initialize() {
-    try {
-      getMath();
+    if (typeof window.Plotly === "undefined") {
+      alert("کتابخانه Plotly.js بارگذاری نشده است.");
 
-      getPlotly();
-    } catch (error) {
-      alert(error.message);
+      return;
+    }
+
+    if (typeof window.math === "undefined") {
+      alert("کتابخانه Math.js بارگذاری نشده است.");
 
       return;
     }
 
     if (!graphContainer) {
-      console.error("VAYRA Graph Engine: #graph not found.");
+      console.error("VAYRA Graph Engine: " + "عنصر #graph پیدا نشد.");
 
       return;
     }
 
-    registerCustomFunctions();
+    loadAngleMode();
 
     setupEvents();
 
-    /*
-     * Load saved graphs
-     */
-
     loadGraphs();
-
-    /*
-     * Update linear preview
-     */
 
     updateLinearPreview();
 
-    /*
-     * Default graph
-     */
-
     if (graphs.length === 0) {
-      plotFunction("sin(x)", {
-        minX: -10,
+      plotFunction(
+        "sin(x)",
 
-        maxX: 10,
+        {
+          minX: -10,
 
-        samples: 4000,
+          maxX: 10,
 
-        name: "sin(x)",
-      });
+          samples: 4000,
+
+          name: "sin(x)",
+        },
+      );
     }
-
-    /*
-     * Setup hover
-     */
 
     setupHover();
   }
 
   /* =========================================================
-     START ENGINE
-     ========================================================= */
+START
+========================================================= */
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initialize, {
-      once: true,
-    });
+    document.addEventListener(
+      "DOMContentLoaded",
+
+      initialize,
+
+      {
+        once: true,
+      },
+    );
   } else {
     initialize();
   }
 
   /* =========================================================
-     PUBLIC API
-     ========================================================= */
+GLOBAL API
+========================================================= */
 
   window.VayraGraph = {
     plot: plotFunction,
@@ -1491,6 +1713,8 @@
 
     zoomOut: zoomOut,
 
-    getGraphs: () => [...graphs],
+    setAngleMode: setAngleMode,
+
+    getAngleMode: () => angleMode,
   };
 })();
