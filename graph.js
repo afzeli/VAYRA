@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     scrollZoom: true,
 
-    modeBarButtonsToAdd: ["drawline", "drawopenpath", "eraseshape"],
+    displayModeBar: false,
   };
 
   // ---------------------------------------------------------
