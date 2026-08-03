@@ -1,46 +1,205 @@
 <!doctype html>
+
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    ```
     <title>ابزارهای مهندسی | VAYRA</title>
-
-    <!-- CSS اصلی -->
 
     <link rel="stylesheet" href="style.css" />
 
-    <!-- فونت وزیرمتن -->
-
     <link
-      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
+
+    <style>
+      /* =====================================================
+     ENGINEERING TOOLS
+  ====================================================== */
+
+      .engineering-tools {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+      }
+
+      .tool-card {
+        background: rgba(5, 15, 30, 0.88);
+        border: 1px solid rgba(212, 175, 55, 0.18);
+        border-radius: 22px;
+        padding: 25px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        transition: 0.25s ease;
+      }
+
+      .tool-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(212, 175, 55, 0.4);
+      }
+
+      .tool-card h2 {
+        color: #d4af37;
+        margin-bottom: 10px;
+        font-size: 22px;
+      }
+
+      .tool-card > p {
+        color: #aaa;
+        line-height: 1.9;
+        margin-bottom: 20px;
+      }
+
+      .tool-form {
+        display: grid;
+        gap: 15px;
+      }
+
+      .tool-form .input-group {
+        margin-bottom: 0;
+      }
+
+      .tool-form label {
+        display: block;
+        margin-bottom: 7px;
+        color: #ddd;
+        font-size: 14px;
+      }
+
+      .tool-form input,
+      .tool-form select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 13px 15px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: #071321;
+        color: white;
+        font-family: inherit;
+        outline: none;
+      }
+
+      .tool-form input:focus,
+      .tool-form select:focus {
+        border-color: #d4af37;
+      }
+
+      .tool-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 5px;
+      }
+
+      .tool-result {
+        margin-top: 20px;
+        padding: 15px;
+        min-height: 25px;
+        background: rgba(2, 8, 23, 0.9);
+        border-radius: 12px;
+        border-right: 3px solid #d4af37;
+        color: #eee;
+        line-height: 2;
+      }
+
+      .tool-result.success {
+        border-right-color: #48c987;
+      }
+
+      .tool-result.error {
+        border-right-color: #ff6b81;
+        color: #ffb4bf;
+      }
+
+      .formula {
+        display: inline-block;
+        direction: ltr;
+        color: #d4af37;
+        font-weight: 600;
+        margin-top: 5px;
+      }
+
+      .unit-label {
+        color: #777;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .reset-tool-btn {
+        background: #24354c;
+        color: white;
+        border: none;
+        border-radius: 9px;
+        padding: 11px 18px;
+        font-family: inherit;
+        cursor: pointer;
+      }
+
+      .reset-tool-btn:hover {
+        filter: brightness(1.2);
+      }
+
+      /* =====================================================
+     RESPONSIVE
+  ====================================================== */
+
+      @media (max-width: 900px) {
+        .engineering-tools {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .tool-card {
+          padding: 18px;
+        }
+
+        .tool-card h2 {
+          font-size: 19px;
+        }
+
+        .tool-actions {
+          flex-direction: column;
+        }
+
+        .tool-actions button {
+          width: 100%;
+        }
+      }
+    </style>
+    ```
   </head>
 
   <body>
     <div class="dashboard">
+      ```
       <!-- =====================================================
-         HEADER
-    ====================================================== -->
+       HEADER
+  ====================================================== -->
 
       <header class="topbar">
-        <!-- ابزارهای سمت چپ -->
-
         <div class="left-tools">
-          <span class="tool-icon" title="حالت شب"> ☾ </span>
+          <span class="tool-icon" title="حالت شب" aria-label="حالت شب">
+            ☾
+          </span>
 
-          <span class="tool-icon" title="زبان"> 🌐 </span>
+          <span class="tool-icon" title="زبان" aria-label="زبان"> 🌐 </span>
 
           <div class="search">
-            <input type="text" placeholder="جستجو کنید..." />
+            <input
+              type="text"
+              placeholder="جستجو کنید..."
+              aria-label="جستجو در ابزارها"
+            />
 
-            <span> ⌕ </span>
+            <span>⌕</span>
           </div>
         </div>
 
-        <!-- برند -->
+        <!-- BRAND -->
 
         <a href="index.html" class="brand">
           <img src="images/vayra-logo1.png" alt="VAYRA Logo" />
@@ -52,27 +211,32 @@
           </div>
         </a>
 
-        <!-- منوی موبایل -->
+        <!-- MOBILE MENU -->
 
-        <div class="menu" onclick="toggleSidebar()">☰</div>
+        <button
+          class="menu"
+          id="menuButton"
+          type="button"
+          aria-label="باز کردن منو"
+          aria-controls="sidebar"
+          aria-expanded="false"
+        >
+          ☰
+        </button>
       </header>
 
       <!-- =====================================================
-         SIDEBAR
-    ====================================================== -->
+       SIDEBAR
+  ====================================================== -->
 
-      <aside class="sidebar" id="sidebar">
-        <!-- پروفایل -->
-
+      <aside class="sidebar" id="sidebar" aria-label="منوی اصلی">
         <div class="profile">
           <img src="images/vayra-logo2.png" alt="VAYRA Logo" />
 
           <h2>VAYRA</h2>
 
-          <small> WINGS OF KNOWLEDGE </small>
+          <small>WINGS OF KNOWLEDGE</small>
         </div>
-
-        <!-- منوی اصلی -->
 
         <nav class="menu-items">
           <a href="solver.html"> ✏️ حل مسئله </a>
@@ -81,120 +245,389 @@
 
           <a href="advanced-calculator.html"> 🔢 ماشین حساب پیشرفته </a>
 
-          <a href="engineering.html" class="active"> 📐 ابزار مهندسی </a>
+          <a href="engineering.html" class="active" aria-current="page">
+            📐 ابزار مهندسی
+          </a>
         </nav>
       </aside>
 
       <!-- =====================================================
-         MAIN CONTENT
-    ====================================================== -->
+       MAIN CONTENT
+  ====================================================== -->
 
       <main class="content">
-        <!-- عنوان صفحه -->
+        <!-- PAGE HEADER -->
 
         <section class="page-header">
           <h1>
             ابزارهای مهندسی
-
-            <span> VAYRA </span>
+            <span>VAYRA</span>
           </h1>
 
           <p>مجموعه‌ای از ابزارهای کاربردی برای محاسبات مهندسی، فیزیک و علوم</p>
         </section>
 
-        <!-- =================================================
-             ENGINEERING TOOLS
-        ================================================== -->
+        <!-- =====================================================
+         ENGINEERING TOOLS
+    ====================================================== -->
 
-        <section class="cards">
-          <!-- =========================
-                 OHM'S LAW
-            ========================== -->
+        <section class="engineering-tools" id="engineeringTools">
+          <!-- =================================================
+           1. OHM'S LAW
+      ================================================== -->
 
-          <div class="card">
-            <div class="icon blue">⚡</div>
+          <div class="tool-card" data-tool="اهم ولتاژ جریان مقاومت">
+            <h2>⚡ قانون اهم</h2>
 
-            <h2>قانون اهم</h2>
+            <p>محاسبه ولتاژ، جریان یا مقاومت با استفاده از قانون اهم.</p>
 
-            <p>محاسبه ولتاژ، جریان و مقاومت در مدارهای الکتریکی</p>
+            <div class="tool-form">
+              <div class="input-group">
+                <label for="ohmVoltage"> ولتاژ (V) </label>
 
-            <a href="#ohm" class="primary-btn"> شروع محاسبه </a>
+                <input
+                  type="number"
+                  id="ohmVoltage"
+                  step="any"
+                  placeholder="مثال: 12"
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="ohmCurrent"> جریان (A) </label>
+
+                <input
+                  type="number"
+                  id="ohmCurrent"
+                  step="any"
+                  placeholder="مثال: 2"
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="ohmResistance"> مقاومت (Ω) </label>
+
+                <input
+                  type="number"
+                  id="ohmResistance"
+                  step="any"
+                  placeholder="مثال: 6"
+                />
+              </div>
+
+              <div class="tool-actions">
+                <button
+                  class="primary-btn"
+                  type="button"
+                  onclick="calculateOhm()"
+                >
+                  محاسبه
+                </button>
+
+                <button
+                  class="reset-tool-btn"
+                  type="button"
+                  onclick="resetTool('ohm')"
+                >
+                  پاک کردن
+                </button>
+              </div>
+            </div>
+
+            <div id="ohmResult" class="tool-result">
+              یکی از سه مقدار را خالی بگذارید تا محاسبه شود.
+            </div>
           </div>
 
-          <!-- =========================
-                 TORQUE
-            ========================== -->
+          <!-- =================================================
+           2. TORQUE
+      ================================================== -->
 
-          <div class="card">
-            <div class="icon purple">⚙️</div>
+          <div class="tool-card" data-tool="گشتاور نیرو مکانیک">
+            <h2>⚙️ محاسبه گشتاور</h2>
 
-            <h2>محاسبه گشتاور</h2>
+            <p>محاسبه گشتاور نیرو در سیستم‌های مکانیکی.</p>
 
-            <p>محاسبه گشتاور نیرو در سیستم‌های مکانیکی</p>
+            <div class="tool-form">
+              <div class="input-group">
+                <label for="torqueForce"> نیرو (N) </label>
 
-            <a href="#torque" class="primary-btn"> شروع محاسبه </a>
+                <input
+                  type="number"
+                  id="torqueForce"
+                  step="any"
+                  placeholder="مثال: 100"
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="torqueDistance"> فاصله از محور (m) </label>
+
+                <input
+                  type="number"
+                  id="torqueDistance"
+                  step="any"
+                  placeholder="مثال: 2"
+                />
+              </div>
+
+              <div class="tool-actions">
+                <button
+                  class="primary-btn"
+                  type="button"
+                  onclick="calculateTorque()"
+                >
+                  محاسبه
+                </button>
+
+                <button
+                  class="reset-tool-btn"
+                  type="button"
+                  onclick="resetTool('torque')"
+                >
+                  پاک کردن
+                </button>
+              </div>
+            </div>
+
+            <div id="torqueResult" class="tool-result">
+              فرمول:
+              <span class="formula"> τ = F × r </span>
+            </div>
           </div>
 
-          <!-- =========================
-                 PRESSURE
-            ========================== -->
+          <!-- =================================================
+           3. PRESSURE
+      ================================================== -->
 
-          <div class="card">
-            <div class="icon green">🔧</div>
+          <div class="tool-card" data-tool="فشار نیرو سطح مقطع پاسکال">
+            <h2>🔧 محاسبه فشار</h2>
 
-            <h2>فشار</h2>
+            <p>محاسبه فشار بر اساس نیرو و سطح مقطع.</p>
 
-            <p>محاسبه فشار بر اساس نیرو و سطح مقطع</p>
+            <div class="tool-form">
+              <div class="input-group">
+                <label for="pressureForce"> نیرو (N) </label>
 
-            <a href="#pressure" class="primary-btn"> شروع محاسبه </a>
+                <input
+                  type="number"
+                  id="pressureForce"
+                  step="any"
+                  placeholder="مثال: 500"
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="pressureArea"> سطح مقطع (m²) </label>
+
+                <input
+                  type="number"
+                  id="pressureArea"
+                  step="any"
+                  placeholder="مثال: 2"
+                />
+              </div>
+
+              <div class="tool-actions">
+                <button
+                  class="primary-btn"
+                  type="button"
+                  onclick="calculatePressure()"
+                >
+                  محاسبه
+                </button>
+
+                <button
+                  class="reset-tool-btn"
+                  type="button"
+                  onclick="resetTool('pressure')"
+                >
+                  پاک کردن
+                </button>
+              </div>
+            </div>
+
+            <div id="pressureResult" class="tool-result">
+              فرمول:
+              <span class="formula"> P = F / A </span>
+            </div>
           </div>
 
-          <!-- =========================
-                 POWER
-            ========================== -->
+          <!-- =================================================
+           4. ELECTRICAL POWER
+      ================================================== -->
 
-          <div class="card">
-            <div class="icon blue">🔋</div>
+          <div class="tool-card" data-tool="توان برق الکتریکی ولتاژ جریان">
+            <h2>🔋 توان الکتریکی</h2>
 
-            <h2>توان الکتریکی</h2>
+            <p>محاسبه توان الکتریکی بر اساس ولتاژ و جریان.</p>
 
-            <p>محاسبه توان الکتریکی در سیستم‌های مختلف</p>
+            <div class="tool-form">
+              <div class="input-group">
+                <label for="powerVoltage"> ولتاژ (V) </label>
 
-            <a href="#power" class="primary-btn"> شروع محاسبه </a>
+                <input
+                  type="number"
+                  id="powerVoltage"
+                  step="any"
+                  placeholder="مثال: 220"
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="powerCurrent"> جریان (A) </label>
+
+                <input
+                  type="number"
+                  id="powerCurrent"
+                  step="any"
+                  placeholder="مثال: 5"
+                />
+              </div>
+
+              <div class="tool-actions">
+                <button
+                  class="primary-btn"
+                  type="button"
+                  onclick="calculatePower()"
+                >
+                  محاسبه
+                </button>
+
+                <button
+                  class="reset-tool-btn"
+                  type="button"
+                  onclick="resetTool('power')"
+                >
+                  پاک کردن
+                </button>
+              </div>
+            </div>
+
+            <div id="powerResult" class="tool-result">
+              فرمول:
+              <span class="formula"> P = V × I </span>
+            </div>
           </div>
 
-          <!-- =========================
-                 SPEED
-            ========================== -->
+          <!-- =================================================
+           5. SPEED
+      ================================================== -->
 
-          <div class="card">
-            <div class="icon purple">🚀</div>
+          <div class="tool-card" data-tool="سرعت مسافت زمان حرکت">
+            <h2>🚀 محاسبه سرعت</h2>
 
-            <h2>سرعت</h2>
+            <p>محاسبه سرعت، مسافت یا زمان حرکت.</p>
 
-            <p>محاسبه سرعت، مسافت و زمان حرکت</p>
+            <div class="tool-form">
+              <div class="input-group">
+                <label for="speedDistance"> مسافت (m) </label>
 
-            <a href="#speed" class="primary-btn"> شروع محاسبه </a>
+                <input
+                  type="number"
+                  id="speedDistance"
+                  step="any"
+                  placeholder="مثال: 100"
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="speedTime"> زمان (s) </label>
+
+                <input
+                  type="number"
+                  id="speedTime"
+                  step="any"
+                  placeholder="مثال: 10"
+                />
+              </div>
+
+              <div class="tool-actions">
+                <button
+                  class="primary-btn"
+                  type="button"
+                  onclick="calculateSpeed()"
+                >
+                  محاسبه سرعت
+                </button>
+
+                <button
+                  class="reset-tool-btn"
+                  type="button"
+                  onclick="resetTool('speed')"
+                >
+                  پاک کردن
+                </button>
+              </div>
+            </div>
+
+            <div id="speedResult" class="tool-result">
+              فرمول:
+              <span class="formula"> v = d / t </span>
+            </div>
           </div>
 
-          <!-- =========================
-                 DENSITY
-            ========================== -->
+          <!-- =================================================
+           6. DENSITY
+      ================================================== -->
 
-          <div class="card">
-            <div class="icon green">🧪</div>
+          <div class="tool-card" data-tool="چگالی جرم حجم ماده">
+            <h2>🧪 محاسبه چگالی</h2>
 
-            <h2>چگالی</h2>
+            <p>محاسبه چگالی بر اساس جرم و حجم ماده.</p>
 
-            <p>محاسبه چگالی بر اساس جرم و حجم ماده</p>
+            <div class="tool-form">
+              <div class="input-group">
+                <label for="densityMass"> جرم (kg) </label>
 
-            <a href="#density" class="primary-btn"> شروع محاسبه </a>
+                <input
+                  type="number"
+                  id="densityMass"
+                  step="any"
+                  placeholder="مثال: 10"
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="densityVolume"> حجم (m³) </label>
+
+                <input
+                  type="number"
+                  id="densityVolume"
+                  step="any"
+                  placeholder="مثال: 2"
+                />
+              </div>
+
+              <div class="tool-actions">
+                <button
+                  class="primary-btn"
+                  type="button"
+                  onclick="calculateDensity()"
+                >
+                  محاسبه
+                </button>
+
+                <button
+                  class="reset-tool-btn"
+                  type="button"
+                  onclick="resetTool('density')"
+                >
+                  پاک کردن
+                </button>
+              </div>
+            </div>
+
+            <div id="densityResult" class="tool-result">
+              فرمول:
+              <span class="formula"> ρ = m / V </span>
+            </div>
           </div>
         </section>
 
-        <!-- =================================================
-             INFORMATION PANEL
-        ================================================== -->
+        <!-- =====================================================
+         INFORMATION
+    ====================================================== -->
 
         <section class="panel" style="margin-top: 40px">
           <h2 style="color: #d4af37; margin-bottom: 15px">
@@ -212,9 +645,9 @@
           </p>
         </section>
 
-        <!-- =================================================
-             FOOTER
-        ================================================== -->
+        <!-- =====================================================
+         FOOTER
+    ====================================================== -->
 
         <footer class="footer">© 2026 VAYRA - Wings of Knowledge</footer>
       </main>
@@ -225,37 +658,420 @@
 ====================================================== -->
 
     <script>
-      /* =========================
-   MOBILE SIDEBAR
-========================= */
+      /* =====================================================
+     MOBILE SIDEBAR
+  ====================================================== */
 
       function toggleSidebar() {
         const sidebar = document.getElementById("sidebar");
 
+        const menuButton = document.getElementById("menuButton");
+
         sidebar.classList.toggle("open");
+
+        const isOpen = sidebar.classList.contains("open");
+
+        menuButton.setAttribute("aria-expanded", isOpen);
       }
 
-      /* =========================
-   SEARCH
-========================= */
+      /* =====================================================
+     HELPER FUNCTIONS
+  ====================================================== */
+
+      function getNumber(id) {
+        const element = document.getElementById(id);
+
+        const value = Number(element.value);
+
+        return Number.isFinite(value) ? value : null;
+      }
+
+      function showResult(id, message, type = "success") {
+        const result = document.getElementById(id);
+
+        result.innerHTML = message;
+
+        result.classList.remove("success", "error");
+
+        result.classList.add(type);
+      }
+
+      function formatNumber(value) {
+        if (!Number.isFinite(value)) {
+          return "خطا";
+        }
+
+        return Number(value.toFixed(10)).toLocaleString("en-US");
+      }
+
+      /* =====================================================
+     1. OHM'S LAW
+     
+     V = I × R
+     I = V / R
+     R = V / I
+  ====================================================== */
+
+      function calculateOhm() {
+        const V = getNumber("ohmVoltage");
+
+        const I = getNumber("ohmCurrent");
+
+        const R = getNumber("ohmResistance");
+
+        const emptyCount = [V, I, R].filter((value) => value === null).length;
+
+        if (emptyCount !== 1) {
+          showResult(
+            "ohmResult",
+            "لطفاً دقیقاً یکی از مقادیر ولتاژ، جریان یا مقاومت را خالی بگذارید.",
+            "error",
+          );
+
+          return;
+        }
+
+        if (R !== null && R === 0) {
+          showResult("ohmResult", "مقاومت نمی‌تواند صفر باشد.", "error");
+
+          return;
+        }
+
+        if (I !== null && I === 0) {
+          showResult(
+            "ohmResult",
+            "جریان صفر است؛ برای محاسبه مقاومت باید جریان غیرصفر باشد.",
+            "error",
+          );
+
+          return;
+        }
+
+        if (V === null) {
+          const result = I * R;
+
+          document.getElementById("ohmVoltage").value = result;
+
+          showResult(
+            "ohmResult",
+            `ولتاژ برابر است با:
+         <strong>${formatNumber(result)} V</strong>
+         <br>
+         <span class="formula">V = I × R</span>`,
+          );
+
+          return;
+        }
+
+        if (I === null) {
+          const result = V / R;
+
+          document.getElementById("ohmCurrent").value = result;
+
+          showResult(
+            "ohmResult",
+            `جریان برابر است با:
+         <strong>${formatNumber(result)} A</strong>
+         <br>
+         <span class="formula">I = V / R</span>`,
+          );
+
+          return;
+        }
+
+        if (R === null) {
+          const result = V / I;
+
+          document.getElementById("ohmResistance").value = result;
+
+          showResult(
+            "ohmResult",
+            `مقاومت برابر است با:
+         <strong>${formatNumber(result)} Ω</strong>
+         <br>
+         <span class="formula">R = V / I</span>`,
+          );
+        }
+      }
+
+      /* =====================================================
+     2. TORQUE
+     
+     τ = F × r
+  ====================================================== */
+
+      function calculateTorque() {
+        const force = getNumber("torqueForce");
+
+        const distance = getNumber("torqueDistance");
+
+        if (force === null || distance === null) {
+          showResult(
+            "torqueResult",
+            "لطفاً نیرو و فاصله را وارد کنید.",
+            "error",
+          );
+
+          return;
+        }
+
+        const result = force * distance;
+
+        showResult(
+          "torqueResult",
+          `گشتاور برابر است با:
+       <strong>${formatNumber(result)} N·m</strong>
+       <br>
+       <span class="formula">τ = F × r</span>`,
+        );
+      }
+
+      /* =====================================================
+     3. PRESSURE
+     
+     P = F / A
+  ====================================================== */
+
+      function calculatePressure() {
+        const force = getNumber("pressureForce");
+
+        const area = getNumber("pressureArea");
+
+        if (force === null || area === null) {
+          showResult(
+            "pressureResult",
+            "لطفاً نیرو و سطح مقطع را وارد کنید.",
+            "error",
+          );
+
+          return;
+        }
+
+        if (area <= 0) {
+          showResult(
+            "pressureResult",
+            "سطح مقطع باید بزرگ‌تر از صفر باشد.",
+            "error",
+          );
+
+          return;
+        }
+
+        const result = force / area;
+
+        showResult(
+          "pressureResult",
+          `فشار برابر است با:
+       <strong>${formatNumber(result)} Pa</strong>
+       <br>
+       <span class="formula">P = F / A</span>`,
+        );
+      }
+
+      /* =====================================================
+     4. ELECTRICAL POWER
+     
+     P = V × I
+  ====================================================== */
+
+      function calculatePower() {
+        const voltage = getNumber("powerVoltage");
+
+        const current = getNumber("powerCurrent");
+
+        if (voltage === null || current === null) {
+          showResult(
+            "powerResult",
+            "لطفاً ولتاژ و جریان را وارد کنید.",
+            "error",
+          );
+
+          return;
+        }
+
+        const result = voltage * current;
+
+        showResult(
+          "powerResult",
+          `توان الکتریکی برابر است با:
+       <strong>${formatNumber(result)} W</strong>
+       <br>
+       <span class="formula">P = V × I</span>`,
+        );
+      }
+
+      /* =====================================================
+     5. SPEED
+     
+     v = d / t
+  ====================================================== */
+
+      function calculateSpeed() {
+        const distance = getNumber("speedDistance");
+
+        const time = getNumber("speedTime");
+
+        if (distance === null || time === null) {
+          showResult(
+            "speedResult",
+            "لطفاً مسافت و زمان را وارد کنید.",
+            "error",
+          );
+
+          return;
+        }
+
+        if (time <= 0) {
+          showResult("speedResult", "زمان باید بزرگ‌تر از صفر باشد.", "error");
+
+          return;
+        }
+
+        const result = distance / time;
+
+        showResult(
+          "speedResult",
+          `سرعت برابر است با:
+       <strong>${formatNumber(result)} m/s</strong>
+       <br>
+       <span class="formula">v = d / t</span>`,
+        );
+      }
+
+      /* =====================================================
+     6. DENSITY
+     
+     ρ = m / V
+  ====================================================== */
+
+      function calculateDensity() {
+        const mass = getNumber("densityMass");
+
+        const volume = getNumber("densityVolume");
+
+        if (mass === null || volume === null) {
+          showResult("densityResult", "لطفاً جرم و حجم را وارد کنید.", "error");
+
+          return;
+        }
+
+        if (volume <= 0) {
+          showResult("densityResult", "حجم باید بزرگ‌تر از صفر باشد.", "error");
+
+          return;
+        }
+
+        const result = mass / volume;
+
+        showResult(
+          "densityResult",
+          `چگالی برابر است با:
+       <strong>${formatNumber(result)} kg/m³</strong>
+       <br>
+       <span class="formula">ρ = m / V</span>`,
+        );
+      }
+
+      /* =====================================================
+     RESET TOOLS
+  ====================================================== */
+
+      function resetTool(tool) {
+        const ids = {
+          ohm: ["ohmVoltage", "ohmCurrent", "ohmResistance"],
+
+          torque: ["torqueForce", "torqueDistance"],
+
+          pressure: ["pressureForce", "pressureArea"],
+
+          power: ["powerVoltage", "powerCurrent"],
+
+          speed: ["speedDistance", "speedTime"],
+
+          density: ["densityMass", "densityVolume"],
+        };
+
+        if (!ids[tool]) {
+          return;
+        }
+
+        ids[tool].forEach((id) => {
+          document.getElementById(id).value = "";
+        });
+
+        const result = document.getElementById(tool + "Result");
+
+        result.classList.remove("success", "error");
+
+        const defaultMessages = {
+          ohm: "یکی از سه مقدار را خالی بگذارید تا محاسبه شود.",
+
+          torque: 'فرمول: <span class="formula">τ = F × r</span>',
+
+          pressure: 'فرمول: <span class="formula">P = F / A</span>',
+
+          power: 'فرمول: <span class="formula">P = V × I</span>',
+
+          speed: 'فرمول: <span class="formula">v = d / t</span>',
+
+          density: 'فرمول: <span class="formula">ρ = m / V</span>',
+        };
+
+        result.innerHTML = defaultMessages[tool];
+      }
+
+      /* =====================================================
+     SEARCH
+  ====================================================== */
 
       const searchInput = document.querySelector(".search input");
 
-      searchInput.addEventListener("keyup", function () {
-        const value = this.value.toLowerCase();
+      if (searchInput) {
+        searchInput.addEventListener("input", function () {
+          const value = this.value.trim().toLowerCase();
 
-        const cards = document.querySelectorAll(".card");
+          const cards = document.querySelectorAll(".tool-card");
 
-        cards.forEach(function (card) {
-          const text = card.innerText.toLowerCase();
+          cards.forEach(function (card) {
+            const text = card.innerText.toLowerCase();
 
-          if (text.includes(value)) {
-            card.style.display = "block";
-          } else {
-            card.style.display = "none";
-          }
+            if (text.includes(value)) {
+              card.style.display = "";
+            } else {
+              card.style.display = "none";
+            }
+          });
         });
+      }
+
+      /* =====================================================
+     ENTER KEY SUPPORT
+  ====================================================== */
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter") {
+          return;
+        }
+
+        const active = document.activeElement;
+
+        if (!active || active.tagName !== "INPUT") {
+          return;
+        }
+
+        const card = active.closest(".tool-card");
+
+        if (!card) {
+          return;
+        }
+
+        const button = card.querySelector(".primary-btn");
+
+        if (button) {
+          button.click();
+        }
       });
     </script>
+    ```
   </body>
 </html>

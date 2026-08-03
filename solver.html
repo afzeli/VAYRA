@@ -13,9 +13,15 @@
       href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap"
       rel="stylesheet"
     />
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   </head>
 
   <body>
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
     <header class="topbar">
       <div class="left-tools">
         <span class="tool-icon">☾</span>
@@ -39,8 +45,12 @@
         </div>
       </a>
 
-      <div class="menu" onclick="toggleSidebar()">☰</div>
+      <button class="menu" type="button" onclick="toggleSidebar()">☰</button>
     </header>
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
 
     <aside class="sidebar" id="sidebar">
       <div class="profile">
@@ -62,52 +72,686 @@
       </nav>
     </aside>
 
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
     <main class="content">
       <section class="page-header">
         <h1>
           حل مسئله
-          <span>VAYRA</span>
+
+          <span> VAYRA </span>
         </h1>
 
-        <p>مسئله ریاضی یا مهندسی خود را وارد کنید.</p>
+        <p>معادلات خطی و درجه دوم خود را وارد کنید.</p>
       </section>
+
+      <!-- =====================================================
+           SOLVER
+      ====================================================== -->
 
       <section class="panel">
         <div class="input-group">
-          <label> متن مسئله </label>
+          <label for="problem"> متن مسئله یا معادله </label>
 
           <textarea
             id="problem"
-            placeholder="مثلاً: معادله 2x + 5 = 15 را حل کنید..."
+            placeholder="مثلاً: 2x + 5 = 0"
+            dir="ltr"
           ></textarea>
+
+          <small>
+            نمونه‌های قابل حل:
+
+            <span dir="ltr"> 2x + 5 = 0 </span>
+
+            ،
+
+            <span dir="ltr"> x^2 - 4 = 0 </span>
+
+            ،
+
+            <span dir="ltr"> x^2 + 2x - 3 = 0 </span>
+          </small>
         </div>
 
-        <button class="primary-btn" onclick="solveProblem()">حل مسئله</button>
+        <div class="button-row">
+          <button class="primary-btn" onclick="solveProblem()">
+            🧮 حل و رسم نمودار
+          </button>
+
+          <button class="secondary-btn" onclick="clearSolver()">
+            پاک کردن
+          </button>
+        </div>
+
+        <!-- RESULT -->
 
         <div id="result" class="result-box">
           نتیجه حل مسئله در این قسمت نمایش داده می‌شود.
         </div>
+
+        <!-- GRAPH -->
+
+        <div
+          id="solverGraph"
+          style="
+            width: 100%;
+            min-height: 450px;
+            margin-top: 30px;
+            border-radius: 20px;
+            overflow: hidden;
+          "
+        ></div>
+      </section>
+
+      <!-- =====================================================
+           HELP
+      ====================================================== -->
+
+      <section class="panel">
+        <h2 style="color: #d4af37; margin-bottom: 15px">راهنمای حل مسئله</h2>
+
+        <p style="color: #aaa; line-height: 2">
+          VAYRA می‌تواند معادلات خطی و درجه دوم را تشخیص داده، جواب‌های آن‌ها را
+          محاسبه کند و نمودار تابع مربوطه را رسم نماید.
+
+          <br /><br />
+
+          معادله خطی:
+
+          <span dir="ltr"> 2x + 5 = 0 </span>
+
+          <br />
+
+          معادله درجه دوم:
+
+          <span dir="ltr"> x^2 - 4 = 0 </span>
+        </p>
       </section>
     </main>
 
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
     <script>
+      /* =====================================================
+         SIDEBAR
+      ===================================================== */
+
       function toggleSidebar() {
         document.getElementById("sidebar").classList.toggle("open");
       }
 
+      /* =====================================================
+         SOLVE
+      ===================================================== */
+
       function solveProblem() {
-        const problem = document.getElementById("problem").value;
+        const input = document.getElementById("problem").value.trim();
 
         const result = document.getElementById("result");
 
-        if (!problem.trim()) {
-          result.innerHTML = "لطفاً ابتدا مسئله را وارد کنید.";
+        if (!input) {
+          result.innerHTML = "⚠️ لطفاً ابتدا یک معادله وارد کنید.";
 
           return;
         }
 
-        result.innerHTML =
-          "مسئله شما دریافت شد. در نسخه کامل VAYRA، موتور هوشمند حل مسئله می‌تواند این بخش را تحلیل و پاسخ مرحله‌به‌مرحله تولید کند.";
+        try {
+          let equation = normalizeEquation(input);
+
+          if (!equation.includes("=")) {
+            throw new Error("لطفاً معادله را به صورت ax + b = c وارد کنید.");
+          }
+
+          const parts = equation.split("=");
+
+          if (parts.length !== 2) {
+            throw new Error("فرمت معادله صحیح نیست.");
+          }
+
+          const left = parts[0];
+
+          const right = parts[1];
+
+          /*
+            تشخیص درجه معادله
+          */
+
+          if (left.includes("x^2") || left.includes("x**2")) {
+            solveQuadratic(left, right, input);
+          } else {
+            solveLinear(left, right, input);
+          }
+        } catch (error) {
+          console.error(error);
+
+          result.innerHTML = `
+            ❌ خطا:
+
+            <br><br>
+
+            ${error.message}
+            `;
+        }
+      }
+
+      /* =====================================================
+         NORMALIZE
+      ===================================================== */
+
+      function normalizeEquation(equation) {
+        return equation
+
+          .replace(/×/g, "*")
+
+          .replace(/÷/g, "/")
+
+          .replace(/−/g, "-")
+
+          .replace(/\s+/g, "")
+
+          .replace(/(\d)x/g, "$1*x")
+
+          .replace(/x\^2/g, "x^2");
+      }
+
+      /* =====================================================
+         LINEAR EQUATION
+      ===================================================== */
+
+      function solveLinear(left, right, original) {
+        /*
+          شکل ساده:
+
+          ax + b = c
+        */
+
+        const match = left.match(/^([+-]?\d*\.?\d*)\*?x([+-]\d*\.?\d+)?$/);
+
+        if (!match) {
+          throw new Error("معادله خطی قابل تشخیص نیست.");
+        }
+
+        let a = match[1];
+
+        if (a === "" || a === "+") {
+          a = 1;
+        } else if (a === "-") {
+          a = -1;
+        } else {
+          a = parseFloat(a);
+        }
+
+        const b = match[2] ? parseFloat(match[2]) : 0;
+
+        const c = parseFloat(right);
+
+        if (!Number.isFinite(c)) {
+          throw new Error("عدد سمت راست معتبر نیست.");
+        }
+
+        const x = (c - b) / a;
+
+        const result = document.getElementById("result");
+
+        result.innerHTML = `
+          <strong>
+            ✅ معادله خطی حل شد.
+          </strong>
+
+          <br><br>
+
+          معادله:
+
+          <span dir="ltr">
+            ${original}
+          </span>
+
+          <br><br>
+
+          جواب:
+
+          <strong dir="ltr">
+            x = ${formatNumber(x)}
+          </strong>
+
+          <br><br>
+
+          نقطه جواب:
+
+          <strong dir="ltr">
+            (${formatNumber(x)}, 0)
+          </strong>
+          `;
+
+        drawGraph(a, b - c, original, [x]);
+      }
+
+      /* =====================================================
+         QUADRATIC EQUATION
+      ===================================================== */
+
+      function solveQuadratic(left, right, original) {
+        /*
+          مثال:
+
+          x^2 + 2x - 3 = 0
+
+          a = 1
+          b = 2
+          c = -3
+        */
+
+        const expression = left.replace(/\^2/g, "").replace(/\*?x/, "");
+
+        /*
+          استخراج ضرایب
+        */
+
+        let a = 1;
+
+        let b = 0;
+
+        let c = 0;
+
+        /*
+          فرم استاندارد:
+
+          ax² + bx + c
+        */
+
+        const normalized = left.replace(/\*/g, "");
+
+        const match = normalized.match(
+          /^([+-]?\d*\.?\d*)x\^2([+-]?\d*\.?\d*)x([+-]?\d*\.?\d*)$/,
+        );
+
+        if (!match) {
+          /*
+            حالت ساده:
+
+            x^2 - 4
+          */
+
+          const simple = normalized.match(/^x\^2([+-]?\d*\.?\d*)$/);
+
+          if (simple) {
+            a = 1;
+
+            b = 0;
+
+            c = parseFloat(simple[1]);
+          } else {
+            throw new Error("فرمت معادله درجه دوم قابل تشخیص نیست.");
+          }
+        } else {
+          let aValue = match[1];
+
+          if (aValue === "" || aValue === "+") {
+            a = 1;
+          } else if (aValue === "-") {
+            a = -1;
+          } else {
+            a = parseFloat(aValue);
+          }
+
+          let bValue = match[2];
+
+          if (bValue === "" || bValue === "+") {
+            b = 1;
+          } else if (bValue === "-") {
+            b = -1;
+          } else {
+            b = parseFloat(bValue);
+          }
+
+          c = parseFloat(match[3]);
+        }
+
+        /*
+          سمت راست معادله
+        */
+
+        const rightValue = parseFloat(right);
+
+        if (Number.isFinite(rightValue) && rightValue !== 0) {
+          c = c - rightValue;
+        }
+
+        /*
+          دلتا
+
+          Δ = b² - 4ac
+        */
+
+        const delta = b * b - 4 * a * c;
+
+        const result = document.getElementById("result");
+
+        /*
+          دو جواب حقیقی
+        */
+
+        if (delta > 0) {
+          const x1 = (-b + Math.sqrt(delta)) / (2 * a);
+
+          const x2 = (-b - Math.sqrt(delta)) / (2 * a);
+
+          result.innerHTML = `
+            <strong>
+              ✅ معادله درجه دوم حل شد.
+            </strong>
+
+            <br><br>
+
+            معادله:
+
+            <span dir="ltr">
+              ${original}
+            </span>
+
+            <br><br>
+
+            دلتا:
+
+            <strong dir="ltr">
+              Δ = ${formatNumber(delta)}
+            </strong>
+
+            <br><br>
+
+            جواب اول:
+
+            <strong dir="ltr">
+              x₁ = ${formatNumber(x1)}
+            </strong>
+
+            <br>
+
+            جواب دوم:
+
+            <strong dir="ltr">
+              x₂ = ${formatNumber(x2)}
+            </strong>
+
+            <br><br>
+
+            نمودار تابع و نقاط تقاطع با محور X
+            در پایین نمایش داده شده‌اند.
+            `;
+
+          drawGraph(a, b, original, [x1, x2], true, c);
+        } else if (delta === 0) {
+
+        /*
+          یک جواب حقیقی
+        */
+          const x = -b / (2 * a);
+
+          result.innerHTML = `
+            <strong>
+              ✅ معادله یک جواب حقیقی دارد.
+            </strong>
+
+            <br><br>
+
+            معادله:
+
+            <span dir="ltr">
+              ${original}
+            </span>
+
+            <br><br>
+
+            جواب:
+
+            <strong dir="ltr">
+              x = ${formatNumber(x)}
+            </strong>
+            `;
+
+          drawGraph(a, b, original, [x], true, c);
+        } else {
+
+        /*
+          بدون جواب حقیقی
+        */
+          const realPart = -b / (2 * a);
+
+          const imaginaryPart = Math.sqrt(-delta) / Math.abs(2 * a);
+
+          result.innerHTML = `
+            <strong>
+              ℹ️ معادله جواب حقیقی ندارد.
+            </strong>
+
+            <br><br>
+
+            دلتا:
+
+            <strong dir="ltr">
+              Δ = ${formatNumber(delta)}
+            </strong>
+
+            <br><br>
+
+            جواب‌های مختلط:
+
+            <br>
+
+            <span dir="ltr">
+              x₁ = ${formatNumber(realPart)}
+              + ${formatNumber(imaginaryPart)}i
+            </span>
+
+            <br>
+
+            <span dir="ltr">
+              x₂ = ${formatNumber(realPart)}
+              - ${formatNumber(imaginaryPart)}i
+            </span>
+
+            <br><br>
+
+            نمودار تابع نیز در پایین نمایش داده شده است.
+            `;
+
+          drawGraph(a, b, original, [], true, c);
+        }
+      }
+
+      /* =====================================================
+         DRAW GRAPH
+      ===================================================== */
+
+      function drawGraph(
+        a,
+        b,
+        equation,
+        solutions,
+        isQuadratic = false,
+        c = 0,
+      ) {
+        const graph = document.getElementById("solverGraph");
+
+        const xValues = [];
+
+        const yValues = [];
+
+        const minX = -10;
+
+        const maxX = 10;
+
+        const samples = 500;
+
+        for (let i = 0; i <= samples; i++) {
+          const x = minX + ((maxX - minX) * i) / samples;
+
+          let y;
+
+          if (isQuadratic) {
+            y = a * x * x + b * x + c;
+          } else {
+            y = a * x + b;
+          }
+
+          xValues.push(x);
+
+          yValues.push(y);
+        }
+
+        const functionTrace = {
+          x: xValues,
+
+          y: yValues,
+
+          type: "scatter",
+
+          mode: "lines",
+
+          name: "تابع: " + equation,
+
+          line: {
+            color: "#d4af37",
+
+            width: 3,
+          },
+        };
+
+        const traces = [functionTrace];
+
+        /*
+          نمایش جواب‌ها
+        */
+
+        if (solutions.length > 0) {
+          const solutionY = solutions.map(() => 0);
+
+          traces.push({
+            x: solutions,
+
+            y: solutionY,
+
+            type: "scatter",
+
+            mode: "markers",
+
+            name: "جواب‌های معادله",
+
+            marker: {
+              color: "#ff6b81",
+
+              size: 12,
+
+              line: {
+                color: "#ffffff",
+
+                width: 2,
+              },
+            },
+          });
+        }
+
+        const layout = {
+          paper_bgcolor: "rgba(0,0,0,0)",
+
+          plot_bgcolor: "rgba(7,19,33,1)",
+
+          font: {
+            family: "Vazirmatn, Tahoma",
+
+            color: "#ffffff",
+          },
+
+          title: {
+            text: "نمودار معادله",
+          },
+
+          xaxis: {
+            title: "X",
+
+            gridcolor: "rgba(255,255,255,0.08)",
+
+            zeroline: true,
+
+            zerolinecolor: "#d4af37",
+          },
+
+          yaxis: {
+            title: "Y",
+
+            gridcolor: "rgba(255,255,255,0.08)",
+
+            zeroline: true,
+
+            zerolinecolor: "#d4af37",
+          },
+
+          hovermode: "closest",
+
+          margin: {
+            l: 60,
+
+            r: 20,
+
+            t: 60,
+
+            b: 60,
+          },
+
+          responsive: true,
+        };
+
+        const config = {
+          responsive: true,
+
+          displaylogo: false,
+
+          scrollZoom: true,
+        };
+
+        Plotly.newPlot(
+          graph,
+
+          traces,
+
+          layout,
+
+          config,
+        );
+      }
+
+      /* =====================================================
+         FORMAT NUMBER
+      ===================================================== */
+
+      function formatNumber(number) {
+        if (Number.isInteger(number)) {
+          return number.toString();
+        }
+
+        return Number(number.toFixed(8)).toString();
+      }
+
+      /* =====================================================
+         CLEAR
+      ===================================================== */
+
+      function clearSolver() {
+        document.getElementById("problem").value = "";
+
+        document.getElementById("result").innerHTML =
+          "نتیجه حل مسئله در این قسمت نمایش داده می‌شود.";
+
+        const graph = document.getElementById("solverGraph");
+
+        if (graph) {
+          Plotly.purge(graph);
+        }
       }
     </script>
   </body>
