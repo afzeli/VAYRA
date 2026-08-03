@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // محور اصلی X در x = 0
       zeroline: true,
-      zerolinecolor: "#000000",
+      zerolinecolor: "#f0fc08",
       zerolinewidth: 4,
 
       // خطوط شبکه
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // محور اصلی Y در y = 0
       zeroline: true,
-      zerolinecolor: "#000000",
+      zerolinecolor: "#fbff0c",
       zerolinewidth: 4,
 
       // خطوط شبکه
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
       showticklabels: true,
     },
 
-    hovermode: "closest",
+    hovermode: false,
 
     dragmode: "pan",
 
