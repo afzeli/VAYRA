@@ -1086,7 +1086,7 @@ UPDATE GRAPH
 
       scrollZoom: true,
 
-      displayModeBar: true,
+      displayModeBar: false,
 
       displaylogo: false,
 
