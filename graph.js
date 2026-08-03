@@ -1,1627 +1,651 @@
-javascript(
-  /* =========================================================
-   VAYRA - ADVANCED GRAPH ENGINE
-   Version: Stable Final
-   Requires:
-   - Plotly.js
-   - Math.js
-   ========================================================= */
+/* =========================================================
+   VAYRA - GRAPH ENGINE
+   Plotly.js + Math.js
+========================================================= */
 
-  () => {
-    "use strict";
+document.addEventListener("DOMContentLoaded", function () {
+  // ---------------------------------------------------------
+  // ELEMENTS
+  // ---------------------------------------------------------
 
-    /* =========================================================
-     DOM ELEMENTS
-     ========================================================= */
+  const functionInput = document.getElementById("functionInput");
+  const plotBtn = document.getElementById("plotBtn");
+  const clearBtn = document.getElementById("clearBtn");
+  const examplesBtn = document.getElementById("examplesBtn");
 
-    const graphContainer = document.getElementById("graph");
-    const functionList = document.getElementById("functionList");
-    const pointInfo = document.getElementById("pointInfo");
+  const resetZoomBtn = document.getElementById("resetZoomBtn");
+  const zoomInBtn = document.getElementById("zoomInBtn");
+  const zoomOutBtn = document.getElementById("zoomOutBtn");
 
-    const functionInput = document.getElementById("functionInput");
+  const minXInput = document.getElementById("minX");
+  const maxXInput = document.getElementById("maxX");
+  const samplesInput = document.getElementById("samples");
 
-    const minXInput = document.getElementById("minX");
-    const maxXInput = document.getElementById("maxX");
-    const samplesInput = document.getElementById("samples");
+  const graphElement = document.getElementById("graph");
+  const functionList = document.getElementById("functionList");
+  const pointInfo = document.getElementById("pointInfo");
 
-    const plotBtn = document.getElementById("plotBtn");
-    const plotLinearBtn = document.getElementById("plotLinearBtn");
+  // Linear function elements
+  const linearEquationInput = document.getElementById("linearEquationInput");
 
-    const linearEquationInput = document.getElementById("linearEquationInput");
+  const linearAInput = document.getElementById("linearA");
+  const linearBInput = document.getElementById("linearB");
 
-    const linearAInput = document.getElementById("linearA");
+  const linearPreview = document.getElementById("linearPreview");
+  const plotLinearBtn = document.getElementById("plotLinearBtn");
 
-    const linearBInput = document.getElementById("linearB");
+  // ---------------------------------------------------------
+  // CHECK LIBRARIES
+  // ---------------------------------------------------------
 
-    const linearPreview = document.getElementById("linearPreview");
+  if (typeof Plotly === "undefined") {
+    alert("خطا: کتابخانه Plotly.js بارگذاری نشده است.");
+    return;
+  }
 
-    const examplesBtn = document.getElementById("examplesBtn");
+  if (typeof math === "undefined") {
+    alert("خطا: کتابخانه Math.js بارگذاری نشده است.");
+    return;
+  }
 
-    const clearBtn = document.getElementById("clearBtn");
+  // ---------------------------------------------------------
+  // VARIABLES
+  // ---------------------------------------------------------
 
-    const resetZoomBtn = document.getElementById("resetZoomBtn");
+  let traces = [];
 
-    const zoomInBtn = document.getElementById("zoomInBtn");
+  let graphLayout = {
+    title: {
+      text: "نمودار تابع",
+      font: {
+        size: 22,
+      },
+    },
 
-    const zoomOutBtn = document.getElementById("zoomOutBtn");
+    xaxis: {
+      title: "X",
+      zeroline: true,
+      showgrid: true,
+      gridcolor: "#dddddd",
+    },
 
-    const menuButton = document.getElementById("menuButton");
+    yaxis: {
+      title: "Y",
+      zeroline: true,
+      showgrid: true,
+      gridcolor: "#dddddd",
+    },
 
-    const sidebar = document.getElementById("sidebar");
+    hovermode: "closest",
 
-    /* =========================================================
-     GLOBAL STATE
-     ========================================================= */
+    dragmode: "pan",
 
-    let graphs = [];
+    margin: {
+      l: 60,
+      r: 30,
+      t: 70,
+      b: 60,
+    },
 
-    let angleMode = "rad";
+    paper_bgcolor: "rgba(0,0,0,0)",
 
-    /* =========================================================
-     CONFIG
-     ========================================================= */
+    plot_bgcolor: "rgba(0,0,0,0)",
+  };
 
-    const GRAPH_CONFIG = {
-      minX: -10,
-      maxX: 10,
-      samples: 4000,
+  const graphConfig = {
+    responsive: true,
 
-      minSamples: 100,
-      maxSamples: 20000,
+    displaylogo: false,
 
-      maxY: 1e10,
+    scrollZoom: true,
 
-      storageKey: "vayra_graphs_v5",
-      angleModeKey: "vayra_angle_mode_v2",
+    modeBarButtonsToAdd: ["drawline", "drawopenpath", "eraseshape"],
+  };
+
+  // ---------------------------------------------------------
+  // INITIAL GRAPH
+  // ---------------------------------------------------------
+
+  Plotly.newPlot(graphElement, [], graphLayout, graphConfig);
+
+  // ---------------------------------------------------------
+  // CREATE X VALUES
+  // ---------------------------------------------------------
+
+  function createXValues(minX, maxX, samples) {
+    const x = [];
+
+    const step = (maxX - minX) / (samples - 1);
+
+    for (let i = 0; i < samples; i++) {
+      x.push(minX + i * step);
+    }
+
+    return x;
+  }
+
+  // ---------------------------------------------------------
+  // EVALUATE FUNCTION
+  // ---------------------------------------------------------
+
+  function evaluateFunction(expression, x) {
+    try {
+      let scope = {
+        x: x,
+      };
+
+      return math.evaluate(expression, scope);
+    } catch (error) {
+      return NaN;
+    }
+  }
+
+  // ---------------------------------------------------------
+  // GENERATE Y VALUES
+  // ---------------------------------------------------------
+
+  function createYValues(expression, xValues) {
+    return xValues.map(function (x) {
+      const y = evaluateFunction(expression, x);
+
+      if (typeof y !== "number" || !Number.isFinite(y)) {
+        return null;
+      }
+
+      // جلوگیری از نمایش خطوط خیلی بزرگ
+      if (Math.abs(y) > 1e10) {
+        return null;
+      }
+
+      return y;
+    });
+  }
+
+  // ---------------------------------------------------------
+  // GET RANGE
+  // ---------------------------------------------------------
+
+  function getRange() {
+    const minX = Number(minXInput.value);
+    const maxX = Number(maxXInput.value);
+
+    let samples = Number(samplesInput.value);
+
+    if (!Number.isFinite(minX) || !Number.isFinite(maxX)) {
+      alert("محدوده X معتبر نیست.");
+      return null;
+    }
+
+    if (minX >= maxX) {
+      alert("حداقل X باید از حداکثر X کوچکتر باشد.");
+      return null;
+    }
+
+    if (!Number.isFinite(samples)) {
+      samples = 3000;
+    }
+
+    samples = Math.max(100, Math.min(20000, samples));
+
+    samplesInput.value = samples;
+
+    return {
+      minX,
+      maxX,
+      samples,
+    };
+  }
+
+  // ---------------------------------------------------------
+  // NORMALIZE EXPRESSION
+  // ---------------------------------------------------------
+
+  function normalizeExpression(expression) {
+    let result = expression.trim();
+
+    // حذف y =
+    result = result.replace(/^y\s*=\s*/i, "");
+
+    // تبدیل ^ به توان Math.js
+    // Math.js خودش ^ را پشتیبانی میکند
+
+    // تبدیل برخی ورودیهای فارسی
+    result = result
+      .replace(/سین/g, "sin")
+      .replace(/کسینوس/g, "cos")
+      .replace(/تانژانت/g, "tan");
+
+    return result;
+  }
+
+  // ---------------------------------------------------------
+  // PLOT FUNCTION
+  // ---------------------------------------------------------
+
+  function plotFunction(expression, label = null) {
+    const range = getRange();
+
+    if (!range) {
+      return;
+    }
+
+    expression = normalizeExpression(expression);
+
+    if (!expression) {
+      alert("لطفاً یک تابع وارد کنید.");
+      return;
+    }
+
+    const xValues = createXValues(range.minX, range.maxX, range.samples);
+
+    const yValues = createYValues(expression, xValues);
+
+    const validPoints = yValues.filter((value) => value !== null);
+
+    if (validPoints.length === 0) {
+      alert("تابع قابل رسم نیست.\n\n" + "لطفاً عبارت تابع را بررسی کنید.");
+
+      return;
+    }
+
+    const trace = {
+      x: xValues,
+
+      y: yValues,
+
+      mode: "lines",
+
+      type: "scatter",
+
+      connectgaps: false,
+
+      name: label || expression,
+
+      line: {
+        width: 3,
+      },
+
+      hovertemplate:
+        "x = %{x:.4f}<br>" + "y = %{y:.4f}" + "<extra>%{fullData.name}</extra>",
     };
 
-    /* =========================================================
-     COLORS
-     ========================================================= */
+    traces.push(trace);
 
-    const graphColors = [
-      "#d4af37",
-      "#4ea1ff",
-      "#48c987",
-      "#ff6b81",
-      "#b889ff",
-      "#ff9f43",
-      "#00d2d3",
-      "#10ac84",
-    ];
+    updateGraph();
 
-    /* =========================================================
-     LIBRARY CHECKS
-     ========================================================= */
+    updateFunctionList();
+  }
 
-    function getMath() {
-      if (typeof window.math === "undefined") {
-        throw new Error("کتابخانه Math.js بارگذاری نشده است.");
-      }
+  // ---------------------------------------------------------
+  // UPDATE GRAPH
+  // ---------------------------------------------------------
 
-      return window.math;
+  function updateGraph() {
+    Plotly.react(graphElement, traces, graphLayout, graphConfig);
+  }
+
+  // ---------------------------------------------------------
+  // UPDATE FUNCTION LIST
+  // ---------------------------------------------------------
+
+  function updateFunctionList() {
+    functionList.innerHTML = "";
+
+    if (traces.length === 0) {
+      functionList.innerHTML = "<p>هنوز تابعی رسم نشده است.</p>";
+
+      return;
     }
 
-    function getPlotly() {
-      if (typeof window.Plotly === "undefined") {
-        throw new Error("کتابخانه Plotly.js بارگذاری نشده است.");
-      }
-
-      return window.Plotly;
-    }
-
-    /* =========================================================
-     ANGLE MODE
-     ========================================================= */
-
-    function setAngleMode(mode) {
-      if (mode !== "rad" && mode !== "deg") {
-        mode = "rad";
-      }
-
-      angleMode = mode;
-
-      try {
-        window.localStorage.setItem(GRAPH_CONFIG.angleModeKey, angleMode);
-      } catch (error) {
-        console.warn("Could not save angle mode:", error);
-      }
-    }
-
-    function loadAngleMode() {
-      try {
-        const saved = window.localStorage.getItem(GRAPH_CONFIG.angleModeKey);
-
-        if (saved === "rad" || saved === "deg") {
-          angleMode = saved;
-        }
-      } catch (error) {
-        console.warn("Could not load angle mode:", error);
-      }
-    }
-
-    function toRadians(value) {
-      const number = Number(value);
-
-      if (!Number.isFinite(number)) {
-        return NaN;
-      }
-
-      if (angleMode === "deg") {
-        return (number * Math.PI) / 180;
-      }
-
-      return number;
-    }
-
-    function fromRadians(value) {
-      const number = Number(value);
-
-      if (!Number.isFinite(number)) {
-        return NaN;
-      }
-
-      if (angleMode === "deg") {
-        return (number * 180) / Math.PI;
-      }
-
-      return number;
-    }
-
-    /* =========================================================
-     CUSTOM MATH SCOPE
-     ========================================================= */
-
-    function createMathScope() {
-      return {
-        pi: Math.PI,
-
-        e: Math.E,
-
-        /* ---------- ANGLE CONVERSION ---------- */
-
-        deg: function (x) {
-          return (Number(x) * 180) / Math.PI;
-        },
-
-        rad: function (x) {
-          return (Number(x) * Math.PI) / 180;
-        },
-
-        /* ---------- TRIGONOMETRY ---------- */
-
-        sin: function (x) {
-          return Math.sin(toRadians(x));
-        },
-
-        cos: function (x) {
-          return Math.cos(toRadians(x));
-        },
-
-        tan: function (x) {
-          const radians = toRadians(x);
-
-          const cosValue = Math.cos(radians);
-
-          if (Math.abs(cosValue) < 1e-12) {
-            return NaN;
-          }
-
-          return Math.tan(radians);
-        },
-
-        /* ---------- INVERSE TRIGONOMETRY ---------- */
-
-        asin: function (x) {
-          return fromRadians(Math.asin(Number(x)));
-        },
-
-        acos: function (x) {
-          return fromRadians(Math.acos(Number(x)));
-        },
-
-        atan: function (x) {
-          return fromRadians(Math.atan(Number(x)));
-        },
-
-        atan2: function (y, x) {
-          return fromRadians(Math.atan2(Number(y), Number(x)));
-        },
-
-        /* ---------- HYPERBOLIC ---------- */
-
-        sinh: function (x) {
-          return Math.sinh(Number(x));
-        },
-
-        cosh: function (x) {
-          return Math.cosh(Number(x));
-        },
-
-        tanh: function (x) {
-          return Math.tanh(Number(x));
-        },
-
-        /* ---------- LOGARITHMS ---------- */
-
-        ln: function (x) {
-          const value = Number(x);
-
-          if (value <= 0) {
-            return NaN;
-          }
-
-          return Math.log(value);
-        },
-
-        log10: function (x) {
-          const value = Number(x);
-
-          if (value <= 0) {
-            return NaN;
-          }
-
-          return Math.log10(value);
-        },
-
-        /*
-        log(x)
-        پیش‌فرض: پایه 10
-
-        log(x, 2)
-        لگاریتم پایه 2
-
-        log2(x)
-        قبل از compile به log(x,2) تبدیل می‌شود.
-      */
-
-        log: function (x, base) {
-          const value = Number(x);
-
-          if (!Number.isFinite(value) || value <= 0) {
-            return NaN;
-          }
-
-          if (typeof base === "undefined") {
-            return Math.log10(value);
-          }
-
-          const b = Number(base);
-
-          if (!Number.isFinite(b) || b <= 0 || b === 1) {
-            return NaN;
-          }
-
-          return Math.log(value) / Math.log(b);
-        },
-
-        /* ---------- EXPONENTIAL ---------- */
-
-        exp: function (x) {
-          return Math.exp(Number(x));
-        },
-
-        /* ---------- BASIC ---------- */
-
-        sqrt: function (x) {
-          return Math.sqrt(Number(x));
-        },
-
-        abs: function (x) {
-          return Math.abs(Number(x));
-        },
-      };
-    }
-
-    /* =========================================================
-     PREPARE EXPRESSION
-     ========================================================= */
-
-    function prepareExpression(expression) {
-      let expr = String(expression ?? "").trim();
-
-      if (!expr) {
-        throw new Error("لطفاً یک تابع وارد کنید.");
-      }
-
-      /* y = ... */
-
-      expr = expr.replace(/^\s*y\s*=\s*/i, "");
-
-      /* Remove spaces */
-
-      expr = expr.replace(/\s+/g, "");
-
-      /* Persian / Unicode */
-
-      expr = expr.replace(/π/gi, "pi");
-
-      expr = expr.replace(/−/g, "-");
-
-      /* Uppercase X */
-
-      expr = expr.replace(/X/g, "x");
-
-      /*
-      log2(x)
-      log3(x)
-      log10(x)
-
-      تبدیل به:
-      log(x,2)
-      log(x,3)
-      log10(x)
-    */
-
-      expr = expr.replace(
-        /log(\d+)\(([^()]*)\)/gi,
-        function (match, base, value) {
-          if (base === "10") {
-            return "log10(" + value + ")";
-          }
-
-          return "log(" + value + "," + base + ")";
-        },
-      );
-
-      return expr;
-    }
-
-    /* =========================================================
-     FORMULA ERROR
-     ========================================================= */
-
-    function getDetailedError(expression, error) {
-      const message = String(error?.message || error || "");
-
-      if (/Undefined symbol/i.test(message)) {
-        const match = message.match(/Undefined symbol\s+([^\s]+)/i);
-
-        const symbol = match?.[1] || "ناشناخته";
-
-        return (
-          "نماد یا تابع «" + symbol + "» شناخته نشد. " + "فرمول را بررسی کنید."
-        );
-      }
-
-      if (/Parenthesis/i.test(message) || /parentheses/i.test(message)) {
-        return (
-          "پرانتزهای فرمول صحیح نیستند. " +
-          "پرانتزهای باز و بسته را بررسی کنید."
-        );
-      }
-
-      if (/Unexpected end/i.test(message)) {
-        return (
-          "فرمول ناقص است. " + "احتمالاً یک پرانتز یا عملگر بسته نشده است."
-        );
-      }
-
-      if (/Unexpected token/i.test(message)) {
-        return "در فرمول یک علامت یا کاراکتر غیرمنتظره وجود دارد.";
-      }
-
-      if (/Undefined function/i.test(message)) {
-        return "تابع وارد شده در Math.js یا موتور VAYRA تعریف نشده است.";
-      }
-
-      return (
-        "فرمول «" +
-        expression +
-        "» معتبر نیست. " +
-        "جزئیات: " +
-        (message || "خطای ناشناخته")
-      );
-    }
-
-    /* =========================================================
-     CREATE FUNCTION
-     ========================================================= */
-
-    function createFunction(expression) {
-      const math = getMath();
-
-      const prepared = prepareExpression(expression);
-
-      try {
-        const scope = createMathScope();
-
-        const node = math.parse(prepared);
-
-        const compiled = node.compile();
-
-        /*
-        Test expression
-      */
-
-        const test = compiled.evaluate({
-          x: 1,
-          ...scope,
-        });
-
-        if (typeof test !== "number" && !math.isNumeric(test)) {
-          throw new Error("تابع باید یک مقدار عددی برگرداند.");
-        }
-
-        return function (x) {
-          try {
-            const result = compiled.evaluate({
-              x: x,
-              ...scope,
-            });
-
-            const numericResult = Number(result);
-
-            if (!Number.isFinite(numericResult)) {
-              return NaN;
-            }
-
-            return numericResult;
-          } catch {
-            return NaN;
-          }
-        };
-      } catch (error) {
-        console.error("Formula error:", error);
-
-        throw new Error(getDetailedError(expression, error));
-      }
-    }
-
-    /* =========================================================
-     GRAPH SETTINGS
-     ========================================================= */
-
-    function getGraphSettings() {
-      const minX = Number(minXInput?.value ?? GRAPH_CONFIG.minX);
-
-      const maxX = Number(maxXInput?.value ?? GRAPH_CONFIG.maxX);
-
-      const samples = Number(samplesInput?.value ?? GRAPH_CONFIG.samples);
-
-      if (!Number.isFinite(minX) || !Number.isFinite(maxX)) {
-        throw new Error("محدوده X معتبر نیست.");
-      }
-
-      if (minX >= maxX) {
-        throw new Error("حداقل X باید از حداکثر X کوچک‌تر باشد.");
-      }
-
-      if (
-        !Number.isFinite(samples) ||
-        samples < GRAPH_CONFIG.minSamples ||
-        samples > GRAPH_CONFIG.maxSamples
-      ) {
-        throw new Error("دقت رسم باید بین 100 تا 20000 باشد.");
-      }
-
-      return {
-        minX: minX,
-        maxX: maxX,
-        samples: Math.floor(samples),
-      };
-    }
-
-    /* =========================================================
-     GENERATE X VALUES
-     ========================================================= */
-
-    function generateXValues(minX, maxX, samples) {
-      const safeSamples = Math.max(
-        GRAPH_CONFIG.minSamples,
-        Math.min(Math.floor(Number(samples)), GRAPH_CONFIG.maxSamples),
-      );
-
-      const step = (maxX - minX) / (safeSamples - 1);
-
-      const values = new Array(safeSamples);
-
-      for (let i = 0; i < safeSamples; i++) {
-        values[i] = minX + i * step;
-      }
-
-      return values;
-    }
-
-    /* =========================================================
-     GENERATE POINTS
-     ========================================================= */
-
-    function generatePoints(func, minX, maxX, samples) {
-      const xValues = generateXValues(minX, maxX, samples);
-
-      const rawY = new Array(xValues.length);
-
-      /*
-      First pass
-    */
-
-      for (let i = 0; i < xValues.length; i++) {
-        try {
-          const y = Number(func(xValues[i]));
-
-          rawY[i] = Number.isFinite(y) ? y : NaN;
-        } catch {
-          rawY[i] = NaN;
-        }
-      }
-
-      const yValues = new Array(rawY.length);
-
-      /*
-      Second pass
-      Detect discontinuities
-    */
-
-      for (let i = 0; i < rawY.length; i++) {
-        const current = rawY[i];
-
-        const previous = i > 0 ? rawY[i - 1] : NaN;
-
-        const next = i < rawY.length - 1 ? rawY[i + 1] : NaN;
-
-        if (!Number.isFinite(current)) {
-          yValues[i] = null;
-          continue;
-        }
-
-        if (Math.abs(current) > GRAPH_CONFIG.maxY) {
-          yValues[i] = null;
-          continue;
-        }
-
-        /*
-        Detect very large jumps.
-
-        این قسمت برای جلوگیری از
-        وصل شدن دو طرف مجانب است.
-      */
-
-        if (Number.isFinite(previous) && Number.isFinite(next)) {
-          const leftJump = Math.abs(current - previous);
-
-          const rightJump = Math.abs(next - current);
-
-          const threshold = Math.max(1000, Math.abs(current) * 25);
-
-          if (leftJump > threshold || rightJump > threshold) {
-            yValues[i] = null;
-            continue;
-          }
-        }
-
-        yValues[i] = current;
-      }
-
-      return {
-        x: xValues,
-        y: yValues,
-      };
-    }
-
-    /* =========================================================
-     CREATE FUNCTION TRACE
-     ========================================================= */
-
-    function createFunctionTrace(expression, options = {}) {
-      const minX = Number.isFinite(Number(options.minX))
-        ? Number(options.minX)
-        : GRAPH_CONFIG.minX;
-
-      const maxX = Number.isFinite(Number(options.maxX))
-        ? Number(options.maxX)
-        : GRAPH_CONFIG.maxX;
-
-      const samples = Number.isFinite(Number(options.samples))
-        ? Number(options.samples)
-        : GRAPH_CONFIG.samples;
-
-      const func = createFunction(expression);
-
-      const points = generatePoints(func, minX, maxX, samples);
-
-      const color = graphColors[graphs.length % graphColors.length];
-
-      return {
-        x: points.x,
-
-        y: points.y,
-
-        type: "scattergl",
-
-        mode: "lines",
-
-        name: options.name || expression,
-
-        graphType: "function",
-
-        expression: expression,
-
-        angleMode: angleMode,
-
-        line: {
-          color: color,
-          width: 2.5,
-        },
-
-        connectgaps: false,
-
-        hovertemplate:
-          "<b>%{fullData.name}</b>" +
-          "<br>x = %{x:.6f}" +
-          "<br>y = %{y:.6f}" +
-          "<extra></extra>",
-      };
-    }
-
-    /* =========================================================
-     PLOT FUNCTION
-     ========================================================= */
-
-    function plotFunction(expression, options = {}) {
-      try {
-        if (typeof expression !== "string") {
-          throw new Error("تابع وارد شده معتبر نیست.");
-        }
-
-        const cleanExpression = expression.trim();
-
-        if (!cleanExpression) {
-          throw new Error("لطفاً تابع را وارد کنید.");
-        }
-
-        const settings = getGraphSettings();
-
-        const trace = createFunctionTrace(cleanExpression, {
-          ...settings,
-          ...options,
-        });
-
-        graphs.push(trace);
-
-        updateGraph();
-
-        updateFunctionList();
-
-        saveGraphs();
-
-        return true;
-      } catch (error) {
-        console.error(error);
-
-        alert(error.message || "خطا در رسم نمودار.");
-
-        return false;
-      }
-    }
-
-    /* =========================================================
-     LINEAR FUNCTION
-     ========================================================= */
-
-    function normalizeLinearExpression(expression) {
-      let expr = String(expression ?? "").trim();
-
-      if (!expr) {
-        throw new Error("لطفاً تابع درجه یک را وارد کنید.");
-      }
-
-      expr = expr.replace(/^\s*y\s*=\s*/i, "");
-
-      expr = expr.replace(/\s+/g, "");
-
-      expr = expr.replace(/−/g, "-");
-
-      expr = expr.replace(/X/g, "x");
-
-      if (!/[x]/.test(expr)) {
-        throw new Error("تابع درجه یک باید شامل متغیر x باشد.");
-      }
-
-      return expr;
-    }
-
-    function createLinearTraceFromEquation(expression, options = {}) {
-      const normalized = normalizeLinearExpression(expression);
-
-      const func = createFunction(normalized);
-
-      const minX = Number.isFinite(Number(options.minX))
-        ? Number(options.minX)
-        : GRAPH_CONFIG.minX;
-
-      const maxX = Number.isFinite(Number(options.maxX))
-        ? Number(options.maxX)
-        : GRAPH_CONFIG.maxX;
-
-      const samples = Number.isFinite(Number(options.samples))
-        ? Number(options.samples)
-        : GRAPH_CONFIG.samples;
-
-      const points = generatePoints(func, minX, maxX, samples);
-
-      const color = graphColors[graphs.length % graphColors.length];
-
-      return {
-        x: points.x,
-
-        y: points.y,
-
-        type: "scattergl",
-
-        mode: "lines",
-
-        name: options.name || "y = " + normalized,
-
-        graphType: "linear",
-
-        expression: "y = " + normalized,
-
-        angleMode: angleMode,
-
-        line: {
-          color: color,
-          width: 3.5,
-        },
-
-        connectgaps: false,
-
-        hovertemplate:
-          "<b>%{fullData.name}</b>" +
-          "<br>x = %{x:.6f}" +
-          "<br>y = %{y:.6f}" +
-          "<extra></extra>",
-      };
-    }
-
-    function formatLinearEquation(a, b) {
-      let result = "";
-
-      if (a === 1) {
-        result = "x";
-      } else if (a === -1) {
-        result = "-x";
-      } else {
-        result = String(a) + "x";
-      }
-
-      if (b > 0) {
-        result += " + " + String(b);
-      } else if (b < 0) {
-        result += " - " + String(Math.abs(b));
-      }
-
-      return "y = " + result;
-    }
-
-    function plotLinearByCoefficients() {
-      try {
-        const a = Number(linearAInput?.value);
-
-        const b = Number(linearBInput?.value);
-
-        if (!Number.isFinite(a) || !Number.isFinite(b)) {
-          throw new Error("مقدار a و b باید عدد معتبر باشند.");
-        }
-
-        const settings = getGraphSettings();
-
-        const expression = String(a) + "*x+" + String(b);
-
-        const trace = createLinearTraceFromEquation(expression, {
-          ...settings,
-
-          name: formatLinearEquation(a, b),
-        });
-
-        graphs.push(trace);
-
-        updateGraph();
-
-        updateFunctionList();
-
-        saveGraphs();
-
-        return true;
-      } catch (error) {
-        console.error(error);
-
-        alert(error.message || "خطا در رسم تابع درجه یک.");
-
-        return false;
-      }
-    }
-
-    function plotLinearByEquation() {
-      try {
-        const expression = String(linearEquationInput?.value ?? "").trim();
-
-        if (!expression) {
-          throw new Error("لطفاً تابع درجه یک را وارد کنید.");
-        }
-
-        const settings = getGraphSettings();
-
-        const trace = createLinearTraceFromEquation(expression, {
-          ...settings,
-          name: expression,
-        });
-
-        graphs.push(trace);
-
-        updateGraph();
-
-        updateFunctionList();
-
-        saveGraphs();
-
-        return true;
-      } catch (error) {
-        console.error(error);
-
-        alert(error.message || "فرمول تابع درجه یک معتبر نیست.");
-
-        return false;
-      }
-    }
-
-    function updateLinearPreview() {
-      if (!linearPreview || !linearAInput || !linearBInput) {
-        return;
-      }
-
-      const a = Number(linearAInput.value);
-
-      const b = Number(linearBInput.value);
-
-      if (!Number.isFinite(a) || !Number.isFinite(b)) {
-        linearPreview.textContent = "مقدار نامعتبر";
-
-        return;
-      }
-
-      linearPreview.textContent = formatLinearEquation(a, b);
-    }
-
-    /* =========================================================
-     EXAMPLES
-     ========================================================= */
-
-    function plotExamples() {
-      const examples = [
-        {
-          expression: "sin(x)",
-          name: "sin(x)",
-        },
-
-        {
-          expression: "cos(x)",
-          name: "cos(x)",
-        },
-
-        {
-          expression: "tan(x)",
-          name: "tan(x)",
-        },
-
-        {
-          expression: "asin(x)",
-          name: "asin(x)",
-        },
-
-        {
-          expression: "ln(x)",
-          name: "ln(x)",
-        },
-
-        {
-          expression: "log(x,2)",
-          name: "log₂(x)",
-        },
-
-        {
-          expression: "exp(x)",
-          name: "eˣ",
-        },
-
-        {
-          expression: "x^2",
-          name: "x²",
-        },
-
-        {
-          expression: "2*x+3",
-          name: "y = 2x + 3",
-        },
-      ];
-
-      const settings = getGraphSettings();
-
-      examples.forEach(function (item) {
-        try {
-          const isLinear = item.name.includes("y =");
-
-          const trace = isLinear
-            ? createLinearTraceFromEquation(item.expression, {
-                ...settings,
-                name: item.name,
-              })
-            : createFunctionTrace(item.expression, {
-                ...settings,
-                name: item.name,
-              });
-
-          graphs.push(trace);
-        } catch (error) {
-          console.warn("Example failed:", error);
-        }
-      });
-
-      updateGraph();
-
-      updateFunctionList();
-
-      saveGraphs();
-    }
-
-    /* =========================================================
-     UPDATE GRAPH
-     ========================================================= */
-
-    function updateGraph() {
-      if (!graphContainer || typeof window.Plotly === "undefined") {
-        return;
-      }
-
-      const Plotly = getPlotly();
-
-      const layout = {
-        autosize: true,
-
-        paper_bgcolor: "rgba(0,0,0,0)",
-
-        plot_bgcolor: "#071321",
-
-        font: {
-          family: "Vazirmatn, Tahoma, sans-serif",
-
-          color: "#ffffff",
-        },
-
-        xaxis: {
-          title: angleMode === "deg" ? "X — درجه" : "X — رادیان",
-
-          showgrid: true,
-
-          gridcolor: "rgba(255,255,255,0.08)",
-
-          zeroline: true,
-
-          zerolinecolor: "#d4af37",
-
-          zerolinewidth: 1.5,
-
-          autorange: true,
-
-          fixedrange: false,
-        },
-
-        yaxis: {
-          title: "Y",
-
-          showgrid: true,
-
-          gridcolor: "rgba(255,255,255,0.08)",
-
-          zeroline: true,
-
-          zerolinecolor: "#d4af37",
-
-          zerolinewidth: 1.5,
-
-          autorange: true,
-
-          fixedrange: false,
-        },
-
-        hovermode: "closest",
-
-        dragmode: "pan",
-
-        showlegend: true,
-
-        legend: {
-          orientation: "h",
-
-          y: -0.15,
-        },
-
-        margin: {
-          l: 65,
-
-          r: 20,
-
-          t: 30,
-
-          b: 90,
-        },
-
-        uirevision: "vayra-fixed",
-      };
-
-      const config = {
-        responsive: true,
-
-        scrollZoom: true,
-
-        displayModeBar: false,
-
-        displaylogo: false,
-
-        doubleClick: "reset",
-      };
-
-      Plotly.react(graphContainer, graphs, layout, config);
-    }
-
-    /* =========================================================
-     CLEAR
-     ========================================================= */
-
-    function clearGraphs() {
-      graphs = [];
-
-      updateGraph();
-
-      updateFunctionList();
-
-      saveGraphs();
-    }
-
-    /* =========================================================
-     REMOVE
-     ========================================================= */
-
-    function removeGraph(index) {
-      if (index < 0 || index >= graphs.length) {
-        return;
-      }
-
-      graphs.splice(index, 1);
-
-      updateGraph();
-
-      updateFunctionList();
-
-      saveGraphs();
-    }
-
-    /* =========================================================
-     RESET ZOOM
-     ========================================================= */
-
-    function resetZoom() {
-      if (!graphContainer || typeof window.Plotly === "undefined") {
-        return;
-      }
-
-      window.Plotly.relayout(graphContainer, {
-        "xaxis.autorange": true,
-
-        "yaxis.autorange": true,
-      });
-    }
-
-    /* =========================================================
-     ZOOM IN
-     ========================================================= */
-
-    function zoomIn() {
-      if (!graphContainer?.layout?.xaxis || !graphContainer?.layout?.yaxis) {
-        return;
-      }
-
-      const xRange = graphContainer.layout.xaxis.range;
-
-      const yRange = graphContainer.layout.yaxis.range;
-
-      if (!xRange || !yRange) {
-        return;
-      }
-
-      const xCenter = (xRange[0] + xRange[1]) / 2;
-
-      const yCenter = (yRange[0] + yRange[1]) / 2;
-
-      const xHalf = (xRange[1] - xRange[0]) * 0.4;
-
-      const yHalf = (yRange[1] - yRange[0]) * 0.4;
-
-      window.Plotly.relayout(graphContainer, {
-        "xaxis.range": [xCenter - xHalf, xCenter + xHalf],
-
-        "yaxis.range": [yCenter - yHalf, yCenter + yHalf],
-      });
-    }
-
-    /* =========================================================
-     ZOOM OUT
-     ========================================================= */
-
-    function zoomOut() {
-      if (!graphContainer?.layout?.xaxis || !graphContainer?.layout?.yaxis) {
-        return;
-      }
-
-      const xRange = graphContainer.layout.xaxis.range;
-
-      const yRange = graphContainer.layout.yaxis.range;
-
-      if (!xRange || !yRange) {
-        return;
-      }
-
-      const xCenter = (xRange[0] + xRange[1]) / 2;
-
-      const yCenter = (yRange[0] + yRange[1]) / 2;
-
-      const xHalf = (xRange[1] - xRange[0]) * 0.625;
-
-      const yHalf = (yRange[1] - yRange[0]) * 0.625;
-
-      window.Plotly.relayout(graphContainer, {
-        "xaxis.range": [xCenter - xHalf, xCenter + xHalf],
-
-        "yaxis.range": [yCenter - yHalf, yCenter + yHalf],
-      });
-    }
-
-    /* =========================================================
-     FUNCTION LIST
-     ========================================================= */
-
-    function updateFunctionList() {
-      if (!functionList) {
-        return;
-      }
-
-      functionList.innerHTML = "";
-
-      if (graphs.length === 0) {
-        const emptyRow = document.createElement("div");
-
-        emptyRow.className = "function-row";
-
-        emptyRow.textContent = "هنوز نموداری رسم نشده است.";
-
-        functionList.appendChild(emptyRow);
-
-        return;
-      }
-
-      graphs.forEach(function (graph, index) {
-        const row = document.createElement("div");
-
-        row.className = "function-row";
-
-        const span = document.createElement("span");
-
-        span.textContent = graph.name || graph.expression || "نمودار";
-
-        const type = document.createElement("span");
-
-        type.className = "graph-type";
-
-        type.textContent =
-          graph.graphType === "linear"
-            ? "درجه یک"
-            : "تابع — " + (graph.angleMode === "deg" ? "درجه" : "رادیان");
-
-        const button = document.createElement("button");
-
-        button.className = "danger-btn";
-
-        button.type = "button";
-
-        button.textContent = "حذف";
-
-        button.addEventListener("click", function () {
-          removeGraph(index);
-        });
-
-        row.appendChild(span);
-
-        row.appendChild(type);
-
-        row.appendChild(button);
-
-        functionList.appendChild(row);
-      });
-    }
-
-    /* =========================================================
-     SAVE
-     ========================================================= */
-
-    function saveGraphs() {
-      try {
-        const data = graphs.map(function (graph) {
-          return {
-            graphType: graph.graphType,
-
-            expression: graph.expression,
-
-            name: graph.name,
-
-            angleMode: graph.angleMode || "rad",
-          };
-        });
-
-        window.localStorage.setItem(
-          GRAPH_CONFIG.storageKey,
-          JSON.stringify(data),
-        );
-      } catch (error) {
-        console.warn("Save error:", error);
-      }
-    }
-
-    /* =========================================================
-     LOAD
-     ========================================================= */
-
-    function loadGraphs() {
-      try {
-        const saved = window.localStorage.getItem(GRAPH_CONFIG.storageKey);
-
-        if (!saved) {
-          return;
-        }
-
-        const data = JSON.parse(saved);
-
-        if (!Array.isArray(data)) {
-          return;
-        }
-
-        data.forEach(function (item) {
-          if (!item || !item.expression) {
-            return;
-          }
-
-          try {
-            const settings = {
-              minX: GRAPH_CONFIG.minX,
-
-              maxX: GRAPH_CONFIG.maxX,
-
-              samples: GRAPH_CONFIG.samples,
-            };
-
-            const oldMode = angleMode;
-
-            if (item.angleMode === "deg" || item.angleMode === "rad") {
-              angleMode = item.angleMode;
-            }
-
-            const trace =
-              item.graphType === "linear"
-                ? createLinearTraceFromEquation(item.expression, {
-                    ...settings,
-
-                    name: item.name || item.expression,
-                  })
-                : createFunctionTrace(item.expression, {
-                    ...settings,
-
-                    name: item.name || item.expression,
-                  });
-
-            graphs.push(trace);
-
-            angleMode = oldMode;
-          } catch (error) {
-            console.warn("Graph load failed:", error);
-          }
-        });
-
-        updateGraph();
-
-        updateFunctionList();
-      } catch (error) {
-        console.warn("Load error:", error);
-      }
-    }
-
-    /* =========================================================
-     HOVER
-     ========================================================= */
-
-    function setupHover() {
-      if (!graphContainer || !pointInfo) {
-        return;
-      }
-
-      graphContainer.on("plotly_hover", function (data) {
-        if (!data || !data.points || !data.points.length) {
-          return;
-        }
-
-        const point = data.points[0];
-
-        const x = Number(point.x);
-
-        const y = Number(point.y);
-
-        if (!Number.isFinite(x) || !Number.isFinite(y)) {
-          return;
-        }
-
-        pointInfo.innerHTML =
-          "<strong>x = " +
-          x.toFixed(8) +
-          "</strong>" +
-          "&nbsp;&nbsp;" +
-          "<strong>y = " +
-          y.toFixed(8) +
-          "</strong>";
-      });
-
-      graphContainer.on("plotly_unhover", function () {
-        pointInfo.textContent =
-          "برای مشاهده مختصات، نشانگر را روی نمودار حرکت دهید.";
-      });
-    }
-
-    /* =========================================================
-     QUICK FUNCTIONS
-     
-     مهم:
-     این بخش باید داخل همین IIFE باشد.
-     در نسخه قبلی شما بیرون IIFE بود و به همین دلیل
-     functionInput و plotFunction را نمی‌شناخت.
-     ========================================================= */
-
-    function setupQuickFunctions() {
-      const quickButtons = document.querySelectorAll(".quick-function");
-
-      quickButtons.forEach(function (button) {
-        button.addEventListener("click", function () {
-          const expression = button.dataset.function;
-
-          if (!expression) {
-            return;
-          }
-
-          /*
-              قرار دادن تابع در Input
-            */
-
-          if (functionInput) {
-            functionInput.value = expression;
-          }
-
-          /*
-              رسم تابع
-            */
-
-          plotFunction(expression);
-        });
-      });
-    }
-
-    /* =========================================================
-     EVENT LISTENERS
-     ========================================================= */
-
-    function setupEvents() {
-      /* ---------- NORMAL FUNCTION ---------- */
-
-      if (plotBtn) {
-        plotBtn.addEventListener("click", function () {
-          const expression = functionInput?.value.trim() || "";
-
-          if (plotFunction(expression)) {
-            if (functionInput) {
-              functionInput.value = "";
-
-              functionInput.focus();
-            }
-          }
-        });
-      }
-
-      /* ---------- NORMAL ENTER ---------- */
-
-      if (functionInput) {
-        functionInput.addEventListener("keydown", function (event) {
-          if (event.key === "Enter") {
-            event.preventDefault();
-
-            plotBtn?.click();
-          }
-        });
-      }
-
-      /* ---------- LINEAR ---------- */
-
-      if (plotLinearBtn) {
-        plotLinearBtn.addEventListener("click", function () {
-          const directEquation = linearEquationInput?.value.trim() || "";
-
-          if (directEquation) {
-            if (plotLinearByEquation() && linearEquationInput) {
-              linearEquationInput.value = "";
-            }
-          } else {
-            plotLinearByCoefficients();
-          }
-        });
-      }
-
-      /* ---------- LINEAR ENTER ---------- */
-
-      if (linearEquationInput) {
-        linearEquationInput.addEventListener("keydown", function (event) {
-          if (event.key === "Enter") {
-            event.preventDefault();
-
-            plotLinearBtn?.click();
-          }
-        });
-      }
-
-      /* ---------- PREVIEW ---------- */
-
-      linearAInput?.addEventListener("input", updateLinearPreview);
-
-      linearBInput?.addEventListener("input", updateLinearPreview);
-
-      /* ---------- EXAMPLES ---------- */
-
-      examplesBtn?.addEventListener("click", function () {
-        try {
-          plotExamples();
-        } catch (error) {
-          alert(error.message || "خطا در رسم مثال‌ها.");
-        }
-      });
-
-      /* ---------- CLEAR ---------- */
-
-      clearBtn?.addEventListener("click", function () {
-        if (graphs.length === 0) {
-          return;
-        }
-
-        if (confirm("آیا می‌خواهید تمام نمودارها حذف شوند؟")) {
-          clearGraphs();
-        }
-      });
-
-      /* ---------- ZOOM ---------- */
-
-      resetZoomBtn?.addEventListener("click", resetZoom);
-
-      zoomInBtn?.addEventListener("click", zoomIn);
-
-      zoomOutBtn?.addEventListener("click", zoomOut);
-
-      /* ---------- MOBILE MENU ---------- */
-
-      if (menuButton && sidebar) {
-        menuButton.addEventListener("click", function () {
-          sidebar.classList.toggle("open");
-        });
-      }
-
-      /* ---------- CLOSE SIDEBAR ---------- */
-
-      if (sidebar) {
-        sidebar.querySelectorAll("a").forEach(function (link) {
-          link.addEventListener("click", function () {
-            sidebar.classList.remove("open");
-          });
-        });
-      }
-    }
-
-    /* =========================================================
-     RESIZE
-     ========================================================= */
-
-    window.addEventListener("resize", function () {
-      if (graphContainer && typeof window.Plotly !== "undefined") {
-        window.Plotly.Plots.resize(graphContainer);
-      }
+    traces.forEach(function (trace, index) {
+      const item = document.createElement("div");
+
+      item.className = "function-item";
+
+      item.innerHTML = `
+        <span>
+          <strong>${index + 1}.</strong>
+          ${trace.name}
+        </span>
+
+        <button
+          type="button"
+          class="danger-btn remove-function"
+          data-index="${index}"
+        >
+          حذف
+        </button>
+      `;
+
+      functionList.appendChild(item);
     });
 
-    /* =========================================================
-     INITIALIZE
-     ========================================================= */
+    const removeButtons = document.querySelectorAll(".remove-function");
 
-    function initialize() {
-      if (typeof window.Plotly === "undefined") {
-        alert("کتابخانه Plotly.js بارگذاری نشده است.");
+    removeButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        const index = Number(this.dataset.index);
 
-        return;
-      }
+        traces.splice(index, 1);
 
-      if (typeof window.math === "undefined") {
-        alert("کتابخانه Math.js بارگذاری نشده است.");
+        updateGraph();
 
-        return;
-      }
-
-      if (!graphContainer) {
-        console.error("VAYRA Graph Engine: عنصر #graph پیدا نشد.");
-
-        return;
-      }
-
-      loadAngleMode();
-
-      setupEvents();
-
-      setupQuickFunctions();
-
-      loadGraphs();
-
-      updateLinearPreview();
-
-      if (graphs.length === 0) {
-        plotFunction("sin(x)", {
-          minX: -10,
-
-          maxX: 10,
-
-          samples: 4000,
-
-          name: "sin(x)",
-        });
-      }
-
-      setupHover();
-    }
-
-    /* =========================================================
-     START
-     ========================================================= */
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initialize, {
-        once: true,
+        updateFunctionList();
       });
-    } else {
-      initialize();
+    });
+  }
+
+  // ---------------------------------------------------------
+  // PLOT BUTTON
+  // ---------------------------------------------------------
+
+  plotBtn.addEventListener("click", function () {
+    const expression = functionInput.value.trim();
+
+    if (!expression) {
+      alert("لطفاً تابع ریاضی را وارد کنید.");
+
+      functionInput.focus();
+
+      return;
     }
 
-    /* =========================================================
-     GLOBAL API
-     ========================================================= */
+    plotFunction(expression);
 
-    window.VayraGraph = {
-      plot: plotFunction,
+    functionInput.value = "";
 
-      plotLinear: plotLinearByEquation,
+    functionInput.focus();
+  });
 
-      plotLinearByCoefficients: plotLinearByCoefficients,
+  // ---------------------------------------------------------
+  // ENTER KEY
+  // ---------------------------------------------------------
 
-      clear: clearGraphs,
+  functionInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
 
-      remove: removeGraph,
+      plotBtn.click();
+    }
+  });
 
-      resetZoom: resetZoom,
+  // ---------------------------------------------------------
+  // QUICK FUNCTIONS
+  // ---------------------------------------------------------
 
-      zoomIn: zoomIn,
+  const quickFunctions = document.querySelectorAll(".quick-function");
 
-      zoomOut: zoomOut,
+  quickFunctions.forEach(function (button) {
+    button.addEventListener("click", function () {
+      const expression = this.dataset.function;
 
-      setAngleMode: setAngleMode,
+      functionInput.value = expression;
 
-      getAngleMode: function () {
-        return angleMode;
-      },
-    };
-  },
-)();
+      functionInput.focus();
+    });
+  });
+
+  // ---------------------------------------------------------
+  // CLEAR ALL
+  // ---------------------------------------------------------
+
+  clearBtn.addEventListener("click", function () {
+    traces = [];
+
+    Plotly.react(graphElement, [], graphLayout, graphConfig);
+
+    updateFunctionList();
+
+    pointInfo.textContent =
+      "برای مشاهده مختصات، نشانگر را روی نمودار حرکت دهید.";
+  });
+
+  // ---------------------------------------------------------
+  // EXAMPLES
+  // ---------------------------------------------------------
+
+  examplesBtn.addEventListener("click", function () {
+    const examples = [
+      "sin(x)",
+      "cos(x)",
+      "x^2",
+      "sqrt(abs(x))",
+      "1/x",
+      "sin(x)/x",
+    ];
+
+    const selected = examples[Math.floor(Math.random() * examples.length)];
+
+    functionInput.value = selected;
+
+    functionInput.focus();
+  });
+
+  // ---------------------------------------------------------
+  // RESET ZOOM
+  // ---------------------------------------------------------
+
+  resetZoomBtn.addEventListener("click", function () {
+    Plotly.relayout(graphElement, {
+      "xaxis.autorange": true,
+      "yaxis.autorange": true,
+    });
+  });
+
+  // ---------------------------------------------------------
+  // ZOOM IN
+  // ---------------------------------------------------------
+
+  zoomInBtn.addEventListener("click", function () {
+    const xRange = graphElement.layout.xaxis.range;
+
+    const yRange = graphElement.layout.yaxis.range;
+
+    if (!xRange || !yRange) {
+      return;
+    }
+
+    const xCenter = (xRange[0] + xRange[1]) / 2;
+
+    const yCenter = (yRange[0] + yRange[1]) / 2;
+
+    const xHalf = (xRange[1] - xRange[0]) * 0.4;
+
+    const yHalf = (yRange[1] - yRange[0]) * 0.4;
+
+    Plotly.relayout(graphElement, {
+      "xaxis.range": [xCenter - xHalf, xCenter + xHalf],
+
+      "yaxis.range": [yCenter - yHalf, yCenter + yHalf],
+    });
+  });
+
+  // ---------------------------------------------------------
+  // ZOOM OUT
+  // ---------------------------------------------------------
+
+  zoomOutBtn.addEventListener("click", function () {
+    const xRange = graphElement.layout.xaxis.range;
+
+    const yRange = graphElement.layout.yaxis.range;
+
+    if (!xRange || !yRange) {
+      return;
+    }
+
+    const xCenter = (xRange[0] + xRange[1]) / 2;
+
+    const yCenter = (yRange[0] + yRange[1]) / 2;
+
+    const xHalf = (xRange[1] - xRange[0]) * 0.625;
+
+    const yHalf = (yRange[1] - yRange[0]) * 0.625;
+
+    Plotly.relayout(graphElement, {
+      "xaxis.range": [xCenter - xHalf, xCenter + xHalf],
+
+      "yaxis.range": [yCenter - yHalf, yCenter + yHalf],
+    });
+  });
+
+  // ---------------------------------------------------------
+  // LINEAR FUNCTION PREVIEW
+  // ---------------------------------------------------------
+
+  function updateLinearPreview() {
+    const a = Number(linearAInput.value) || 0;
+
+    const b = Number(linearBInput.value) || 0;
+
+    let equation = "";
+
+    if (a === 0) {
+      equation = `y = ${b}`;
+    } else {
+      equation = `y = ${a}x`;
+
+      if (b > 0) {
+        equation += ` + ${b}`;
+      } else if (b < 0) {
+        equation += ` - ${Math.abs(b)}`;
+      }
+    }
+
+    linearPreview.textContent = equation;
+  }
+
+  linearAInput.addEventListener("input", updateLinearPreview);
+
+  linearBInput.addEventListener("input", updateLinearPreview);
+
+  // ---------------------------------------------------------
+  // LINEAR EQUATION PARSER
+  // ---------------------------------------------------------
+
+  function parseLinearEquation(equation) {
+    equation = equation.trim().toLowerCase().replace(/\s+/g, "");
+
+    equation = equation.replace(/^y=/, "");
+
+    // بررسی وجود x
+    if (!equation.includes("x")) {
+      const constant = Number(equation);
+
+      if (Number.isFinite(constant)) {
+        return {
+          a: 0,
+          b: constant,
+        };
+      }
+
+      return null;
+    }
+
+    // استفاده از Math.js برای استخراج ضرایب
+    try {
+      const node = math.parse(equation);
+
+      const a = math.evaluate(math.derivative(equation, "x").toString());
+
+      // روش مطمئنتر:
+      // محاسبه مقدار تابع در x=0 و x=1
+
+      const b = math.evaluate(equation, { x: 0 });
+
+      const y1 = math.evaluate(equation, { x: 1 });
+
+      const coefficient = y1 - b;
+
+      if (Number.isFinite(coefficient) && Number.isFinite(b)) {
+        return {
+          a: coefficient,
+          b: b,
+        };
+      }
+    } catch (error) {
+      return null;
+    }
+
+    return null;
+  }
+
+  // ---------------------------------------------------------
+  // PLOT LINEAR FUNCTION
+  // ---------------------------------------------------------
+
+  plotLinearBtn.addEventListener("click", function () {
+    let a;
+    let b;
+
+    const directEquation = linearEquationInput.value.trim();
+
+    if (directEquation) {
+      const result = parseLinearEquation(directEquation);
+
+      if (!result) {
+        alert(
+          "تابع درجه یک وارد شده معتبر نیست.\n\n" +
+            "مثال صحیح:\n" +
+            "y = 2x + 3",
+        );
+
+        return;
+      }
+
+      a = result.a;
+
+      b = result.b;
+    } else {
+      a = Number(linearAInput.value);
+
+      b = Number(linearBInput.value);
+
+      if (!Number.isFinite(a) || !Number.isFinite(b)) {
+        alert("ضرایب a و b معتبر نیستند.");
+
+        return;
+      }
+    }
+
+    const expression = `${a} * x + (${b})`;
+
+    const label = `y = ${a}x ${b >= 0 ? "+" : "-"} ${Math.abs(b)}`;
+
+    plotFunction(expression, label);
+  });
+
+  // ---------------------------------------------------------
+  // GRAPH HOVER
+  // ---------------------------------------------------------
+
+  graphElement.on("plotly_hover", function (eventData) {
+    if (!eventData || !eventData.points || !eventData.points.length) {
+      return;
+    }
+
+    const point = eventData.points[0];
+
+    const x = Number(point.x);
+
+    const y = Number(point.y);
+
+    pointInfo.innerHTML = `
+        <strong>مختصات نقطه:</strong>
+        <span dir="ltr">
+          X = ${x.toFixed(6)}
+          &nbsp;&nbsp;
+          Y = ${y.toFixed(6)}
+        </span>
+      `;
+  });
+
+  // ---------------------------------------------------------
+  // INITIALIZATION
+  // ---------------------------------------------------------
+
+  updateLinearPreview();
+
+  updateFunctionList();
+
+  console.log("VAYRA Graph Engine Loaded Successfully");
+});
