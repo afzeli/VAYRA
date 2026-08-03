@@ -1,22 +1,23 @@
-```html
 <!doctype html>
+
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
 
+    ```
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>VAYRA - رسم نمودار پیشرفته</title>
 
     <!-- =====================================================
-         VAYRA STYLE
-    ====================================================== -->
+     VAYRA STYLE
+====================================================== -->
 
     <link rel="stylesheet" href="style.css" />
 
     <!-- =====================================================
-         VAZIRMATN FONT
-    ====================================================== -->
+     VAZIRMATN FONT
+====================================================== -->
 
     <link
       href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap"
@@ -24,23 +25,25 @@
     />
 
     <!-- =====================================================
-         PLOTLY.JS
-    ====================================================== -->
+     PLOTLY.JS
+====================================================== -->
 
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
     <!-- =====================================================
-         MATH.JS
-    ====================================================== -->
+     MATH.JS
+====================================================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/mathjs@13.2.3/lib/browser/math.js"></script>
+    ```
   </head>
 
   <body>
     <div class="dashboard">
+      ```
       <!-- =====================================================
-         HEADER
-    ====================================================== -->
+       HEADER
+  ====================================================== -->
 
       <header class="topbar">
         <div class="left-tools">
@@ -51,7 +54,7 @@
           <div class="search">
             <input type="text" placeholder="جستجو کنید..." />
 
-            <span> ⌕ </span>
+            <span>⌕</span>
           </div>
         </div>
 
@@ -69,12 +72,12 @@
 
         <!-- MOBILE MENU -->
 
-        <div class="menu" onclick="toggleSidebar()">☰</div>
+        <div class="menu" id="menuButton" onclick="toggleSidebar()">☰</div>
       </header>
 
       <!-- =====================================================
-         SIDEBAR
-    ====================================================== -->
+       SIDEBAR
+  ====================================================== -->
 
       <aside class="sidebar" id="sidebar">
         <div class="profile">
@@ -97,8 +100,8 @@
       </aside>
 
       <!-- =====================================================
-         MAIN CONTENT
-    ====================================================== -->
+       MAIN CONTENT
+  ====================================================== -->
 
       <main class="content">
         <!-- PAGE HEADER -->
@@ -106,7 +109,7 @@
         <section class="page-header">
           <h1>
             رسم نمودار
-            <span> پیشرفته </span>
+            <span>پیشرفته</span>
           </h1>
 
           <p>
@@ -118,14 +121,14 @@
           </p>
         </section>
 
-        <!-- =================================================
-             GRAPH PANEL
-        ================================================== -->
+        <!-- =====================================================
+         GRAPH PANEL
+    ====================================================== -->
 
         <section class="panel">
           <!-- =================================================
-                 FUNCTION INPUT
-            ================================================== -->
+           GENERAL FUNCTION
+      ================================================== -->
 
           <div class="input-group">
             <label for="functionInput"> تابع ریاضی </label>
@@ -162,8 +165,91 @@
           </div>
 
           <!-- =================================================
-                 GRAPH CONTROLS
-            ================================================== -->
+           LINEAR FUNCTION
+      ================================================== -->
+
+          <div class="linear-function-box">
+            <div class="linear-title">
+              <h3>📐 رسم تابع درجه یک</h3>
+
+              <p>
+                تابع را به صورت
+                <span dir="ltr">y = ax + b</span>
+                وارد کنید یا ضرایب
+                <span dir="ltr">a</span>
+                و
+                <span dir="ltr">b</span>
+                را مشخص کنید.
+              </p>
+            </div>
+
+            <!-- DIRECT EQUATION -->
+
+            <div class="input-group">
+              <label for="linearEquationInput">
+                وارد کردن مستقیم تابع درجه یک
+              </label>
+
+              <input
+                type="text"
+                id="linearEquationInput"
+                dir="ltr"
+                placeholder="مثال: y = 2x + 3"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+
+            <div class="linear-divider">
+              <span>یا</span>
+            </div>
+
+            <!-- A AND B -->
+
+            <div class="linear-coefficients">
+              <div class="input-group">
+                <label for="linearA"> ضریب a </label>
+
+                <input
+                  type="number"
+                  id="linearA"
+                  value="1"
+                  step="any"
+                  dir="ltr"
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="linearB"> ضریب b </label>
+
+                <input
+                  type="number"
+                  id="linearB"
+                  value="0"
+                  step="any"
+                  dir="ltr"
+                />
+              </div>
+            </div>
+
+            <div class="linear-preview">
+              <span> تابع فعلی: </span>
+
+              <strong id="linearPreview" dir="ltr"> y = x </strong>
+            </div>
+
+            <button
+              class="primary-btn linear-btn"
+              id="plotLinearBtn"
+              type="button"
+            >
+              📈 رسم تابع درجه یک
+            </button>
+          </div>
+
+          <!-- =================================================
+           GRAPH CONTROLS
+      ================================================== -->
 
           <div class="controls-grid">
             <!-- MIN X -->
@@ -201,8 +287,8 @@
           </div>
 
           <!-- =================================================
-                 BUTTONS
-            ================================================== -->
+           BUTTONS
+      ================================================== -->
 
           <div class="button-row">
             <button class="primary-btn" id="plotBtn" type="button">
@@ -231,8 +317,8 @@
           </div>
 
           <!-- =================================================
-                 QUICK FUNCTIONS
-            ================================================== -->
+           QUICK FUNCTIONS
+      ================================================== -->
 
           <div class="quick-functions">
             <span> توابع سریع: </span>
@@ -295,16 +381,24 @@
           </div>
 
           <!-- =================================================
-                 GRAPH
-            ================================================== -->
+           GRAPH
+      ================================================== -->
 
           <div class="graph-container">
             <div id="graph" aria-label="نمودار توابع ریاضی"></div>
           </div>
 
           <!-- =================================================
-                 FUNCTION LIST
-            ================================================== -->
+           POINT INFORMATION
+      ================================================== -->
+
+          <div id="pointInfo">
+            برای مشاهده مختصات، نشانگر را روی نمودار حرکت دهید.
+          </div>
+
+          <!-- =================================================
+           FUNCTION LIST
+      ================================================== -->
 
           <div class="function-section">
             <h3>توابع رسم‌شده</h3>
@@ -313,8 +407,8 @@
           </div>
 
           <!-- =================================================
-                 GRAPH HELP
-            ================================================== -->
+           GRAPH HELP
+      ================================================== -->
 
           <div class="result-box">
             <strong> راهنمای نمودار: </strong>
@@ -341,188 +435,31 @@
           </div>
         </section>
 
-        <!-- =====================================================
-             FOOTER
-        ====================================================== -->
+        <!-- FOOTER -->
 
         <footer class="footer">© 2026 VAYRA - Wings of Knowledge</footer>
       </main>
     </div>
 
-    <!-- =========================================================
-     SIDEBAR SCRIPT
-========================================================== -->
+    <!-- =====================================================
+     SIDEBAR
+====================================================== -->
 
     <script>
       function toggleSidebar() {
         const sidebar = document.getElementById("sidebar");
 
-        sidebar.classList.toggle("open");
+        if (sidebar) {
+          sidebar.classList.toggle("open");
+        }
       }
     </script>
 
-    <!-- =========================================================
-     GRAPH UI CONTROLLER
-========================================================== -->
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const functionInput = document.getElementById("functionInput");
-
-        const minXInput = document.getElementById("minX");
-
-        const maxXInput = document.getElementById("maxX");
-
-        const samplesInput = document.getElementById("samples");
-
-        // =================================================
-        // PLOT BUTTON
-        // =================================================
-
-        document
-          .getElementById("plotBtn")
-          .addEventListener("click", function () {
-            const expression = functionInput.value.trim();
-
-            if (!expression) {
-              alert("لطفاً یک تابع وارد کنید.");
-
-              functionInput.focus();
-
-              return;
-            }
-
-            const minX = Number(minXInput.value);
-
-            const maxX = Number(maxXInput.value);
-
-            const samples = Number(samplesInput.value);
-
-            if (!Number.isFinite(minX) || !Number.isFinite(maxX)) {
-              alert("محدوده X معتبر نیست.");
-
-              return;
-            }
-
-            if (minX >= maxX) {
-              alert("حداقل X باید از حداکثر X کوچک‌تر باشد.");
-
-              return;
-            }
-
-            if (samples < 100 || samples > 20000) {
-              alert("دقت رسم باید بین 100 تا 20000 باشد.");
-
-              return;
-            }
-
-            plotFunction(expression, {
-              minX: minX,
-
-              maxX: maxX,
-
-              samples: samples,
-
-              name: expression,
-            });
-
-            functionInput.value = "";
-
-            functionInput.focus();
-          });
-
-        // =================================================
-        // ENTER KEY
-        // =================================================
-
-        functionInput.addEventListener("keydown", function (event) {
-          if (event.key === "Enter") {
-            event.preventDefault();
-
-            document.getElementById("plotBtn").click();
-          }
-        });
-
-        // =================================================
-        // CLEAR ALL
-        // =================================================
-
-        document
-          .getElementById("clearBtn")
-          .addEventListener("click", function () {
-            if (typeof graphs !== "undefined" && graphs.length > 0) {
-              const confirmed = confirm(
-                "آیا می‌خواهید تمام نمودارها حذف شوند؟",
-              );
-
-              if (confirmed) {
-                clearGraphs();
-              }
-            }
-          });
-
-        // =================================================
-        // EXAMPLES
-        // =================================================
-
-        document
-          .getElementById("examplesBtn")
-          .addEventListener("click", function () {
-            plotExamples();
-          });
-
-        // =================================================
-        // RESET ZOOM
-        // =================================================
-
-        document
-          .getElementById("resetZoomBtn")
-          .addEventListener("click", function () {
-            resetZoom();
-          });
-
-        // =================================================
-        // ZOOM IN
-        // =================================================
-
-        document
-          .getElementById("zoomInBtn")
-          .addEventListener("click", function () {
-            zoomIn();
-          });
-
-        // =================================================
-        // ZOOM OUT
-        // =================================================
-
-        document
-          .getElementById("zoomOutBtn")
-          .addEventListener("click", function () {
-            zoomOut();
-          });
-
-        // =================================================
-        // QUICK FUNCTIONS
-        // =================================================
-
-        const quickButtons = document.querySelectorAll(".quick-function");
-
-        quickButtons.forEach(function (button) {
-          button.addEventListener("click", function () {
-            const expression = this.dataset.function;
-
-            functionInput.value = expression;
-
-            functionInput.focus();
-          });
-        });
-      });
-    </script>
-
-    <!-- =========================================================
-     ADVANCED GRAPH ENGINE
-========================================================== -->
+    <!-- =====================================================
+     GRAPH ENGINE
+====================================================== -->
 
     <script src="graph.js"></script>
+    ```
   </body>
 </html>

@@ -1698,3 +1698,523 @@ img {
         animation: none !important;
     }
 }
+/* ========================================================= VAYRA GRAPH FINAL PATCH Linear Function UI + Graph Size Fix ========================================================= */
+/* ========================================================= LINEAR FUNCTION BOX ========================================================= */
+.linear-function-box {
+margin:
+    10px 0 25px;
+
+padding:
+    22px;
+
+background:
+    linear-gradient(
+        145deg,
+        rgba(7, 19, 33, 0.95),
+        rgba(12, 30, 52, 0.95)
+    );
+
+border:
+    1px solid
+    rgba(212, 175, 55, 0.22);
+
+border-radius:
+    var(--radius-lg);
+
+box-shadow:
+    inset
+    0 0 25px
+    rgba(0, 0, 0, 0.15);
+}
+.linear-title {
+margin-bottom:
+    20px;
+}
+.linear-title h3 {
+color:
+    var(--gold-light);
+
+font-size:
+    19px;
+
+margin-bottom:
+    8px;
+}
+.linear-title p {
+color:
+    #aaa;
+
+font-size:
+    13px;
+
+line-height:
+    1.9;
+}
+.linear-title span {
+color:
+    var(--gold-light);
+
+font-family:
+    "Consolas",
+    "Courier New",
+    monospace;
+}
+/* ========================================================= LINEAR COEFFICIENTS ========================================================= */
+.linear-coefficients {
+display:
+    grid;
+
+grid-template-columns:
+    repeat(
+        2,
+        minmax(
+            0,
+            1fr
+        )
+    );
+
+gap:
+    15px;
+}
+.linear-coefficients .input-group {
+margin-bottom:
+    15px;
+}
+.linear-coefficients .input-group input {
+direction:
+    ltr;
+
+text-align:
+    left;
+
+font-family:
+    "Consolas",
+    "Courier New",
+    monospace;
+}
+/* ========================================================= LINEAR DIVIDER ========================================================= */
+.linear-divider {
+display:
+    flex;
+
+align-items:
+    center;
+
+gap:
+    15px;
+
+margin:
+    5px 0 20px;
+
+color:
+    #888;
+}
+.linear-divider::before, .linear-divider::after {
+content:
+    "";
+
+flex:
+    1;
+
+height:
+    1px;
+
+background:
+    rgba(
+        255,
+        255,
+        255,
+        0.1
+    );
+}
+.linear-divider span {
+padding:
+    0 8px;
+
+color:
+    var(--gold);
+
+font-size:
+    13px;
+}
+/* ========================================================= LINEAR PREVIEW ========================================================= */
+.linear-preview {
+display:
+    flex;
+
+align-items:
+    center;
+
+flex-wrap:
+    wrap;
+
+gap:
+    10px;
+
+margin:
+    5px 0 15px;
+
+padding:
+    12px 15px;
+
+background:
+    rgba(
+        0,
+        0,
+        0,
+        0.18
+    );
+
+border-radius:
+    var(--radius-sm);
+
+color:
+    #aaa;
+
+font-size:
+    13px;
+}
+.linear-preview strong {
+color:
+    var(--gold-light);
+
+font-family:
+    "Consolas",
+    "Courier New",
+    monospace;
+
+font-size:
+    15px;
+
+direction:
+    ltr;
+}
+/* ========================================================= LINEAR BUTTON ========================================================= */
+.linear-btn {
+width:
+    100%;
+
+min-height:
+    46px;
+
+margin-top:
+    5px;
+}
+/* ========================================================= GRAPH TYPE ========================================================= */
+.graph-type {
+flex:
+    0 0 auto !important;
+
+width:
+    auto !important;
+
+padding:
+    4px 10px;
+
+color:
+    var(--gold-light) !important;
+
+background:
+    rgba(
+        212,
+        175,
+        55,
+        0.08
+    );
+
+border:
+    1px solid
+    rgba(
+        212,
+        175,
+        55,
+        0.2
+    );
+
+border-radius:
+    6px;
+
+font-family:
+    "Vazirmatn",
+    "Tahoma",
+    sans-serif !important;
+
+font-size:
+    11px;
+
+direction:
+    rtl !important;
+
+text-align:
+    center !important;
+
+overflow:
+    visible !important;
+
+text-overflow:
+    clip !important;
+
+white-space:
+    nowrap !important;
+}
+/* ========================================================= GRAPH CONTAINER FIX Removes unwanted extra black area ========================================================= */
+.graph-container {
+position:
+    relative;
+
+width:
+    100%;
+
+max-width:
+    100%;
+
+min-width:
+    0;
+
+height:
+    620px;
+
+min-height:
+    450px;
+
+padding:
+    0;
+
+margin:
+    0;
+
+background:
+    #071321;
+
+border:
+    1px solid
+    rgba(
+        255,
+        255,
+        255,
+        0.1
+    );
+
+border-radius:
+    var(--radius-lg);
+
+overflow:
+    hidden;
+}
+#graph {
+position:
+    relative;
+
+display:
+    block;
+
+width:
+    100% !important;
+
+height:
+    100% !important;
+
+min-width:
+    0 !important;
+
+min-height:
+    0 !important;
+
+max-width:
+    100% !important;
+
+margin:
+    0 !important;
+
+padding:
+    0 !important;
+
+direction:
+    ltr;
+}
+#graph .plotly {
+width:
+    100% !important;
+
+height:
+    100% !important;
+
+margin:
+    0 !important;
+
+padding:
+    0 !important;
+}
+#graph .svg-container {
+width:
+    100% !important;
+
+height:
+    100% !important;
+}
+/* ========================================================= PLOTLY MAIN SVG ========================================================= */
+#graph .main-svg {
+border-radius:
+    var(--radius-lg);
+}
+/* ========================================================= PLOTLY MODEBAR ========================================================= */
+#graph .modebar {
+top:
+    10px !important;
+
+right:
+    10px !important;
+
+left:
+    auto !important;
+
+background:
+    rgba(
+        5,
+        15,
+        30,
+        0.85
+    ) !important;
+
+border-radius:
+    8px;
+
+padding:
+    4px;
+
+backdrop-filter:
+    blur(10px);
+
+-webkit-backdrop-filter:
+    blur(10px);
+
+border:
+    1px solid
+    rgba(
+        255,
+        255,
+        255,
+        0.08
+    );
+}
+/* ========================================================= FUNCTION SECTION ========================================================= */
+.function-section {
+margin-top:
+    25px;
+}
+.function-section h3 {
+margin-bottom:
+    15px;
+
+color:
+    #ddd;
+
+font-size:
+    18px;
+}
+/* ========================================================= MOBILE LINEAR FUNCTION ========================================================= */
+@media ( max-width: 750px ) {
+.linear-function-box {
+
+    padding:
+        16px;
+
+}
+
+
+.linear-coefficients {
+
+    grid-template-columns:
+        1fr;
+
+    gap:
+        0;
+
+}
+
+
+.linear-title h3 {
+
+    font-size:
+        17px;
+
+}
+
+
+.linear-title p {
+
+    font-size:
+        12px;
+
+}
+
+
+.graph-container {
+
+    height:
+        450px;
+
+    min-height:
+        350px;
+
+    padding:
+        0;
+
+}
+
+
+#graph {
+
+    width:
+        100% !important;
+
+    height:
+        100% !important;
+
+}
+}
+/* ========================================================= SMALL MOBILE ========================================================= */
+@media ( max-width: 480px ) {
+.linear-function-box {
+
+    padding:
+        13px;
+
+    border-radius:
+        12px;
+
+}
+
+
+.linear-preview {
+
+    align-items:
+        flex-start;
+
+    flex-direction:
+        column;
+
+}
+
+
+.linear-btn {
+
+    font-size:
+        13px;
+
+}
+
+
+.graph-container {
+
+    height:
+        400px;
+
+    min-height:
+        300px;
+
+    border-radius:
+        10px;
+
+}
+}
