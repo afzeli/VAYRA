@@ -54,6 +54,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let traces = [];
 
+  // ---------------------------------------------------------
+  // GRAPH LAYOUT
+  // محورهای اصلی X و Y به صورت پررنگ
+  // ---------------------------------------------------------
+
   let graphLayout = {
     title: {
       text: "نمودار تابع",
@@ -63,17 +68,71 @@ document.addEventListener("DOMContentLoaded", function () {
     },
 
     xaxis: {
-      title: "X",
+      title: {
+        text: "X",
+        font: {
+          size: 16,
+          color: "#000000",
+        },
+      },
+
+      // محور اصلی X در x = 0
       zeroline: true,
+      zerolinecolor: "#000000",
+      zerolinewidth: 4,
+
+      // خطوط شبکه
       showgrid: true,
       gridcolor: "#dddddd",
+      gridwidth: 1,
+
+      // خط اطراف محور
+      showline: true,
+      linecolor: "#000000",
+      linewidth: 2,
+
+      // تیک‌های محور
+      ticks: "outside",
+      tickcolor: "#000000",
+      tickwidth: 1,
+      ticklen: 5,
+
+      // نمایش اعداد محور
+      showticklabels: true,
     },
 
     yaxis: {
-      title: "Y",
+      title: {
+        text: "Y",
+        font: {
+          size: 16,
+          color: "#000000",
+        },
+      },
+
+      // محور اصلی Y در y = 0
       zeroline: true,
+      zerolinecolor: "#000000",
+      zerolinewidth: 4,
+
+      // خطوط شبکه
       showgrid: true,
       gridcolor: "#dddddd",
+      gridwidth: 1,
+
+      // خط اطراف محور
+      showline: true,
+      linecolor: "#000000",
+      linewidth: 2,
+
+      // تیک‌های محور
+      ticks: "outside",
+      tickcolor: "#000000",
+      tickwidth: 1,
+      ticklen: 5,
+
+      // نمایش اعداد محور
+      showticklabels: true,
     },
 
     hovermode: "closest",
@@ -91,6 +150,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     plot_bgcolor: "rgba(0,0,0,0)",
   };
+
+  // ---------------------------------------------------------
+  // GRAPH CONFIG
+  // ---------------------------------------------------------
 
   const graphConfig = {
     responsive: true,
@@ -130,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function evaluateFunction(expression, x) {
     try {
-      let scope = {
+      const scope = {
         x: x,
       };
 
@@ -178,6 +241,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (minX >= maxX) {
       alert("حداقل X باید از حداکثر X کوچکتر باشد.");
+
       return null;
     }
 
@@ -206,10 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // حذف y =
     result = result.replace(/^y\s*=\s*/i, "");
 
-    // تبدیل ^ به توان Math.js
-    // Math.js خودش ^ را پشتیبانی میکند
-
-    // تبدیل برخی ورودیهای فارسی
+    // تبدیل ورودی‌های فارسی
     result = result
       .replace(/سین/g, "sin")
       .replace(/کسینوس/g, "cos")
@@ -233,6 +294,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!expression) {
       alert("لطفاً یک تابع وارد کنید.");
+
       return;
     }
 
@@ -292,7 +354,7 @@ document.addEventListener("DOMContentLoaded", function () {
     functionList.innerHTML = "";
 
     if (traces.length === 0) {
-      functionList.innerHTML = "<p>هنوز تابعی رسم نشده است.</p>";
+      functionList.innerHTML = "<p>هنوز تابعی رسم نشده است.";
 
       return;
     }
@@ -303,19 +365,19 @@ document.addEventListener("DOMContentLoaded", function () {
       item.className = "function-item";
 
       item.innerHTML = `
-        <span>
-          <strong>${index + 1}.</strong>
-          ${trace.name}
-        </span>
+          <span>
+            <strong>${index + 1}.</strong>
+            ${trace.name}
+          </span>
 
-        <button
-          type="button"
-          class="danger-btn remove-function"
-          data-index="${index}"
-        >
-          حذف
-        </button>
-      `;
+          <button
+            type="button"
+            class="danger-btn remove-function"
+            data-index="${index}"
+          >
+            حذف
+          </button>
+        `;
 
       functionList.appendChild(item);
     });
@@ -525,9 +587,10 @@ document.addEventListener("DOMContentLoaded", function () {
   function parseLinearEquation(equation) {
     equation = equation.trim().toLowerCase().replace(/\s+/g, "");
 
+    // حذف y=
     equation = equation.replace(/^y=/, "");
 
-    // بررسی وجود x
+    // اگر x وجود نداشت
     if (!equation.includes("x")) {
       const constant = Number(equation);
 
@@ -541,18 +604,16 @@ document.addEventListener("DOMContentLoaded", function () {
       return null;
     }
 
-    // استفاده از Math.js برای استخراج ضرایب
+    // استفاده از Math.js
+    // برای محاسبه مقدار تابع در x=0 و x=1
     try {
-      const node = math.parse(equation);
+      const b = math.evaluate(equation, {
+        x: 0,
+      });
 
-      const a = math.evaluate(math.derivative(equation, "x").toString());
-
-      // روش مطمئنتر:
-      // محاسبه مقدار تابع در x=0 و x=1
-
-      const b = math.evaluate(equation, { x: 0 });
-
-      const y1 = math.evaluate(equation, { x: 1 });
+      const y1 = math.evaluate(equation, {
+        x: 1,
+      });
 
       const coefficient = y1 - b;
 
@@ -631,6 +692,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     pointInfo.innerHTML = `
         <strong>مختصات نقطه:</strong>
+
         <span dir="ltr">
           X = ${x.toFixed(6)}
           &nbsp;&nbsp;
