@@ -1,8 +1,6 @@
-css
 /* =========================================================
-   VAYRA - ADVANCED GLOBAL STYLE
-   Graph Engine / Plotly.js
-   Version: Unified Responsive
+   VAYRA - FINAL GLOBAL STYLE
+   Responsive Dashboard + Graph Engine / Plotly.js
    ========================================================= */
 
 
@@ -23,15 +21,42 @@ html {
 }
 
 body {
+    min-height: 100vh;
     width: 100%;
     max-width: 100%;
-    min-height: 100vh;
     overflow-x: hidden;
+
+    font-family:
+        "Vazirmatn",
+        "Tahoma",
+        sans-serif;
+
+    color: var(--text);
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(18, 59, 112, 0.45),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            circle at 90% 80%,
+            rgba(212, 175, 55, 0.08),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #020817,
+            #061426 50%,
+            #020817
+        );
 }
 
 
 /* =========================================================
-   ROOT VARIABLES
+   VARIABLES
    ========================================================= */
 
 :root {
@@ -68,8 +93,7 @@ body {
     --radius-xl: 24px;
 
     --shadow:
-        0 20px 50px
-        rgba(0, 0, 0, 0.35);
+        0 20px 50px rgba(0, 0, 0, 0.35);
 
     --transition:
         0.3s ease;
@@ -77,44 +101,7 @@ body {
 
 
 /* =========================================================
-   BODY
-   ========================================================= */
-
-body {
-
-    font-family:
-        "Vazirmatn",
-        "Tahoma",
-        sans-serif;
-
-    color:
-        var(--text);
-
-    background:
-
-        radial-gradient(
-            circle at 10% 10%,
-            rgba(18, 59, 112, 0.45),
-            transparent 35%
-        ),
-
-        radial-gradient(
-            circle at 90% 80%,
-            rgba(212, 175, 55, 0.08),
-            transparent 30%
-        ),
-
-        linear-gradient(
-            135deg,
-            #020817,
-            #061426 50%,
-            #020817
-        );
-}
-
-
-/* =========================================================
-   LINKS
+   GLOBAL ELEMENTS
    ========================================================= */
 
 a {
@@ -122,13 +109,7 @@ a {
     text-decoration: none;
 }
 
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
-
 button {
-
     border: none;
     outline: none;
 
@@ -153,13 +134,14 @@ button:active {
 }
 
 button:focus-visible {
-
     outline:
-        2px solid
-        var(--gold);
+        2px solid var(--gold);
 
-    outline-offset:
-        3px;
+    outline-offset: 3px;
+}
+
+img {
+    max-width: 100%;
 }
 
 
@@ -168,17 +150,16 @@ button:focus-visible {
    ========================================================= */
 
 .dashboard {
-    min-height: 100vh;
     width: 100%;
+    min-height: 100vh;
 }
 
 
 /* =========================================================
-   HEADER
+   TOPBAR
    ========================================================= */
 
 .topbar {
-
     position: fixed;
 
     top: 0;
@@ -189,7 +170,6 @@ button:focus-visible {
     height: var(--header-height);
 
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
@@ -198,19 +178,14 @@ button:focus-visible {
     background:
         rgba(5, 15, 30, 0.88);
 
-    backdrop-filter:
-        blur(18px);
-
-    -webkit-backdrop-filter:
-        blur(18px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 
     border-bottom:
-        1px solid
-        rgba(212, 175, 55, 0.25);
+        1px solid rgba(212, 175, 55, 0.25);
 
     box-shadow:
-        0 5px 25px
-        rgba(0, 0, 0, 0.25);
+        0 5px 25px rgba(0, 0, 0, 0.25);
 
     z-index: 1000;
 }
@@ -221,47 +196,31 @@ button:focus-visible {
    ========================================================= */
 
 .brand {
-
     display: flex;
-
     align-items: center;
 
     gap: 15px;
-
-    min-width: 0;
 
     flex-shrink: 0;
 }
 
 .brand img {
-
     width: 75px;
     height: 75px;
 
     object-fit: contain;
-
     display: block;
-
-    flex-shrink: 0;
 }
 
 .brand h2 {
+    color: var(--gold);
 
-    color:
-        var(--gold);
+    letter-spacing: 5px;
 
-    letter-spacing:
-        5px;
-
-    font-size:
-        24px;
-
-    white-space:
-        nowrap;
+    font-size: 24px;
 }
 
 .brand p {
-
     margin-top: 3px;
 
     color: #ddd;
@@ -277,9 +236,7 @@ button:focus-visible {
    ========================================================= */
 
 .left-tools {
-
     display: flex;
-
     align-items: center;
 
     gap: 20px;
@@ -288,24 +245,16 @@ button:focus-visible {
 }
 
 .tool-icon {
-
     font-size: 22px;
-
     cursor: pointer;
 
-    transition:
-        var(--transition);
-
-    flex-shrink: 0;
+    transition: var(--transition);
 }
 
 .tool-icon:hover {
+    color: var(--gold);
 
-    color:
-        var(--gold);
-
-    transform:
-        scale(1.1);
+    transform: scale(1.1);
 }
 
 
@@ -314,12 +263,10 @@ button:focus-visible {
    ========================================================= */
 
 .search {
-
     width: 220px;
     height: 40px;
 
     display: flex;
-
     align-items: center;
 
     gap: 10px;
@@ -330,8 +277,7 @@ button:focus-visible {
         rgba(21, 36, 56, 0.85);
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.08);
+        1px solid rgba(255, 255, 255, 0.08);
 
     border-radius:
         var(--radius-md);
@@ -343,9 +289,7 @@ button:focus-visible {
 }
 
 .search:focus-within {
-
-    border-color:
-        var(--gold);
+    border-color: var(--gold);
 
     box-shadow:
         0 0 0 3px
@@ -353,14 +297,12 @@ button:focus-visible {
 }
 
 .search input {
-
     width: 100%;
     min-width: 0;
 
     background: transparent;
 
     border: none;
-
     outline: none;
 
     color: white;
@@ -374,11 +316,10 @@ button:focus-visible {
 
 
 /* =========================================================
-   MENU ICON
+   MOBILE MENU ICON
    ========================================================= */
 
 .menu {
-
     display: none;
 
     font-size: 25px;
@@ -394,7 +335,6 @@ button:focus-visible {
    ========================================================= */
 
 .sidebar {
-
     position: fixed;
 
     top: var(--header-height);
@@ -403,18 +343,13 @@ button:focus-visible {
     width: var(--sidebar-width);
 
     height:
-        calc(
-            100vh -
-            var(--header-height)
-        );
+        calc(100vh - var(--header-height));
 
     padding: 30px 20px;
 
     overflow-y: auto;
-    overflow-x: hidden;
 
     background:
-
         linear-gradient(
             180deg,
             rgba(15, 30, 50, 0.97),
@@ -422,8 +357,7 @@ button:focus-visible {
         );
 
     border-left:
-        1px solid
-        rgba(255, 255, 255, 0.1);
+        1px solid rgba(255, 255, 255, 0.1);
 
     z-index: 900;
 
@@ -439,12 +373,9 @@ button:focus-visible {
 }
 
 .sidebar::-webkit-scrollbar-thumb {
+    background: var(--gold);
 
-    background:
-        var(--gold);
-
-    border-radius:
-        10px;
+    border-radius: 10px;
 }
 
 
@@ -453,18 +384,15 @@ button:focus-visible {
    ========================================================= */
 
 .profile {
-
     text-align: center;
 
     padding-bottom: 25px;
 
     border-bottom:
-        1px solid
-        rgba(255, 255, 255, 0.1);
+        1px solid rgba(255, 255, 255, 0.1);
 }
 
 .profile img {
-
     width: 140px;
     height: 140px;
 
@@ -476,24 +404,17 @@ button:focus-visible {
 }
 
 .profile h2 {
+    color: var(--gold);
 
-    color:
-        var(--gold);
+    letter-spacing: 4px;
 
-    letter-spacing:
-        4px;
-
-    font-size:
-        24px;
+    font-size: 24px;
 }
 
 .profile small {
+    color: #aaa;
 
-    color:
-        #aaa;
-
-    font-size:
-        11px;
+    font-size: 11px;
 }
 
 
@@ -502,7 +423,6 @@ button:focus-visible {
    ========================================================= */
 
 .menu-items {
-
     display: flex;
 
     flex-direction: column;
@@ -513,11 +433,9 @@ button:focus-visible {
 }
 
 .menu-items a {
-
     min-height: 50px;
 
     display: flex;
-
     align-items: center;
 
     padding: 0 18px;
@@ -526,8 +444,7 @@ button:focus-visible {
         var(--panel-dark);
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.08);
+        1px solid rgba(255, 255, 255, 0.08);
 
     border-radius:
         var(--radius-md);
@@ -541,22 +458,18 @@ button:focus-visible {
 }
 
 .menu-items a:hover {
-
     color: #000;
 
-    background:
-        var(--gold);
+    background: var(--gold);
 
     transform:
         translateX(-7px);
 }
 
 .menu-items a.active {
-
     color: #000;
 
     background:
-
         linear-gradient(
             135deg,
             var(--gold),
@@ -564,7 +477,6 @@ button:focus-visible {
         );
 
     box-shadow:
-
         0 8px 25px
         rgba(212, 175, 55, 0.2);
 }
@@ -575,32 +487,25 @@ button:focus-visible {
    ========================================================= */
 
 .content {
-
     position: relative;
 
-    width: 100%;
-    min-width: 0;
+    width: auto;
     min-height: 100vh;
 
     margin-right:
         var(--sidebar-width);
 
     padding:
-
-        calc(
-            var(--header-height) +
-            40px
-        )
-
+        calc(var(--header-height) + 40px)
         45px
-
         60px;
 
     overflow: visible;
+
+    min-width: 0;
 }
 
 .content::before {
-
     content: "";
 
     position: absolute;
@@ -612,7 +517,6 @@ button:focus-visible {
     left: 50px;
 
     background:
-
         radial-gradient(
             circle,
             #123b70,
@@ -632,14 +536,12 @@ button:focus-visible {
    ========================================================= */
 
 .page-header {
-
     text-align: center;
 
     margin-bottom: 35px;
 }
 
 .page-header h1 {
-
     font-size: 40px;
 
     font-weight: 900;
@@ -652,7 +554,6 @@ button:focus-visible {
 }
 
 .page-header p {
-
     color: #bbb;
 
     font-size: 16px;
@@ -666,48 +567,37 @@ button:focus-visible {
    ========================================================= */
 
 .panel {
-
     width: 100%;
     max-width: 1400px;
-    min-width: 0;
 
     margin: 0 auto;
 
     padding: 30px;
 
     background:
-
-        rgba(
-            10,
-            25,
-            45,
-            0.78
-        );
+        rgba(10, 25, 45, 0.78);
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.1);
+        1px solid rgba(255, 255, 255, 0.1);
 
     border-radius:
         var(--radius-xl);
 
-    backdrop-filter:
-        blur(20px);
-
-    -webkit-backdrop-filter:
-        blur(20px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 
     box-shadow:
         var(--shadow);
+
+    min-width: 0;
 }
 
 
 /* =========================================================
-   GRAPH CONTROL PANEL
+   GRAPH CONTROLS
    ========================================================= */
 
 .graph-controls {
-
     display: grid;
 
     grid-template-columns:
@@ -719,16 +609,10 @@ button:focus-visible {
 
     margin-bottom: 20px;
 
-    width: 100%;
+    min-width: 0;
 }
 
-
-/* =========================================================
-   CONTROLS GRID
-   ========================================================= */
-
 .controls-grid {
-
     display: grid;
 
     grid-template-columns:
@@ -737,8 +621,6 @@ button:focus-visible {
     gap: 15px;
 
     margin-bottom: 20px;
-
-    width: 100%;
 }
 
 
@@ -747,7 +629,6 @@ button:focus-visible {
    ========================================================= */
 
 .input-group {
-
     width: 100%;
     min-width: 0;
 
@@ -755,7 +636,6 @@ button:focus-visible {
 }
 
 .input-group label {
-
     display: block;
 
     margin-bottom: 8px;
@@ -768,7 +648,6 @@ button:focus-visible {
 }
 
 .input-group small {
-
     display: block;
 
     color: #999;
@@ -781,7 +660,6 @@ button:focus-visible {
 .input-group input,
 .input-group textarea,
 .input-group select {
-
     width: 100%;
     max-width: 100%;
     min-width: 0;
@@ -794,8 +672,7 @@ button:focus-visible {
         #111e32;
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.1);
+        1px solid rgba(255, 255, 255, 0.1);
 
     border-radius:
         var(--radius-md);
@@ -811,7 +688,6 @@ button:focus-visible {
 .input-group input:hover,
 .input-group textarea:hover,
 .input-group select:hover {
-
     border-color:
         rgba(212, 175, 55, 0.4);
 }
@@ -819,18 +695,15 @@ button:focus-visible {
 .input-group input:focus,
 .input-group textarea:focus,
 .input-group select:focus {
-
     border-color:
         var(--gold);
 
     box-shadow:
-
         0 0 0 3px
         rgba(212, 175, 55, 0.08);
 }
 
 .input-group textarea {
-
     min-height: 180px;
 
     resize: vertical;
@@ -842,7 +715,6 @@ button:focus-visible {
    ========================================================= */
 
 #functionInput {
-
     direction: ltr;
 
     text-align: left;
@@ -859,104 +731,10 @@ button:focus-visible {
 
 
 /* =========================================================
-   POINT INPUTS
-   پشتیبانی از ورود جداگانه هر نقطه
-   ========================================================= */
-
-#pointsList {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-
-    width: 100%;
-
-    margin-bottom: 20px;
-}
-
-.point-row {
-
-    display: grid;
-
-    grid-template-columns:
-        minmax(0, 1fr)
-        minmax(0, 1fr)
-        auto;
-
-    align-items: center;
-
-    gap: 10px;
-
-    width: 100%;
-
-    padding: 10px;
-
-    background:
-
-        linear-gradient(
-            135deg,
-            rgba(17, 30, 50, 0.95),
-            rgba(12, 25, 43, 0.95)
-        );
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.08);
-
-    border-radius:
-        var(--radius-md);
-}
-
-.point-row input {
-
-    width: 100%;
-    min-width: 0;
-
-    padding: 11px 12px;
-
-    color: white;
-
-    background:
-        #111e32;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.1);
-
-    border-radius:
-        var(--radius-sm);
-
-    outline: none;
-
-    direction: ltr;
-
-    text-align: left;
-
-    font-family:
-        "Consolas",
-        "Courier New",
-        monospace;
-}
-
-.point-row input:focus {
-
-    border-color:
-        var(--gold);
-
-    box-shadow:
-        0 0 0 3px
-        rgba(212, 175, 55, 0.08);
-}
-
-
-/* =========================================================
    FUNCTION LIST
    ========================================================= */
 
 #functionList {
-
     display: flex;
 
     flex-direction: column;
@@ -968,6 +746,7 @@ button:focus-visible {
     max-height: 300px;
 
     overflow-y: auto;
+
     overflow-x: hidden;
 
     padding-right: 3px;
@@ -978,12 +757,10 @@ button:focus-visible {
 }
 
 #functionList::-webkit-scrollbar-thumb {
-
     background:
         var(--gold-dark);
 
-    border-radius:
-        10px;
+    border-radius: 10px;
 }
 
 
@@ -992,7 +769,6 @@ button:focus-visible {
    ========================================================= */
 
 .function-row {
-
     display: flex;
 
     align-items: center;
@@ -1004,7 +780,6 @@ button:focus-visible {
     padding: 10px 14px;
 
     background:
-
         linear-gradient(
             135deg,
             rgba(17, 30, 50, 0.95),
@@ -1012,8 +787,7 @@ button:focus-visible {
         );
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.08);
+        1px solid rgba(255, 255, 255, 0.08);
 
     border-radius:
         var(--radius-md);
@@ -1025,7 +799,6 @@ button:focus-visible {
 }
 
 .function-row:hover {
-
     border-color:
         rgba(212, 175, 55, 0.45);
 
@@ -1033,13 +806,11 @@ button:focus-visible {
         translateX(-3px);
 
     box-shadow:
-
         0 5px 20px
         rgba(0, 0, 0, 0.2);
 }
 
 .function-row span {
-
     flex: 1;
 
     min-width: 0;
@@ -1069,14 +840,11 @@ button:focus-visible {
    ========================================================= */
 
 .button-row {
-
     display: flex;
 
     flex-wrap: wrap;
 
     gap: 10px;
-
-    width: 100%;
 
     margin: 20px 0;
 }
@@ -1087,15 +855,13 @@ button:focus-visible {
 
 
 /* =========================================================
-   PRIMARY BUTTON
+   BUTTONS
    ========================================================= */
 
 .primary-btn {
-
     padding: 11px 25px;
 
     background:
-
         linear-gradient(
             135deg,
             #b99022,
@@ -1111,7 +877,6 @@ button:focus-visible {
 }
 
 .primary-btn:hover {
-
     transform:
         translateY(-3px);
 
@@ -1119,18 +884,11 @@ button:focus-visible {
         brightness(1.15);
 
     box-shadow:
-
         0 8px 20px
         rgba(212, 175, 55, 0.25);
 }
 
-
-/* =========================================================
-   SECONDARY BUTTON
-   ========================================================= */
-
 .secondary-btn {
-
     padding: 11px 22px;
 
     background:
@@ -1139,15 +897,13 @@ button:focus-visible {
     color: white;
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.08);
+        1px solid rgba(255, 255, 255, 0.08);
 
     border-radius:
         var(--radius-sm);
 }
 
 .secondary-btn:hover {
-
     background:
         #304967;
 
@@ -1158,17 +914,10 @@ button:focus-visible {
         rgba(212, 175, 55, 0.35);
 }
 
-
-/* =========================================================
-   DANGER BUTTON
-   ========================================================= */
-
 .danger-btn {
-
     padding: 9px 16px;
 
     background:
-
         linear-gradient(
             135deg,
             var(--danger-dark),
@@ -1182,7 +931,6 @@ button:focus-visible {
 }
 
 .danger-btn:hover {
-
     filter:
         brightness(1.15);
 
@@ -1196,7 +944,6 @@ button:focus-visible {
    ========================================================= */
 
 .graph-container {
-
     position: relative;
 
     width: 100%;
@@ -1209,7 +956,6 @@ button:focus-visible {
     padding: 8px;
 
     background:
-
         linear-gradient(
             145deg,
             #071321,
@@ -1217,14 +963,12 @@ button:focus-visible {
         );
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.1);
+        1px solid rgba(255, 255, 255, 0.1);
 
     border-radius:
         var(--radius-lg);
 
     box-shadow:
-
         inset
         0 0 30px
         rgba(0, 0, 0, 0.3),
@@ -1241,30 +985,22 @@ button:focus-visible {
    ========================================================= */
 
 #graph {
-
     width: 100% !important;
+
     height: 100% !important;
 
+    min-height: 0 !important;
     max-width: 100% !important;
-    min-width: 0 !important;
-
-    min-height: 430px;
 
     direction: ltr;
-
-    overflow: hidden;
 }
 
 #graph .plotly {
-
     width: 100% !important;
     height: 100% !important;
-
-    max-width: 100% !important;
 }
 
 #graph .main-svg {
-
     border-radius:
         var(--radius-md);
 }
@@ -1275,56 +1011,34 @@ button:focus-visible {
    ========================================================= */
 
 #graph .modebar {
-
     top: 10px !important;
-
     right: 10px !important;
-
     left: auto !important;
 
     background:
-
-        rgba(
-            5,
-            15,
-            30,
-            0.85
-        ) !important;
+        rgba(5, 15, 30, 0.85) !important;
 
     border-radius: 8px;
 
     padding: 4px;
 
-    backdrop-filter:
-        blur(10px);
-
-    -webkit-backdrop-filter:
-        blur(10px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.08);
+        1px solid rgba(255, 255, 255, 0.08);
 }
 
 #graph .modebar-btn {
-
-    color:
-        #ddd !important;
+    color: #ddd !important;
 
     transition:
         var(--transition);
 }
 
 #graph .modebar-btn:hover {
-
     background:
-
-        rgba(
-            212,
-            175,
-            55,
-            0.2
-        ) !important;
+        rgba(212, 175, 55, 0.2) !important;
 
     color:
         var(--gold-light) !important;
@@ -1336,9 +1050,7 @@ button:focus-visible {
    ========================================================= */
 
 #graph .hovertext {
-
     font-family:
-
         "Vazirmatn",
         "Tahoma",
         sans-serif !important;
@@ -1350,7 +1062,6 @@ button:focus-visible {
    ========================================================= */
 
 #pointInfo {
-
     margin-top: 18px;
 
     min-height: 65px;
@@ -1370,17 +1081,10 @@ button:focus-visible {
     color: #ddd;
 
     background:
-
-        rgba(
-            8,
-            20,
-            38,
-            0.95
-        );
+        rgba(8, 20, 38, 0.95);
 
     border-right:
-        4px solid
-        var(--gold);
+        4px solid var(--gold);
 
     border-radius:
         var(--radius-md);
@@ -1393,12 +1097,10 @@ button:focus-visible {
 }
 
 #pointInfo strong {
-
     color:
         var(--gold-light);
 
     font-family:
-
         "Consolas",
         "Courier New",
         monospace;
@@ -1414,7 +1116,6 @@ button:focus-visible {
    ========================================================= */
 
 .result-box {
-
     margin-top: 25px;
 
     padding: 20px;
@@ -1428,8 +1129,7 @@ button:focus-visible {
         var(--radius-md);
 
     border-right:
-        4px solid
-        var(--gold);
+        4px solid var(--gold);
 
     line-height: 2;
 }
@@ -1440,25 +1140,23 @@ button:focus-visible {
    ========================================================= */
 
 .hero {
-
     text-align: center;
 
     margin-bottom: 60px;
 }
 
 .hero h1 {
-
     font-size: 45px;
 
     font-weight: 900;
 }
 
 .hero h1 span {
-    color: var(--gold);
+    color:
+        var(--gold);
 }
 
 .hero p {
-
     margin-top: 20px;
 
     color: #ddd;
@@ -1474,7 +1172,6 @@ button:focus-visible {
    ========================================================= */
 
 .cards {
-
     display: grid;
 
     grid-template-columns:
@@ -1484,7 +1181,6 @@ button:focus-visible {
 }
 
 .card {
-
     padding: 30px;
 
     min-height: 260px;
@@ -1495,24 +1191,19 @@ button:focus-visible {
         var(--panel);
 
     border:
-        1px solid
-        var(--border);
+        1px solid var(--border);
 
     border-radius:
         var(--radius-lg);
 
-    backdrop-filter:
-        blur(20px);
-
-    -webkit-backdrop-filter:
-        blur(20px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 
     transition:
         var(--transition);
 }
 
 .card:hover {
-
     transform:
         translateY(-10px);
 
@@ -1520,7 +1211,6 @@ button:focus-visible {
         var(--gold);
 
     box-shadow:
-
         0 20px 40px
         rgba(0, 0, 0, 0.4);
 }
@@ -1530,7 +1220,6 @@ button:focus-visible {
 }
 
 .card p {
-
     color: #aaa;
 
     line-height: 2;
@@ -1544,7 +1233,6 @@ button:focus-visible {
    ========================================================= */
 
 .icon {
-
     width: 60px;
     height: 60px;
 
@@ -1561,30 +1249,18 @@ button:focus-visible {
 }
 
 .purple {
-
-    background:
-        #33205d;
-
-    color:
-        #b889ff;
+    background: #33205d;
+    color: #b889ff;
 }
 
 .green {
-
-    background:
-        #12482b;
-
-    color:
-        #80ff9b;
+    background: #12482b;
+    color: #80ff9b;
 }
 
 .blue {
-
-    background:
-        #123d70;
-
-    color:
-        #55aaff;
+    background: #123d70;
+    color: #55aaff;
 }
 
 
@@ -1593,7 +1269,6 @@ button:focus-visible {
    ========================================================= */
 
 .footer {
-
     margin-top: 60px;
 
     padding: 25px;
@@ -1603,8 +1278,7 @@ button:focus-visible {
     color: #777;
 
     border-top:
-        1px solid
-        rgba(255, 255, 255, 0.08);
+        1px solid rgba(255, 255, 255, 0.08);
 }
 
 
@@ -1613,21 +1287,17 @@ button:focus-visible {
    ========================================================= */
 
 ::-webkit-scrollbar {
-
     width: 8px;
     height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-
     background:
         #020817;
 }
 
 ::-webkit-scrollbar-thumb {
-
     background:
-
         linear-gradient(
             var(--gold-dark),
             var(--gold)
@@ -1637,12 +1307,14 @@ button:focus-visible {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--gold-light);
+    background:
+        var(--gold-light);
 }
 
 
 /* =========================================================
    TABLET
+   1100px
    ========================================================= */
 
 @media (max-width: 1100px) {
@@ -1651,27 +1323,7 @@ button:focus-visible {
         --sidebar-width: 230px;
     }
 
-    .controls-grid {
-
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-    }
-
-    .graph-controls {
-
-        grid-template-columns:
-            minmax(0, 2fr)
-            minmax(0, 1fr);
-    }
-
-    .cards {
-
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-    }
-
     .content {
-
         margin-right:
             var(--sidebar-width);
 
@@ -1679,306 +1331,202 @@ button:focus-visible {
         padding-right: 25px;
     }
 
-    .panel {
+    .controls-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
 
-        width: 100%;
-        max-width: 100%;
+    .graph-controls {
+        grid-template-columns:
+            minmax(0, 2fr)
+            minmax(0, 1fr);
+    }
+
+    .cards {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 
     .graph-container {
-
-        width: 100%;
-
-        height: 520px;
-
-        min-height: 420px;
-    }
-
-    #graph {
-        min-height: 400px;
+        height: 560px;
+        min-height: 430px;
     }
 }
 
 
 /* =========================================================
    MOBILE
+   750px
    ========================================================= */
 
 @media (max-width: 750px) {
 
     :root {
-
-        --header-height:
-            75px;
+        --header-height: 75px;
     }
 
-
-    /* -----------------------------------------
-       HEADER
-       ----------------------------------------- */
-
     .topbar {
-
-        width: 100%;
-
-        padding:
-            0 12px;
+        padding: 0 12px;
 
         gap: 10px;
     }
 
-
     .brand {
+        gap: 8px;
 
         flex-shrink: 0;
-
-        gap: 8px;
     }
 
-
     .brand img {
-
         width: 55px;
         height: 55px;
     }
 
-
     .brand h2 {
-
         font-size: 17px;
 
         letter-spacing: 3px;
     }
 
-
     .brand p {
         display: none;
     }
 
-
     .left-tools {
+        flex: 1;
 
         min-width: 0;
-
-        flex: 1;
 
         gap: 8px;
     }
 
-
     .search {
-
         width: 100%;
-
         max-width: 150px;
-
-        min-width: 0;
     }
 
-
     .menu {
-
         display: block;
-
-        flex-shrink: 0;
 
         width: 40px;
 
         text-align: center;
     }
 
-
-    /* -----------------------------------------
-       SIDEBAR
-       ----------------------------------------- */
-
     .sidebar {
+        top: var(--header-height);
 
-        position: fixed;
-
-        top:
-            var(--header-height);
-
-        right:
-            -100%;
+        right: -100%;
 
         width: 280px;
 
         height:
-
-            calc(
-                100vh -
-                var(--header-height)
-            );
+            calc(100vh - var(--header-height));
 
         transition:
-            0.3s ease;
+            right 0.3s ease;
     }
-
 
     .sidebar.open {
         right: 0;
     }
 
-
-    /* -----------------------------------------
-       CONTENT
-       ----------------------------------------- */
-
     .content {
-
         width: 100%;
 
         max-width: 100%;
 
-        min-width: 0;
-
         margin-right: 0;
 
         padding:
-
-            calc(
-                var(--header-height) +
-                30px
-            )
-
+            calc(var(--header-height) + 30px)
             12px
-
             30px;
 
         overflow: visible;
     }
 
-
-    /* -----------------------------------------
-       PAGE HEADER
-       ----------------------------------------- */
-
     .page-header h1 {
         font-size: 30px;
     }
-
 
     .hero h1 {
         font-size: 30px;
     }
 
-
     .hero p {
         font-size: 15px;
     }
 
+    .profile img {
+        width: 120px;
+        height: 120px;
+    }
 
-    /* -----------------------------------------
-       PANEL
-       ----------------------------------------- */
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .controls-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .graph-controls {
+        grid-template-columns: 1fr;
+    }
 
     .panel {
-
         width: 100%;
-
-        max-width: 100%;
-
-        min-width: 0;
 
         padding: 15px;
 
-        border-radius: 16px;
-
-        overflow: visible;
+        border-radius:
+            16px;
     }
 
-
-    /* -----------------------------------------
-       CONTROLS
-       ----------------------------------------- */
-
-    .controls-grid {
-
-        grid-template-columns:
-            1fr;
-    }
-
-
-    .graph-controls {
-
-        grid-template-columns:
-            1fr;
-
-        gap: 10px;
-    }
-
-
-    .input-group {
-
+    .graph-container {
         width: 100%;
 
-        min-width: 0;
+        height: 450px;
+
+        min-height: 350px;
+
+        padding: 2px;
     }
 
+    #graph {
+        width: 100% !important;
 
-    .input-group input,
-    .input-group textarea,
-    .input-group select {
+        height: 100% !important;
 
-        width: 100%;
-
-        max-width: 100%;
-
-        min-width: 0;
+        min-height: 0 !important;
     }
 
+    #graph .modebar {
+        top: 5px !important;
+        right: 5px !important;
 
-    /* -----------------------------------------
-       POINT INPUTS
-       ----------------------------------------- */
+        transform: scale(0.85);
 
-    .point-row {
-
-        grid-template-columns:
-            minmax(0, 1fr)
-            minmax(0, 1fr);
-
-        gap: 8px;
+        transform-origin:
+            top right;
     }
-
-
-    .point-row .danger-btn {
-
-        grid-column:
-            1 / -1;
-
-        width: 100%;
-    }
-
-
-    /* -----------------------------------------
-       BUTTONS
-       ----------------------------------------- */
 
     .button-row {
-
         width: 100%;
 
         display: grid;
 
         grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
+            repeat(2, minmax(0, 1fr));
 
         gap: 8px;
     }
 
-
     .button-row button {
-
         width: 100%;
 
         min-width: 0;
-
-        margin: 0;
 
         padding:
             10px 8px;
@@ -1986,234 +1534,94 @@ button:focus-visible {
         font-size: 13px;
     }
 
-
-    /* -----------------------------------------
-       FUNCTION ROW
-       ----------------------------------------- */
-
     .function-row {
+        flex-direction: column;
 
-        align-items:
-            stretch;
-
-        flex-direction:
-            column;
+        align-items: stretch;
     }
 
-
     .function-row span {
-
         width: 100%;
 
         text-align: left;
     }
 
-
     .function-row button {
-
         width: 100%;
     }
-
-
-    /* -----------------------------------------
-       GRAPH
-       ----------------------------------------- */
-
-    .graph-container {
-
-        width: 100%;
-
-        max-width: 100%;
-
-        min-width: 0;
-
-        height: 450px;
-
-        min-height: 350px;
-
-        padding: 2px;
-
-        overflow: hidden;
-    }
-
-
-    #graph {
-
-        width: 100% !important;
-
-        height: 100% !important;
-
-        max-width: 100% !important;
-
-        min-width: 0 !important;
-
-        min-height: 0 !important;
-    }
-
-
-    /* -----------------------------------------
-       PLOTLY MODEBAR
-       ----------------------------------------- */
-
-    #graph .modebar {
-
-        top: 5px !important;
-
-        right: 5px !important;
-
-        transform:
-            scale(0.85);
-
-        transform-origin:
-            top right;
-    }
-
-
-    /* -----------------------------------------
-       FUNCTION LIST
-       ----------------------------------------- */
-
-    #functionList {
-
-        width: 100%;
-
-        max-width: 100%;
-
-        overflow-x: hidden;
-    }
-
-
-    /* -----------------------------------------
-       POINT INFO
-       ----------------------------------------- */
 
     #pointInfo {
-
         font-size: 12px;
 
         min-height: 75px;
 
-        align-items:
-            flex-start;
+        align-items: flex-start;
 
-        flex-direction:
-            column;
-    }
-
-
-    /* -----------------------------------------
-       CARDS
-       ----------------------------------------- */
-
-    .cards {
-
-        grid-template-columns:
-            1fr;
-    }
-
-
-    .profile img {
-
-        width: 120px;
-
-        height: 120px;
+        flex-direction: column;
     }
 }
 
 
 /* =========================================================
    SMALL MOBILE
+   480px
    ========================================================= */
 
 @media (max-width: 480px) {
 
-    /* -----------------------------------------
-       HEADER
-       ----------------------------------------- */
-
     .topbar {
-
-        padding:
-            0 8px;
+        padding: 0 8px;
 
         gap: 5px;
     }
-
 
     .left-tools {
-
         gap: 5px;
     }
 
-
     .left-tools .tool-icon {
-
         display: none;
     }
 
-
     .search {
-
         width: 100px;
+
+        max-width: 100px;
     }
 
-
     .brand {
-
         gap: 5px;
     }
 
-
     .brand img {
-
         width: 45px;
-
         height: 45px;
     }
 
-
     .brand h2 {
-
         font-size: 14px;
 
         letter-spacing: 2px;
     }
 
-
     .menu {
+        width: 35px;
 
         font-size: 22px;
-
-        width: 35px;
     }
 
-
-    /* -----------------------------------------
-       CONTENT
-       ----------------------------------------- */
-
     .content {
-
         padding-left: 8px;
-
         padding-right: 8px;
     }
 
-
     .panel {
-
         padding: 12px;
 
         border-radius: 12px;
     }
 
-
-    /* -----------------------------------------
-       GRAPH
-       ----------------------------------------- */
-
     .graph-container {
-
         height: 400px;
 
         min-height: 300px;
@@ -2223,88 +1631,48 @@ button:focus-visible {
         border-radius: 10px;
     }
 
-
     #graph {
-
         width: 100% !important;
 
         height: 100% !important;
-
-        min-height: 0 !important;
     }
-
-
-    /* -----------------------------------------
-       BUTTONS
-       ----------------------------------------- */
 
     .button-row {
-
-        grid-template-columns:
-            1fr;
+        grid-template-columns: 1fr;
     }
 
-
     .button-row button {
-
         min-height: 46px;
 
         font-size: 13px;
     }
 
-
-    /* -----------------------------------------
-       POINT INPUTS
-       ----------------------------------------- */
-
-    .point-row {
-
-        grid-template-columns:
-            1fr;
-    }
-
-
-    .point-row .danger-btn {
-
-        grid-column:
-            auto;
-    }
-
-
-    /* -----------------------------------------
-       PAGE HEADER
-       ----------------------------------------- */
-
     .page-header {
-
         margin-bottom: 30px;
     }
 
-
     .page-header h1 {
-
         font-size: 25px;
+    }
+
+    .graph-controls {
+        gap: 10px;
     }
 }
 
 
 /* =========================================================
-   PLOTLY MOBILE TOUCH SUPPORT
+   TOUCH DEVICES
    ========================================================= */
 
 @media (hover: none) and (pointer: coarse) {
 
     #graph {
-
-        touch-action:
-            none;
+        touch-action: none;
     }
 
-
     #graph .modebar {
-
-        transform:
-            scale(0.8);
+        transform: scale(0.8);
 
         transform-origin:
             top right;
@@ -2318,16 +1686,15 @@ button:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
 
-    * {
+    html {
+        scroll-behavior: auto !important;
+    }
 
-        scroll-behavior:
-            auto !important;
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
 
-        transition:
-            none !important;
-
-        animation:
-            none !important;
+        animation: none !important;
     }
 }
-
