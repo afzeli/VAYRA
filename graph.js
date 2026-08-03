@@ -1,10 +1,10 @@
 /* =========================================================
-   VAYRA - ADVANCED FUNCTION GRAPH ENGINE
+   VAYRA - ADVANCED FUNCTION + LINE GRAPH ENGINE
    Requires: Plotly.js
    ========================================================= */
 
 /* =========================================================
-   GRAPH ELEMENT
+   DOM ELEMENTS
    ========================================================= */
 
 const graphContainer = document.getElementById("graph");
@@ -13,11 +13,41 @@ const functionList = document.getElementById("functionList");
 
 const pointInfo = document.getElementById("pointInfo");
 
+const functionInput = document.getElementById("functionInput");
+
+const plotFunctionBtn = document.getElementById("plotFunctionBtn");
+
+const pointX = document.getElementById("pointX");
+
+const pointY = document.getElementById("pointY");
+
+const addPointBtn = document.getElementById("addPointBtn");
+
+const plotLineBtn = document.getElementById("plotLineBtn");
+
+const clearPointsBtn = document.getElementById("clearPointsBtn");
+
+const pendingPoints = document.getElementById("pendingPoints");
+
+const clearGraphsBtn = document.getElementById("clearGraphsBtn");
+
+const resetZoomBtn = document.getElementById("resetZoomBtn");
+
+const zoomInBtn = document.getElementById("zoomInBtn");
+
+const zoomOutBtn = document.getElementById("zoomOutBtn");
+
+const menuButton = document.getElementById("menuButton");
+
+const sidebar = document.getElementById("sidebar");
+
 /* =========================================================
-   GLOBAL GRAPH DATA
+   GLOBAL DATA
    ========================================================= */
 
 let graphs = [];
+
+let pendingLinePoints = [];
 
 /* =========================================================
    SETTINGS
@@ -34,7 +64,7 @@ const GRAPH_CONFIG = {
 
   maxY: 1e10,
 
-  storageKey: "vayra_graphs",
+  storageKey: "vayra_graphs_v2",
 };
 
 /* =========================================================
@@ -134,19 +164,11 @@ function prepareExpression(expression) {
     expr = expr.replace(regex, "Math." + func + "(");
   });
 
-  /*
-   * Convert ^ to **
-   *
-   * x^2
-   * x^3
-   * (x+1)^2
-   */
+  /* Power */
 
   expr = expr.replace(/\^/g, "**");
 
-  /*
-   * Common mathematical constants
-   */
+  /* Infinity */
 
   expr = expr.replace(/\binfinity\b/gi, "Infinity");
 
@@ -161,22 +183,14 @@ function createFunction(expression) {
   const prepared = prepareExpression(expression);
 
   try {
-    /*
-     * Create function
-     */
-
     const func = new Function(
       "x",
+
       `
                 "use strict";
-
                 return (${prepared});
                 `,
     );
-
-    /*
-     * Test function
-     */
 
     const test = func(1);
 
@@ -232,10 +246,6 @@ function generatePoints(func, minX, maxX, samples) {
       y = NaN;
     }
 
-    /*
-     * Invalid values
-     */
-
     if (!Number.isFinite(y) || Math.abs(y) > GRAPH_CONFIG.maxY) {
       yValues.push(null);
 
@@ -243,16 +253,6 @@ function generatePoints(func, minX, maxX, samples) {
 
       continue;
     }
-
-    /*
-     * Detect discontinuity
-     *
-     * Example:
-     *
-     * tan(x)
-     *
-     * 1/x
-     */
 
     if (previousY !== null) {
       const jump = Math.abs(y - previousY);
@@ -279,10 +279,10 @@ function generatePoints(func, minX, maxX, samples) {
 }
 
 /* =========================================================
-   CREATE TRACE
+   CREATE FUNCTION TRACE
    ========================================================= */
 
-function createTrace(expression, options = {}) {
+function createFunctionTrace(expression, options = {}) {
   const minX = Number.isFinite(Number(options.minX))
     ? Number(options.minX)
     : GRAPH_CONFIG.minX;
@@ -312,6 +312,10 @@ function createTrace(expression, options = {}) {
 
     name: options.name || expression,
 
+    graphType: "function",
+
+    expression: expression,
+
     line: {
       color: color,
 
@@ -319,6 +323,70 @@ function createTrace(expression, options = {}) {
     },
 
     connectgaps: false,
+
+    hovertemplate:
+      "<b>%{fullData.name}</b>" +
+      "<br>" +
+      "x = %{x:.6f}" +
+      "<br>" +
+      "y = %{y:.6f}" +
+      "<extra></extra>",
+  };
+}
+
+/* =========================================================
+   CREATE LINE TRACE
+   ========================================================= */
+
+function createLineTrace(points, options = {}) {
+  if (!Array.isArray(points) || points.length < 2) {
+    throw new Error("برای رسم نمودار خطی حداقل دو نقطه وارد کنید.");
+  }
+
+  const x = points.map((point) => point.x);
+
+  const y = points.map((point) => point.y);
+
+  const color = graphColors[graphs.length % graphColors.length];
+
+  return {
+    x: x,
+
+    y: y,
+
+    type: "scatter",
+
+    mode: "lines+markers",
+
+    name: options.name || "نمودار خطی",
+
+    graphType: "line",
+
+    points: points.map((point) => ({
+      x: point.x,
+
+      y: point.y,
+    })),
+
+    line: {
+      color: color,
+
+      width: 3,
+    },
+
+    marker: {
+      size: 9,
+
+      color: color,
+
+      line: {
+        color: "#ffffff",
+
+        width: 1,
+      },
+    },
+
+    connectgaps: true,
 
     hovertemplate:
       "<b>%{fullData.name}</b>" +
@@ -346,35 +414,13 @@ function plotFunction(expression, options = {}) {
       throw new Error("لطفاً تابع را وارد کنید.");
     }
 
-    const trace = createTrace(cleanExpression, options);
-
-    /*
-     * Save expression
-     */
-
-    trace.expression = cleanExpression;
-
-    /*
-     * Add graph
-     */
+    const trace = createFunctionTrace(cleanExpression, options);
 
     graphs.push(trace);
 
-    /*
-     * Update graph
-     */
-
     updateGraph();
 
-    /*
-     * Update function list
-     */
-
     updateFunctionList();
-
-    /*
-     * Save
-     */
 
     saveGraphs();
 
@@ -385,6 +431,152 @@ function plotFunction(expression, options = {}) {
     alert(error.message || "خطا در رسم نمودار.");
 
     return false;
+  }
+}
+
+/* =========================================================
+   ADD POINT
+   ========================================================= */
+
+function addPoint() {
+  const x = Number(pointX.value);
+
+  const y = Number(pointY.value);
+
+  if (!Number.isFinite(x) || !Number.isFinite(y)) {
+    alert("لطفاً مقدار معتبر برای X و Y وارد کنید.");
+
+    return;
+  }
+
+  pendingLinePoints.push({
+    x: x,
+
+    y: y,
+  });
+
+  renderPendingPoints();
+
+  pointX.value = "";
+
+  pointY.value = "";
+
+  pointX.focus();
+}
+
+/* =========================================================
+   RENDER PENDING POINTS
+   ========================================================= */
+
+function renderPendingPoints() {
+  if (!pendingPoints) {
+    return;
+  }
+
+  pendingPoints.innerHTML = "";
+
+  if (pendingLinePoints.length === 0) {
+    pendingPoints.innerHTML = `
+            <div class="empty-points">
+                هنوز نقطه‌ای وارد نشده است.
+            </div>
+            `;
+
+    return;
+  }
+
+  pendingLinePoints.forEach(function (point, index) {
+    const chip = document.createElement("div");
+
+    chip.className = "point-chip";
+
+    chip.innerHTML = `
+                <span>
+                    P${index + 1}
+                    =
+                    (${point.x}, ${point.y})
+                </span>
+                `;
+
+    const removeButton = document.createElement("button");
+
+    removeButton.type = "button";
+
+    removeButton.textContent = "×";
+
+    removeButton.title = "حذف نقطه";
+
+    removeButton.addEventListener(
+      "click",
+
+      function () {
+        removePendingPoint(index);
+      },
+    );
+
+    chip.appendChild(removeButton);
+
+    pendingPoints.appendChild(chip);
+  });
+}
+
+/* =========================================================
+   REMOVE PENDING POINT
+   ========================================================= */
+
+function removePendingPoint(index) {
+  if (index < 0 || index >= pendingLinePoints.length) {
+    return;
+  }
+
+  pendingLinePoints.splice(index, 1);
+
+  renderPendingPoints();
+}
+
+/* =========================================================
+   CLEAR PENDING POINTS
+   ========================================================= */
+
+function clearPendingPoints() {
+  pendingLinePoints = [];
+
+  renderPendingPoints();
+}
+
+/* =========================================================
+   PLOT LINE
+   ========================================================= */
+
+function plotLine() {
+  try {
+    if (pendingLinePoints.length < 2) {
+      throw new Error("برای رسم نمودار خطی حداقل دو نقطه وارد کنید.");
+    }
+
+    const points = pendingLinePoints.map((point) => ({
+      x: point.x,
+
+      y: point.y,
+    }));
+
+    const trace = createLineTrace(points, {
+      name: "نمودار خطی " + (graphs.length + 1),
+    });
+
+    graphs.push(trace);
+
+    updateGraph();
+
+    updateFunctionList();
+
+    saveGraphs();
+
+    clearPendingPoints();
+  } catch (error) {
+    console.error(error);
+
+    alert(error.message || "خطا در رسم نمودار خطی.");
   }
 }
 
@@ -493,7 +685,7 @@ function updateGraph() {
 }
 
 /* =========================================================
-   CLEAR ALL
+   CLEAR ALL GRAPHS
    ========================================================= */
 
 function clearGraphs() {
@@ -629,15 +821,11 @@ function updateFunctionList() {
 
   if (graphs.length === 0) {
     functionList.innerHTML = `
-
             <div class="function-row">
-
                 <span>
-                    هنوز تابعی رسم نشده است.
+                    هنوز نموداری رسم نشده است.
                 </span>
-
             </div>
-
             `;
 
     return;
@@ -650,7 +838,16 @@ function updateFunctionList() {
 
     const span = document.createElement("span");
 
-    span.textContent = graph.expression;
+    span.textContent =
+      graph.graphType === "line"
+        ? formatLinePoints(graph.points)
+        : graph.expression;
+
+    const type = document.createElement("span");
+
+    type.className = "graph-type";
+
+    type.textContent = graph.graphType === "line" ? "خطی" : "تابع";
 
     const button = document.createElement("button");
 
@@ -670,6 +867,8 @@ function updateFunctionList() {
 
     row.appendChild(span);
 
+    row.appendChild(type);
+
     row.appendChild(button);
 
     functionList.appendChild(row);
@@ -677,16 +876,32 @@ function updateFunctionList() {
 }
 
 /* =========================================================
-   SAVE
+   FORMAT LINE POINTS
+   ========================================================= */
+
+function formatLinePoints(points) {
+  if (!Array.isArray(points)) {
+    return "نمودار خطی";
+  }
+
+  return points.map((point) => `(${point.x}, ${point.y})`).join(" → ");
+}
+
+/* =========================================================
+   SAVE GRAPHS
    ========================================================= */
 
 function saveGraphs() {
   try {
     const data = graphs.map(function (graph) {
       return {
+        graphType: graph.graphType,
+
         expression: graph.expression,
 
         name: graph.name,
+
+        points: graph.points,
       };
     });
 
@@ -701,7 +916,7 @@ function saveGraphs() {
 }
 
 /* =========================================================
-   LOAD
+   LOAD GRAPHS
    ========================================================= */
 
 function loadGraphs() {
@@ -719,29 +934,57 @@ function loadGraphs() {
     }
 
     data.forEach(function (item) {
-      if (item && item.expression) {
-        plotFunction(
-          item.expression,
+      if (!item) {
+        return;
+      }
 
-          {
-            name: item.name || item.expression,
+      try {
+        if (item.graphType === "line" && Array.isArray(item.points)) {
+          const trace = createLineTrace(
+            item.points,
 
-            minX: GRAPH_CONFIG.minX,
+            {
+              name: item.name || "نمودار خطی",
+            },
+          );
 
-            maxX: GRAPH_CONFIG.maxX,
+          graphs.push(trace);
+        } else if (item.graphType === "function" && item.expression) {
+          const trace = createFunctionTrace(
+            item.expression,
 
-            samples: GRAPH_CONFIG.samples,
-          },
+            {
+              name: item.name || item.expression,
+
+              minX: GRAPH_CONFIG.minX,
+
+              maxX: GRAPH_CONFIG.maxX,
+
+              samples: GRAPH_CONFIG.samples,
+            },
+          );
+
+          graphs.push(trace);
+        }
+      } catch (error) {
+        console.warn(
+          "Graph load failed:",
+
+          error,
         );
       }
     });
+
+    updateGraph();
+
+    updateFunctionList();
   } catch (error) {
     console.warn("Load error:", error);
   }
 }
 
 /* =========================================================
-   POINT INFORMATION
+   POINT INFORMATION / HOVER
    ========================================================= */
 
 function setupHover() {
@@ -766,22 +1009,187 @@ function setupHover() {
       pointInfo.innerHTML = `
 
                 <strong>
-
-                x = ${x.toFixed(8)}
-
+                    x = ${x.toFixed(8)}
                 </strong>
 
                 &nbsp;&nbsp;
 
                 <strong>
-
-                y = ${y.toFixed(8)}
-
+                    y = ${y.toFixed(8)}
                 </strong>
 
                 `;
     },
   );
+
+  graphContainer.on(
+    "plotly_unhover",
+
+    function () {
+      pointInfo.innerHTML =
+        "برای مشاهده مختصات، نشانگر را روی نمودار حرکت دهید.";
+    },
+  );
+}
+
+/* =========================================================
+   EVENT LISTENERS
+   ========================================================= */
+
+function setupEvents() {
+  /* Function */
+
+  if (plotFunctionBtn) {
+    plotFunctionBtn.addEventListener(
+      "click",
+
+      function () {
+        const expression = functionInput.value;
+
+        if (plotFunction(expression)) {
+          functionInput.value = "";
+
+          functionInput.focus();
+        }
+      },
+    );
+  }
+
+  /* Function Enter */
+
+  if (functionInput) {
+    functionInput.addEventListener(
+      "keydown",
+
+      function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+
+          plotFunctionBtn.click();
+        }
+      },
+    );
+  }
+
+  /* Add Point */
+
+  if (addPointBtn) {
+    addPointBtn.addEventListener(
+      "click",
+
+      addPoint,
+    );
+  }
+
+  /* Point Enter */
+
+  [pointX, pointY].forEach(function (input) {
+    if (!input) {
+      return;
+    }
+
+    input.addEventListener(
+      "keydown",
+
+      function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+
+          addPoint();
+        }
+      },
+    );
+  });
+
+  /* Plot Line */
+
+  if (plotLineBtn) {
+    plotLineBtn.addEventListener(
+      "click",
+
+      plotLine,
+    );
+  }
+
+  /* Clear Pending */
+
+  if (clearPointsBtn) {
+    clearPointsBtn.addEventListener(
+      "click",
+
+      clearPendingPoints,
+    );
+  }
+
+  /* Clear Graphs */
+
+  if (clearGraphsBtn) {
+    clearGraphsBtn.addEventListener(
+      "click",
+
+      function () {
+        if (graphs.length === 0) {
+          return;
+        }
+
+        if (confirm("آیا می‌خواهید همه نمودارها حذف شوند؟")) {
+          clearGraphs();
+        }
+      },
+    );
+  }
+
+  /* Zoom */
+
+  if (resetZoomBtn) {
+    resetZoomBtn.addEventListener(
+      "click",
+
+      resetZoom,
+    );
+  }
+
+  if (zoomInBtn) {
+    zoomInBtn.addEventListener(
+      "click",
+
+      zoomIn,
+    );
+  }
+
+  if (zoomOutBtn) {
+    zoomOutBtn.addEventListener(
+      "click",
+
+      zoomOut,
+    );
+  }
+
+  /* Mobile Menu */
+
+  if (menuButton && sidebar) {
+    menuButton.addEventListener(
+      "click",
+
+      function () {
+        sidebar.classList.toggle("open");
+      },
+    );
+  }
+
+  /* Close sidebar after click */
+
+  if (sidebar) {
+    sidebar.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener(
+        "click",
+
+        function () {
+          sidebar.classList.remove("open");
+        },
+      );
+    });
+  }
 }
 
 /* =========================================================
@@ -820,20 +1228,15 @@ document.addEventListener(
       return;
     }
 
-    updateFunctionList();
+    setupEvents();
 
     setupHover();
 
-    /*
-     * Load saved graphs
-     */
+    renderPendingPoints();
 
     loadGraphs();
 
-    /*
-     * If no saved graph exists
-     * draw default graph
-     */
+    /* Default Graph */
 
     if (graphs.length === 0) {
       plotFunction(
@@ -859,6 +1262,20 @@ document.addEventListener(
 
 window.VayraGraph = {
   plot: plotFunction,
+
+  plotLine: function (points) {
+    const trace = createLineTrace(points);
+
+    graphs.push(trace);
+
+    updateGraph();
+
+    updateFunctionList();
+
+    saveGraphs();
+  },
+
+  addPoint: addPoint,
 
   clear: clearGraphs,
 

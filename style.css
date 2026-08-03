@@ -2,6 +2,7 @@ css
 /* =========================================================
    VAYRA - ADVANCED GLOBAL STYLE
    Graph Engine / Plotly.js
+   Version: Unified Responsive
    ========================================================= */
 
 
@@ -17,7 +18,21 @@ css
 
 html {
     scroll-behavior: smooth;
+    width: 100%;
+    max-width: 100%;
 }
+
+body {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   ROOT VARIABLES
+   ========================================================= */
 
 :root {
 
@@ -67,8 +82,6 @@ html {
 
 body {
 
-    min-height: 100vh;
-
     font-family:
         "Vazirmatn",
         "Tahoma",
@@ -97,8 +110,6 @@ body {
             #061426 50%,
             #020817
         );
-
-    overflow-x: hidden;
 }
 
 
@@ -107,12 +118,8 @@ body {
    ========================================================= */
 
 a {
-
-    color:
-        inherit;
-
-    text-decoration:
-        none;
+    color: inherit;
+    text-decoration: none;
 }
 
 
@@ -122,40 +129,27 @@ a {
 
 button {
 
-    border:
-        none;
-
-    outline:
-        none;
+    border: none;
+    outline: none;
 
     font-family:
         "Vazirmatn",
         "Tahoma",
         sans-serif;
 
-    cursor:
-        pointer;
-
-    user-select:
-        none;
+    cursor: pointer;
+    user-select: none;
 
     transition:
-
         transform var(--transition),
-
         filter var(--transition),
-
         box-shadow var(--transition),
-
         background var(--transition),
-
         border-color var(--transition);
 }
 
 button:active {
-
-    transform:
-        scale(0.97);
+    transform: scale(0.97);
 }
 
 button:focus-visible {
@@ -174,9 +168,8 @@ button:focus-visible {
    ========================================================= */
 
 .dashboard {
-
-    min-height:
-        100vh;
+    min-height: 100vh;
+    width: 100%;
 }
 
 
@@ -186,32 +179,21 @@ button:focus-visible {
 
 .topbar {
 
-    position:
-        fixed;
+    position: fixed;
 
-    top:
-        0;
+    top: 0;
+    left: 0;
+    right: 0;
 
-    left:
-        0;
+    width: 100%;
+    height: var(--header-height);
 
-    right:
-        0;
+    display: flex;
 
-    height:
-        var(--header-height);
+    align-items: center;
+    justify-content: space-between;
 
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        space-between;
-
-    padding:
-        0 35px;
+    padding: 0 35px;
 
     background:
         rgba(5, 15, 30, 0.88);
@@ -230,8 +212,7 @@ button:focus-visible {
         0 5px 25px
         rgba(0, 0, 0, 0.25);
 
-    z-index:
-        1000;
+    z-index: 1000;
 }
 
 
@@ -241,29 +222,27 @@ button:focus-visible {
 
 .brand {
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        center;
+    align-items: center;
 
-    gap:
-        15px;
+    gap: 15px;
+
+    min-width: 0;
+
+    flex-shrink: 0;
 }
 
 .brand img {
 
-    width:
-        75px;
+    width: 75px;
+    height: 75px;
 
-    height:
-        75px;
+    object-fit: contain;
 
-    object-fit:
-        contain;
+    display: block;
 
-    display:
-        block;
+    flex-shrink: 0;
 }
 
 .brand h2 {
@@ -276,21 +255,20 @@ button:focus-visible {
 
     font-size:
         24px;
+
+    white-space:
+        nowrap;
 }
 
 .brand p {
 
-    margin-top:
-        3px;
+    margin-top: 3px;
 
-    color:
-        #ddd;
+    color: #ddd;
 
-    font-size:
-        10px;
+    font-size: 10px;
 
-    letter-spacing:
-        2px;
+    letter-spacing: 2px;
 }
 
 
@@ -300,26 +278,25 @@ button:focus-visible {
 
 .left-tools {
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        center;
+    align-items: center;
 
-    gap:
-        20px;
+    gap: 20px;
+
+    min-width: 0;
 }
 
 .tool-icon {
 
-    font-size:
-        22px;
+    font-size: 22px;
 
-    cursor:
-        pointer;
+    cursor: pointer;
 
     transition:
         var(--transition);
+
+    flex-shrink: 0;
 }
 
 .tool-icon:hover {
@@ -338,23 +315,16 @@ button:focus-visible {
 
 .search {
 
-    width:
-        220px;
+    width: 220px;
+    height: 40px;
 
-    height:
-        40px;
+    display: flex;
 
-    display:
-        flex;
+    align-items: center;
 
-    align-items:
-        center;
+    gap: 10px;
 
-    gap:
-        10px;
-
-    padding:
-        0 15px;
+    padding: 0 15px;
 
     background:
         rgba(21, 36, 56, 0.85);
@@ -368,6 +338,8 @@ button:focus-visible {
 
     transition:
         var(--transition);
+
+    min-width: 0;
 }
 
 .search:focus-within {
@@ -382,29 +354,22 @@ button:focus-visible {
 
 .search input {
 
-    width:
-        100%;
+    width: 100%;
+    min-width: 0;
 
-    background:
-        transparent;
+    background: transparent;
 
-    border:
-        none;
+    border: none;
 
-    outline:
-        none;
+    outline: none;
 
-    color:
-        white;
+    color: white;
 
-    font-family:
-        inherit;
+    font-family: inherit;
 }
 
 .search input::placeholder {
-
-    color:
-        #999;
+    color: #999;
 }
 
 
@@ -414,14 +379,13 @@ button:focus-visible {
 
 .menu {
 
-    display:
-        none;
+    display: none;
 
-    font-size:
-        25px;
+    font-size: 25px;
 
-    cursor:
-        pointer;
+    cursor: pointer;
+
+    flex-shrink: 0;
 }
 
 
@@ -431,17 +395,12 @@ button:focus-visible {
 
 .sidebar {
 
-    position:
-        fixed;
+    position: fixed;
 
-    top:
-        var(--header-height);
+    top: var(--header-height);
+    right: 0;
 
-    right:
-        0;
-
-    width:
-        var(--sidebar-width);
+    width: var(--sidebar-width);
 
     height:
         calc(
@@ -449,11 +408,10 @@ button:focus-visible {
             var(--header-height)
         );
 
-    padding:
-        30px 20px;
+    padding: 30px 20px;
 
-    overflow-y:
-        auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 
     background:
 
@@ -467,11 +425,9 @@ button:focus-visible {
         1px solid
         rgba(255, 255, 255, 0.1);
 
-    z-index:
-        900;
+    z-index: 900;
 
-    scrollbar-width:
-        thin;
+    scrollbar-width: thin;
 
     scrollbar-color:
         var(--gold)
@@ -479,9 +435,7 @@ button:focus-visible {
 }
 
 .sidebar::-webkit-scrollbar {
-
-    width:
-        5px;
+    width: 5px;
 }
 
 .sidebar::-webkit-scrollbar-thumb {
@@ -500,11 +454,9 @@ button:focus-visible {
 
 .profile {
 
-    text-align:
-        center;
+    text-align: center;
 
-    padding-bottom:
-        25px;
+    padding-bottom: 25px;
 
     border-bottom:
         1px solid
@@ -513,20 +465,14 @@ button:focus-visible {
 
 .profile img {
 
-    width:
-        140px;
+    width: 140px;
+    height: 140px;
 
-    height:
-        140px;
+    display: block;
 
-    display:
-        block;
+    object-fit: contain;
 
-    object-fit:
-        contain;
-
-    margin:
-        0 auto 10px;
+    margin: 0 auto 10px;
 }
 
 .profile h2 {
@@ -557,32 +503,24 @@ button:focus-visible {
 
 .menu-items {
 
-    display:
-        flex;
+    display: flex;
 
-    flex-direction:
-        column;
+    flex-direction: column;
 
-    gap:
-        12px;
+    gap: 12px;
 
-    margin-top:
-        30px;
+    margin-top: 30px;
 }
 
 .menu-items a {
 
-    min-height:
-        50px;
+    min-height: 50px;
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        center;
+    align-items: center;
 
-    padding:
-        0 18px;
+    padding: 0 18px;
 
     background:
         var(--panel-dark);
@@ -594,11 +532,9 @@ button:focus-visible {
     border-radius:
         var(--radius-md);
 
-    color:
-        white;
+    color: white;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
     transition:
         var(--transition);
@@ -606,8 +542,7 @@ button:focus-visible {
 
 .menu-items a:hover {
 
-    color:
-        #000;
+    color: #000;
 
     background:
         var(--gold);
@@ -618,8 +553,7 @@ button:focus-visible {
 
 .menu-items a.active {
 
-    color:
-        #000;
+    color: #000;
 
     background:
 
@@ -642,11 +576,11 @@ button:focus-visible {
 
 .content {
 
-    position:
-        relative;
+    position: relative;
 
-    min-height:
-        100vh;
+    width: 100%;
+    min-width: 0;
+    min-height: 100vh;
 
     margin-right:
         var(--sidebar-width);
@@ -662,29 +596,20 @@ button:focus-visible {
 
         60px;
 
-    overflow:
-        hidden;
+    overflow: visible;
 }
 
 .content::before {
 
-    content:
-        "";
+    content: "";
 
-    position:
-        absolute;
+    position: absolute;
 
-    width:
-        600px;
+    width: 600px;
+    height: 600px;
 
-    height:
-        600px;
-
-    top:
-        100px;
-
-    left:
-        50px;
+    top: 100px;
+    left: 50px;
 
     background:
 
@@ -694,14 +619,11 @@ button:focus-visible {
             transparent 70%
         );
 
-    opacity:
-        0.35;
+    opacity: 0.35;
 
-    pointer-events:
-        none;
+    pointer-events: none;
 
-    z-index:
-        -1;
+    z-index: -1;
 }
 
 
@@ -711,41 +633,31 @@ button:focus-visible {
 
 .page-header {
 
-    text-align:
-        center;
+    text-align: center;
 
-    margin-bottom:
-        35px;
+    margin-bottom: 35px;
 }
 
 .page-header h1 {
 
-    font-size:
-        40px;
+    font-size: 40px;
 
-    font-weight:
-        900;
+    font-weight: 900;
 
-    margin-bottom:
-        15px;
+    margin-bottom: 15px;
 }
 
 .page-header h1 span {
-
-    color:
-        var(--gold);
+    color: var(--gold);
 }
 
 .page-header p {
 
-    color:
-        #bbb;
+    color: #bbb;
 
-    font-size:
-        16px;
+    font-size: 16px;
 
-    line-height:
-        2;
+    line-height: 2;
 }
 
 
@@ -755,17 +667,13 @@ button:focus-visible {
 
 .panel {
 
-    width:
-        100%;
+    width: 100%;
+    max-width: 1400px;
+    min-width: 0;
 
-    max-width:
-        1400px;
+    margin: 0 auto;
 
-    margin:
-        0 auto;
-
-    padding:
-        30px;
+    padding: 30px;
 
     background:
 
@@ -777,7 +685,6 @@ button:focus-visible {
         );
 
     border:
-
         1px solid
         rgba(255, 255, 255, 0.1);
 
@@ -801,19 +708,18 @@ button:focus-visible {
 
 .graph-controls {
 
-    display:
-        grid;
+    display: grid;
 
     grid-template-columns:
         minmax(250px, 2fr)
         minmax(120px, 1fr)
         minmax(120px, 1fr);
 
-    gap:
-        15px;
+    gap: 15px;
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
+
+    width: 100%;
 }
 
 
@@ -823,17 +729,16 @@ button:focus-visible {
 
 .controls-grid {
 
-    display:
-        grid;
+    display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(3, minmax(0, 1fr));
 
-    gap:
-        15px;
+    gap: 15px;
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
+
+    width: 100%;
 }
 
 
@@ -843,55 +748,47 @@ button:focus-visible {
 
 .input-group {
 
-    margin-bottom:
-        20px;
+    width: 100%;
+    min-width: 0;
+
+    margin-bottom: 20px;
 }
 
 .input-group label {
 
-    display:
-        block;
+    display: block;
 
-    margin-bottom:
-        8px;
+    margin-bottom: 8px;
 
-    color:
-        #ddd;
+    color: #ddd;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
-    font-weight:
-        600;
+    font-weight: 600;
 }
 
 .input-group small {
 
-    display:
-        block;
+    display: block;
 
-    color:
-        #999;
+    color: #999;
 
-    line-height:
-        1.8;
+    line-height: 1.8;
 
-    margin-top:
-        6px;
+    margin-top: 6px;
 }
 
 .input-group input,
 .input-group textarea,
 .input-group select {
 
-    width:
-        100%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 
-    padding:
-        13px 15px;
+    padding: 13px 15px;
 
-    color:
-        white;
+    color: white;
 
     background:
         #111e32;
@@ -903,11 +800,9 @@ button:focus-visible {
     border-radius:
         var(--radius-md);
 
-    outline:
-        none;
+    outline: none;
 
-    font-family:
-        inherit;
+    font-family: inherit;
 
     transition:
         var(--transition);
@@ -936,11 +831,9 @@ button:focus-visible {
 
 .input-group textarea {
 
-    min-height:
-        180px;
+    min-height: 180px;
 
-    resize:
-        vertical;
+    resize: vertical;
 }
 
 
@@ -950,23 +843,111 @@ button:focus-visible {
 
 #functionInput {
 
-    direction:
-        ltr;
+    direction: ltr;
 
-    text-align:
-        left;
+    text-align: left;
 
     font-family:
-
         "Consolas",
         "Courier New",
         monospace;
 
-    font-size:
-        16px;
+    font-size: 16px;
 
-    letter-spacing:
-        0.3px;
+    letter-spacing: 0.3px;
+}
+
+
+/* =========================================================
+   POINT INPUTS
+   پشتیبانی از ورود جداگانه هر نقطه
+   ========================================================= */
+
+#pointsList {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    width: 100%;
+
+    margin-bottom: 20px;
+}
+
+.point-row {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+
+    padding: 10px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(17, 30, 50, 0.95),
+            rgba(12, 25, 43, 0.95)
+        );
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+    border-radius:
+        var(--radius-md);
+}
+
+.point-row input {
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 11px 12px;
+
+    color: white;
+
+    background:
+        #111e32;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+    border-radius:
+        var(--radius-sm);
+
+    outline: none;
+
+    direction: ltr;
+
+    text-align: left;
+
+    font-family:
+        "Consolas",
+        "Courier New",
+        monospace;
+}
+
+.point-row input:focus {
+
+    border-color:
+        var(--gold);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(212, 175, 55, 0.08);
 }
 
 
@@ -976,32 +957,24 @@ button:focus-visible {
 
 #functionList {
 
-    display:
-        flex;
+    display: flex;
 
-    flex-direction:
-        column;
+    flex-direction: column;
 
-    gap:
-        10px;
+    gap: 10px;
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
 
-    max-height:
-        300px;
+    max-height: 300px;
 
-    overflow-y:
-        auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 
-    padding-right:
-        3px;
+    padding-right: 3px;
 }
 
 #functionList::-webkit-scrollbar {
-
-    width:
-        5px;
+    width: 5px;
 }
 
 #functionList::-webkit-scrollbar-thumb {
@@ -1020,20 +993,15 @@ button:focus-visible {
 
 .function-row {
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        center;
+    align-items: center;
 
-    gap:
-        12px;
+    gap: 12px;
 
-    min-height:
-        52px;
+    min-height: 52px;
 
-    padding:
-        10px 14px;
+    padding: 10px 14px;
 
     background:
 
@@ -1052,6 +1020,8 @@ button:focus-visible {
 
     transition:
         var(--transition);
+
+    min-width: 0;
 }
 
 .function-row:hover {
@@ -1070,35 +1040,27 @@ button:focus-visible {
 
 .function-row span {
 
-    flex:
-        1;
+    flex: 1;
 
-    min-width:
-        0;
+    min-width: 0;
 
     color:
         var(--gold-light);
 
     font-family:
-
         "Consolas",
         "Courier New",
         monospace;
 
-    direction:
-        ltr;
+    direction: ltr;
 
-    text-align:
-        left;
+    text-align: left;
 
-    overflow:
-        hidden;
+    overflow: hidden;
 
-    text-overflow:
-        ellipsis;
+    text-overflow: ellipsis;
 
-    white-space:
-        nowrap;
+    white-space: nowrap;
 }
 
 
@@ -1108,23 +1070,19 @@ button:focus-visible {
 
 .button-row {
 
-    display:
-        flex;
+    display: flex;
 
-    flex-wrap:
-        wrap;
+    flex-wrap: wrap;
 
-    gap:
-        10px;
+    gap: 10px;
 
-    margin:
-        20px 0;
+    width: 100%;
+
+    margin: 20px 0;
 }
 
 .button-row button {
-
-    min-height:
-        44px;
+    min-height: 44px;
 }
 
 
@@ -1134,8 +1092,7 @@ button:focus-visible {
 
 .primary-btn {
 
-    padding:
-        11px 25px;
+    padding: 11px 25px;
 
     background:
 
@@ -1145,11 +1102,9 @@ button:focus-visible {
             var(--gold)
         );
 
-    color:
-        #000;
+    color: #000;
 
-    font-weight:
-        700;
+    font-weight: 700;
 
     border-radius:
         var(--radius-sm);
@@ -1176,17 +1131,14 @@ button:focus-visible {
 
 .secondary-btn {
 
-    padding:
-        11px 22px;
+    padding: 11px 22px;
 
     background:
         #24354c;
 
-    color:
-        white;
+    color: white;
 
     border:
-
         1px solid
         rgba(255, 255, 255, 0.08);
 
@@ -1213,8 +1165,7 @@ button:focus-visible {
 
 .danger-btn {
 
-    padding:
-        9px 16px;
+    padding: 9px 16px;
 
     background:
 
@@ -1224,8 +1175,7 @@ button:focus-visible {
             var(--danger)
         );
 
-    color:
-        white;
+    color: white;
 
     border-radius:
         var(--radius-sm);
@@ -1247,20 +1197,16 @@ button:focus-visible {
 
 .graph-container {
 
-    position:
-        relative;
+    position: relative;
 
-    width:
-        100%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 
-    height:
-        620px;
+    height: 620px;
+    min-height: 450px;
 
-    min-height:
-        450px;
-
-    padding:
-        8px;
+    padding: 8px;
 
     background:
 
@@ -1271,7 +1217,6 @@ button:focus-visible {
         );
 
     border:
-
         1px solid
         rgba(255, 255, 255, 0.1);
 
@@ -1287,8 +1232,7 @@ button:focus-visible {
         0 10px 30px
         rgba(0, 0, 0, 0.2);
 
-    overflow:
-        hidden;
+    overflow: hidden;
 }
 
 
@@ -1298,26 +1242,25 @@ button:focus-visible {
 
 #graph {
 
-    width:
-        100% !important;
+    width: 100% !important;
+    height: 100% !important;
 
-    height:
-        100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
 
-    min-height:
-        430px;
+    min-height: 430px;
 
-    direction:
-        ltr;
+    direction: ltr;
+
+    overflow: hidden;
 }
 
 #graph .plotly {
 
-    width:
-        100% !important;
+    width: 100% !important;
+    height: 100% !important;
 
-    height:
-        100% !important;
+    max-width: 100% !important;
 }
 
 #graph .main-svg {
@@ -1333,14 +1276,11 @@ button:focus-visible {
 
 #graph .modebar {
 
-    top:
-        10px !important;
+    top: 10px !important;
 
-    right:
-        10px !important;
+    right: 10px !important;
 
-    left:
-        auto !important;
+    left: auto !important;
 
     background:
 
@@ -1351,11 +1291,9 @@ button:focus-visible {
             0.85
         ) !important;
 
-    border-radius:
-        8px;
+    border-radius: 8px;
 
-    padding:
-        4px;
+    padding: 4px;
 
     backdrop-filter:
         blur(10px);
@@ -1413,32 +1351,23 @@ button:focus-visible {
 
 #pointInfo {
 
-    margin-top:
-        18px;
+    margin-top: 18px;
 
-    min-height:
-        65px;
+    min-height: 65px;
 
-    padding:
-        14px 18px;
+    padding: 14px 18px;
 
-    display:
-        flex;
+    display: flex;
 
-    align-items:
-        center;
+    align-items: center;
 
-    justify-content:
-        flex-start;
+    justify-content: flex-start;
 
-    flex-wrap:
-        wrap;
+    flex-wrap: wrap;
 
-    gap:
-        8px;
+    gap: 8px;
 
-    color:
-        #ddd;
+    color: #ddd;
 
     background:
 
@@ -1456,14 +1385,11 @@ button:focus-visible {
     border-radius:
         var(--radius-md);
 
-    line-height:
-        2;
+    line-height: 2;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
-    direction:
-        rtl;
+    direction: rtl;
 }
 
 #pointInfo strong {
@@ -1477,11 +1403,9 @@ button:focus-visible {
         "Courier New",
         monospace;
 
-    direction:
-        ltr;
+    direction: ltr;
 
-    display:
-        inline-block;
+    display: inline-block;
 }
 
 
@@ -1491,14 +1415,11 @@ button:focus-visible {
 
 .result-box {
 
-    margin-top:
-        25px;
+    margin-top: 25px;
 
-    padding:
-        20px;
+    padding: 20px;
 
-    color:
-        #ddd;
+    color: #ddd;
 
     background:
         #081426;
@@ -1510,8 +1431,7 @@ button:focus-visible {
         4px solid
         var(--gold);
 
-    line-height:
-        2;
+    line-height: 2;
 }
 
 
@@ -1521,41 +1441,31 @@ button:focus-visible {
 
 .hero {
 
-    text-align:
-        center;
+    text-align: center;
 
-    margin-bottom:
-        60px;
+    margin-bottom: 60px;
 }
 
 .hero h1 {
 
-    font-size:
-        45px;
+    font-size: 45px;
 
-    font-weight:
-        900;
+    font-weight: 900;
 }
 
 .hero h1 span {
-
-    color:
-        var(--gold);
+    color: var(--gold);
 }
 
 .hero p {
 
-    margin-top:
-        20px;
+    margin-top: 20px;
 
-    color:
-        #ddd;
+    color: #ddd;
 
-    line-height:
-        2;
+    line-height: 2;
 
-    font-size:
-        18px;
+    font-size: 18px;
 }
 
 
@@ -1565,26 +1475,21 @@ button:focus-visible {
 
 .cards {
 
-    display:
-        grid;
+    display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(3, minmax(0, 1fr));
 
-    gap:
-        25px;
+    gap: 25px;
 }
 
 .card {
 
-    padding:
-        30px;
+    padding: 30px;
 
-    min-height:
-        260px;
+    min-height: 260px;
 
-    text-align:
-        center;
+    text-align: center;
 
     background:
         var(--panel);
@@ -1621,21 +1526,16 @@ button:focus-visible {
 }
 
 .card h2 {
-
-    margin-bottom:
-        15px;
+    margin-bottom: 15px;
 }
 
 .card p {
 
-    color:
-        #aaa;
+    color: #aaa;
 
-    line-height:
-        2;
+    line-height: 2;
 
-    font-size:
-        14px;
+    font-size: 14px;
 }
 
 
@@ -1645,29 +1545,19 @@ button:focus-visible {
 
 .icon {
 
-    width:
-        60px;
+    width: 60px;
+    height: 60px;
 
-    height:
-        60px;
+    display: flex;
 
-    display:
-        flex;
+    align-items: center;
+    justify-content: center;
 
-    align-items:
-        center;
+    margin: 0 auto 20px;
 
-    justify-content:
-        center;
+    border-radius: 15px;
 
-    margin:
-        0 auto 20px;
-
-    border-radius:
-        15px;
-
-    font-size:
-        28px;
+    font-size: 28px;
 }
 
 .purple {
@@ -1704,17 +1594,13 @@ button:focus-visible {
 
 .footer {
 
-    margin-top:
-        60px;
+    margin-top: 60px;
 
-    padding:
-        25px;
+    padding: 25px;
 
-    text-align:
-        center;
+    text-align: center;
 
-    color:
-        #777;
+    color: #777;
 
     border-top:
         1px solid
@@ -1728,11 +1614,8 @@ button:focus-visible {
 
 ::-webkit-scrollbar {
 
-    width:
-        8px;
-
-    height:
-        8px;
+    width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -1750,14 +1633,11 @@ button:focus-visible {
             var(--gold)
         );
 
-    border-radius:
-        10px;
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-
-    background:
-        var(--gold-light);
+    background: var(--gold-light);
 }
 
 
@@ -1767,46 +1647,55 @@ button:focus-visible {
 
 @media (max-width: 1100px) {
 
+    :root {
+        --sidebar-width: 230px;
+    }
+
     .controls-grid {
 
         grid-template-columns:
-            repeat(2, 1fr);
+            repeat(2, minmax(0, 1fr));
     }
 
     .graph-controls {
 
         grid-template-columns:
-            2fr 1fr;
+            minmax(0, 2fr)
+            minmax(0, 1fr);
     }
 
     .cards {
 
         grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-    .sidebar {
-
-        width:
-            230px;
+            repeat(2, minmax(0, 1fr));
     }
 
     .content {
 
         margin-right:
-            230px;
+            var(--sidebar-width);
 
-        padding-left:
-            25px;
+        padding-left: 25px;
+        padding-right: 25px;
+    }
 
-        padding-right:
-            25px;
+    .panel {
+
+        width: 100%;
+        max-width: 100%;
     }
 
     .graph-container {
 
-        height:
-            560px;
+        width: 100%;
+
+        height: 520px;
+
+        min-height: 420px;
+    }
+
+    #graph {
+        min-height: 400px;
     }
 }
 
@@ -1824,58 +1713,88 @@ button:focus-visible {
     }
 
 
+    /* -----------------------------------------
+       HEADER
+       ----------------------------------------- */
+
     .topbar {
 
+        width: 100%;
+
         padding:
-            0 15px;
+            0 12px;
+
+        gap: 10px;
+    }
+
+
+    .brand {
+
+        flex-shrink: 0;
+
+        gap: 8px;
     }
 
 
     .brand img {
 
-        width:
-            60px;
-
-        height:
-            60px;
+        width: 55px;
+        height: 55px;
     }
 
 
     .brand h2 {
 
-        font-size:
-            18px;
+        font-size: 17px;
 
-        letter-spacing:
-            3px;
+        letter-spacing: 3px;
     }
 
 
     .brand p {
+        display: none;
+    }
 
-        display:
-            none;
+
+    .left-tools {
+
+        min-width: 0;
+
+        flex: 1;
+
+        gap: 8px;
     }
 
 
     .search {
 
-        width:
-            140px;
+        width: 100%;
+
+        max-width: 150px;
+
+        min-width: 0;
     }
 
 
     .menu {
 
-        display:
-            block;
+        display: block;
+
+        flex-shrink: 0;
+
+        width: 40px;
+
+        text-align: center;
     }
 
 
+    /* -----------------------------------------
+       SIDEBAR
+       ----------------------------------------- */
+
     .sidebar {
 
-        position:
-            fixed;
+        position: fixed;
 
         top:
             var(--header-height);
@@ -1883,8 +1802,7 @@ button:focus-visible {
         right:
             -100%;
 
-        width:
-            280px;
+        width: 280px;
 
         height:
 
@@ -1899,16 +1817,23 @@ button:focus-visible {
 
 
     .sidebar.open {
-
-        right:
-            0;
+        right: 0;
     }
 
 
+    /* -----------------------------------------
+       CONTENT
+       ----------------------------------------- */
+
     .content {
 
-        margin-right:
-            0;
+        width: 100%;
+
+        max-width: 100%;
+
+        min-width: 0;
+
+        margin-right: 0;
 
         padding:
 
@@ -1917,49 +1842,56 @@ button:focus-visible {
                 30px
             )
 
-            15px
+            12px
 
-            40px;
+            30px;
+
+        overflow: visible;
     }
 
 
-    .page-header h1 {
+    /* -----------------------------------------
+       PAGE HEADER
+       ----------------------------------------- */
 
-        font-size:
-            30px;
+    .page-header h1 {
+        font-size: 30px;
     }
 
 
     .hero h1 {
-
-        font-size:
-            30px;
+        font-size: 30px;
     }
 
 
     .hero p {
-
-        font-size:
-            15px;
+        font-size: 15px;
     }
 
 
-    .profile img {
+    /* -----------------------------------------
+       PANEL
+       ----------------------------------------- */
 
-        width:
-            120px;
+    .panel {
 
-        height:
-            120px;
+        width: 100%;
+
+        max-width: 100%;
+
+        min-width: 0;
+
+        padding: 15px;
+
+        border-radius: 16px;
+
+        overflow: visible;
     }
 
 
-    .cards {
-
-        grid-template-columns:
-            1fr;
-    }
-
+    /* -----------------------------------------
+       CONTROLS
+       ----------------------------------------- */
 
     .controls-grid {
 
@@ -1972,58 +1904,92 @@ button:focus-visible {
 
         grid-template-columns:
             1fr;
+
+        gap: 10px;
     }
 
 
-    .panel {
+    .input-group {
 
-        padding:
-            20px;
+        width: 100%;
 
-        border-radius:
-            16px;
+        min-width: 0;
     }
 
 
-    .graph-container {
+    .input-group input,
+    .input-group textarea,
+    .input-group select {
 
-        height:
-            500px;
+        width: 100%;
 
-        min-height:
-            400px;
+        max-width: 100%;
 
-        padding:
-            5px;
+        min-width: 0;
     }
 
 
-    #graph {
+    /* -----------------------------------------
+       POINT INPUTS
+       ----------------------------------------- */
 
-        min-height:
-            380px;
+    .point-row {
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+
+        gap: 8px;
     }
 
+
+    .point-row .danger-btn {
+
+        grid-column:
+            1 / -1;
+
+        width: 100%;
+    }
+
+
+    /* -----------------------------------------
+       BUTTONS
+       ----------------------------------------- */
 
     .button-row {
 
-        display:
-            grid;
+        width: 100%;
+
+        display: grid;
 
         grid-template-columns:
-            repeat(2, 1fr);
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        gap: 8px;
     }
 
 
     .button-row button {
 
-        width:
-            100%;
+        width: 100%;
 
-        margin:
-            0;
+        min-width: 0;
+
+        margin: 0;
+
+        padding:
+            10px 8px;
+
+        font-size: 13px;
     }
 
+
+    /* -----------------------------------------
+       FUNCTION ROW
+       ----------------------------------------- */
 
     .function-row {
 
@@ -2037,28 +2003,95 @@ button:focus-visible {
 
     .function-row span {
 
-        width:
-            100%;
+        width: 100%;
 
-        text-align:
-            left;
+        text-align: left;
     }
 
 
     .function-row button {
 
-        width:
-            100%;
+        width: 100%;
     }
 
 
+    /* -----------------------------------------
+       GRAPH
+       ----------------------------------------- */
+
+    .graph-container {
+
+        width: 100%;
+
+        max-width: 100%;
+
+        min-width: 0;
+
+        height: 450px;
+
+        min-height: 350px;
+
+        padding: 2px;
+
+        overflow: hidden;
+    }
+
+
+    #graph {
+
+        width: 100% !important;
+
+        height: 100% !important;
+
+        max-width: 100% !important;
+
+        min-width: 0 !important;
+
+        min-height: 0 !important;
+    }
+
+
+    /* -----------------------------------------
+       PLOTLY MODEBAR
+       ----------------------------------------- */
+
+    #graph .modebar {
+
+        top: 5px !important;
+
+        right: 5px !important;
+
+        transform:
+            scale(0.85);
+
+        transform-origin:
+            top right;
+    }
+
+
+    /* -----------------------------------------
+       FUNCTION LIST
+       ----------------------------------------- */
+
+    #functionList {
+
+        width: 100%;
+
+        max-width: 100%;
+
+        overflow-x: hidden;
+    }
+
+
+    /* -----------------------------------------
+       POINT INFO
+       ----------------------------------------- */
+
     #pointInfo {
 
-        font-size:
-            12px;
+        font-size: 12px;
 
-        min-height:
-            75px;
+        min-height: 75px;
 
         align-items:
             flex-start;
@@ -2067,69 +2100,143 @@ button:focus-visible {
             column;
     }
 
+
+    /* -----------------------------------------
+       CARDS
+       ----------------------------------------- */
+
+    .cards {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .profile img {
+
+        width: 120px;
+
+        height: 120px;
+    }
 }
 
 
 /* =========================================================
-   VERY SMALL MOBILE
+   SMALL MOBILE
    ========================================================= */
 
 @media (max-width: 480px) {
 
+    /* -----------------------------------------
+       HEADER
+       ----------------------------------------- */
+
+    .topbar {
+
+        padding:
+            0 8px;
+
+        gap: 5px;
+    }
+
+
     .left-tools {
 
-        gap:
-            8px;
+        gap: 5px;
+    }
+
+
+    .left-tools .tool-icon {
+
+        display: none;
     }
 
 
     .search {
 
-        width:
-            110px;
+        width: 100px;
+    }
+
+
+    .brand {
+
+        gap: 5px;
     }
 
 
     .brand img {
 
-        width:
-            50px;
+        width: 45px;
 
-        height:
-            50px;
+        height: 45px;
     }
 
 
     .brand h2 {
 
-        font-size:
-            15px;
+        font-size: 14px;
+
+        letter-spacing: 2px;
+    }
+
+
+    .menu {
+
+        font-size: 22px;
+
+        width: 35px;
+    }
+
+
+    /* -----------------------------------------
+       CONTENT
+       ----------------------------------------- */
+
+    .content {
+
+        padding-left: 8px;
+
+        padding-right: 8px;
     }
 
 
     .panel {
 
-        padding:
-            15px;
+        padding: 12px;
+
+        border-radius: 12px;
     }
 
 
+    /* -----------------------------------------
+       GRAPH
+       ----------------------------------------- */
+
     .graph-container {
 
-        height:
-            420px;
+        height: 400px;
 
-        min-height:
-            350px;
+        min-height: 300px;
+
+        padding: 0;
+
+        border-radius: 10px;
     }
 
 
     #graph {
 
-        min-height:
-            330px;
+        width: 100% !important;
+
+        height: 100% !important;
+
+        min-height: 0 !important;
     }
 
+
+    /* -----------------------------------------
+       BUTTONS
+       ----------------------------------------- */
 
     .button-row {
 
@@ -2140,31 +2247,68 @@ button:focus-visible {
 
     .button-row button {
 
-        padding:
-            12px;
+        min-height: 46px;
+
+        font-size: 13px;
     }
 
 
+    /* -----------------------------------------
+       POINT INPUTS
+       ----------------------------------------- */
+
+    .point-row {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .point-row .danger-btn {
+
+        grid-column:
+            auto;
+    }
+
+
+    /* -----------------------------------------
+       PAGE HEADER
+       ----------------------------------------- */
+
     .page-header {
 
-        margin-bottom:
-            30px;
+        margin-bottom: 30px;
     }
 
 
     .page-header h1 {
 
-        font-size:
-            25px;
+        font-size: 25px;
+    }
+}
+
+
+/* =========================================================
+   PLOTLY MOBILE TOUCH SUPPORT
+   ========================================================= */
+
+@media (hover: none) and (pointer: coarse) {
+
+    #graph {
+
+        touch-action:
+            none;
     }
 
 
-    .graph-controls {
+    #graph .modebar {
 
-        gap:
-            10px;
+        transform:
+            scale(0.8);
+
+        transform-origin:
+            top right;
     }
-
 }
 
 
@@ -2185,6 +2329,5 @@ button:focus-visible {
         animation:
             none !important;
     }
-
 }
 
